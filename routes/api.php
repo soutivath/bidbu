@@ -67,3 +67,6 @@ Route::prefix('buddhist/{buddhist_id}/comment/{comment_id}')->group(function () 
    //delete
    Route::delete('reply/{reply_id}',[App\Http\Controllers\ReplyController::class,'destroy']);
 });
+
+//get buddhist by id
+Route::get('typeBuddhist/{type_id}',[App\Http\Controllers\BuddhistController::class,'buddhistType']);

@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Type;
 use Illuminate\Http\Request;
+use Image;
+use File;
 class TypeController extends Controller
 {
     /**
@@ -13,7 +15,7 @@ class TypeController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:api');
+        $this->middleware('auth:api')->except(["index","show"]);
     }
     public function index()
     {
@@ -41,9 +43,22 @@ class TypeController extends Controller
     {
         $request->validate([
             'name'=>'required|string|max:30',
+            'image' =>'required|',
+            'image.*'=>'image|mimes:jpeg,png,jpg,PNG|max:8192',
         ]);
+        if(!\File::isDirectory(public_path("/type_images")))
+               {
+                   \File::makeDirectory(public_path('/type_images'),493,true);
+               }
+        $file = $request->image;
+        $fileExtension = $file->getClientOriginalExtension();
+        $fileName = 'type_image'.'_'.time().'_'.\uniqid().'.'.$fileExtension;
+        $location =public_path("/type_image/".$fileName);
+        Image::make($file)->resize(300,300)->save($location);
+        
         $type = Type::create([
-            'name'=>$request->name
+            'name'=>$request->name,
+            'image_path'=>$fileName,
         ]);
         return response(['data'=>$type],201);
     }
@@ -104,4 +119,6 @@ class TypeController extends Controller
         $type->delete();
         return response(['data'=>$type],200);
     }
+
+   
 }

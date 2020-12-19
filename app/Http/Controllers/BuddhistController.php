@@ -253,4 +253,10 @@ class BuddhistController extends Controller
             return response()->json(["data"=>"Your bidding price must more than highest price"],400);
         }
     }
+
+    public function buddhistType($type_id)
+    {
+        $buddhists = Buddhist::where('type_id',$type_id)->with('type')->get();
+        return response()->json(['data'=>$buddhists],200);
+    }
 }
