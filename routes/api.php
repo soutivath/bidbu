@@ -70,3 +70,10 @@ Route::prefix('buddhist/{buddhist_id}/comment/{comment_id}')->group(function () 
 
 //get buddhist by id
 Route::get('typeBuddhist/{type_id}',[App\Http\Controllers\BuddhistController::class,'buddhistType']);
+
+//getFavorite
+Route::get(('favorite/buddhist/{buddhist_id}/user/{user_id}'),[App\Http\Controllers\FavouriteController::class,'index']);
+//add into favorite
+Route::post('favorite/buddhist/{buddhist_id}/user/{user_id}',[]);
+//remove favorite
+Route::delete('favorite/buddhist/{buddhist}/user/{user_id}');

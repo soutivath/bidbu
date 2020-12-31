@@ -97,9 +97,24 @@ class TypeController extends Controller
     {
         $this->validate($request, array(  // Removed `[]` from the array.
             'name'=>'required|string|max:30',
+            'image'=>'sometimes|image|mimes:jpeg,png,jpg,PNG|max:8192'
         ));
             $type = Type::findOrFail($id);
             $type->name =$request->name;
+            if($request->hasFile('image'))
+            {
+                $file = $request->image;
+                $fileExtension = $file->getClientOriginalExtension();
+                $fileName = 'type_image'.'_'.time().'_'.\uniqid().'.'.$fileExtension;
+                $location =public_path("/type_image/".$fileName);
+                Image::make($file)->resize(300,300)->save($location);
+
+                $path = public_path().'/type_image/'.$type->image_path;
+                if(\file_exists($path))
+                {
+                 unlink(public_path().'\type_image/'.$type->image_path);
+                }
+            }
             $type->save();
             return response(['data'=>$type],200);
     
@@ -116,6 +131,11 @@ class TypeController extends Controller
     public function destroy($id)
     {
         $type=Type::findOrFail($id);
+        $path = public_path().'/type_image/'.$type->image_path;
+                if(\file_exists($path))
+                {
+                 unlink(public_path().'\type_image/'.$type->image_path);
+                }
         $type->delete();
         return response(['data'=>$type],200);
     }

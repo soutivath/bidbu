@@ -11,10 +11,10 @@ class favourite extends Model
    
     public function user()
     {
-        $this->belongsTo("app\user");
+        $this->belongsTo(User::class);
     }
     public function buddhist()
     {
-        $this->belongsTo("app\Buddhist");
+        $this->belongsTo(Buddhist::class);
     }
 }

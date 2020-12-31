@@ -90,10 +90,10 @@ class apiAuthController extends Controller
     public function register(Request $request)
     {
         $request->validate([
-            'name'=>'required|min:5|max:30|string',
-            'surname'=>'required|min:5|max:30|string',
+            'name'=>'required|max:30|string',
+            'surname'=>'required|max:30|string',
             //'email'=>'required|email',
-            'phone_number'=>'required|integer',
+            'phone_number'=>'required|string|unique:users',
             'firebase_token'=>'required|string',
             'password'=>'required|string|min:6|max:18',
             'picture'=>'sometimes|image|mines:jpeg,png,jpg,PNG|max:8192'
@@ -145,7 +145,7 @@ class apiAuthController extends Controller
                 'timeout' => 60
             ]);
             try {
-                $response = $http->post('http://127.0.0.1:8001/oauth/token', [
+                $response = $http->post('http://192.168.123.131:8001/oauth/token', [
                     'form_params' => [
                         'grant_type' => 'password',
                         'client_id' => 2,

@@ -12,9 +12,15 @@ class FavouriteController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index($buddhist_id,$user_id)
     {
-        //
+        $favorite = favourite::where(
+            [
+                ['buddhist_id',$buddhist_id],
+                ['user_id',$user_id]
+            ]
+            )->with('user','buddhist');
+            return Response()->json(['data',$favorite],200);
     }
 
     /**
