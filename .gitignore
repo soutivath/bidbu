@@ -5,6 +5,12 @@
 /storage/*.json
 /vendor
 /firebase_key
+
+/public/buddhist_images/
+/public/profile_image/
+/public/type_image/
+/public/type_images
+
 .env
 .env.backup
 .phpunit.result.cache
@@ -12,7 +18,4 @@ Homestead.json
 Homestead.yaml
 npm-debug.log
 yarn-error.log
-/public/buddhist_images
-/public/profile_image
-/public/type_image
-/public/type_images
+

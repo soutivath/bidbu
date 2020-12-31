@@ -24,11 +24,10 @@ class BuddhistController extends Controller
     }
     public function index()
     {
-        
+        #nice
       $bud = Buddhist::whereDate('end_time','>',Carbon::now())->with('type')->get();
     return BuddhistResource::collection($bud);
     }
-
     /**
      * Show the form for creating a new resource.
      *
