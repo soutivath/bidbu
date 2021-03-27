@@ -6,6 +6,8 @@ use Illuminate\Http\Resources\Json\JsonResource;
 use Carbon\carbon;
 use File;
 use Request;
+use Auth;
+use App\Models\favourite;
 class BuddhistResource extends JsonResource
 {
     /**
@@ -16,22 +18,28 @@ class BuddhistResource extends JsonResource
      */
     public function toArray($request)
     {
+        
         $allImage = array();
         $files= File::files(public_path('/buddhist_images/'.$this->image_path."/"));
-        foreach($files as $file){
+       /* foreach($files as $file){
             $file_path = pathinfo($file);
             \array_push($allImage,"buddhist_images/".$this->image_path."/".$file_path['basename']);
-        }
+        }*/
+        $file_path = pathinfo($files[0]);
+        \array_push($allImage,"buddhist_images/".$this->image_path."/".$file_path['basename']);
         return [
             'id'=>$this->id,
             'name'=>$this->name,
             'price'=>$this->price,
             'highest_price'=>$this->highest_price,
-             'time_remain'=>Carbon::now()->lessThan(Carbon::parse($this->end_time))?Carbon::now()->diffInSeconds(Carbon::parse($this->end_time)):"Item is expired",
+            'place'=>$this->place,
+             'time_remain'=>Carbon::now()->lessThan(Carbon::parse($this->end_time))?Carbon::now()->diffInSeconds(Carbon::parse($this->end_time)):"0",
             'type'=>[
                 'id'=>$this->type->id,
                 'name'=>$this->type->name
             ],
+           
+            
             'image'=>$allImage
         ];
     }

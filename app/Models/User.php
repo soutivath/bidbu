@@ -23,7 +23,7 @@ class User extends Authenticatable
         'name','surname', 'email', 'password','phone_number','picture','firebase_uid'
     ];
 
-  
+    protected $primaryKey = 'id';
 
     /**
      * The attributes that should be hidden for arrays.

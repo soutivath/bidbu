@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddImagePathToType extends Migration
+class AddPlacetoBuddhist extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,8 @@ class AddImagePathToType extends Migration
      */
     public function up()
     {
-        Schema::table('types', function (Blueprint $table) {
-            $table->string('image_path')->nullable();
+        Schema::table('buddhists', function (Blueprint $table) {
+            $table->string('place');
         });
     }
 
@@ -25,8 +25,8 @@ class AddImagePathToType extends Migration
      */
     public function down()
     {
-        Schema::table('types', function (Blueprint $table) {
-            $table->dropColumn('image_path');
+        Schema::table('buddhists', function (Blueprint $table) {
+            //
         });
     }
 }

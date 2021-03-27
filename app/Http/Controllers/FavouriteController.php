@@ -4,7 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\favourite;
 use Illuminate\Http\Request;
-
+use Auth;
+use App\Http\Resources\FavoriteResource;
 class FavouriteController extends Controller
 {
     /**
@@ -12,15 +13,21 @@ class FavouriteController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index($buddhist_id,$user_id)
+
+     public function __construct()
+     {
+         $this->middleware("auth:api");
+         
+     }
+
+    public function index()
     {
         $favorite = favourite::where(
-            [
-                ['buddhist_id',$buddhist_id],
-                ['user_id',$user_id]
-            ]
-            )->with('user','buddhist');
-            return Response()->json(['data',$favorite],200);
+                'user_id',Auth::id()
+            )->with('buddhist')->get();
+           
+            //return Response()->json(['data'=>$favorite],200);
+            return FavoriteResource::collection($favorite);
     }
 
     /**
@@ -41,11 +48,36 @@ class FavouriteController extends Controller
      */
     public function store(Request $request)
     {
+        
         $request->validate(
             [
-                
+                'buddhist_id'=>'required|integer',
             ]
             );
+            $found = favourite::where([
+                ['buddhist_id',$request->buddhist_id],
+                ['user_id',Auth::id()]
+            ])->get();
+           
+            if($found->isEmpty())
+            {
+                
+                $favorite = favourite::Create([
+                    'user_id'=>Auth::id(),
+                    'buddhist_id'=>$request->buddhist_id,
+                ]);
+                return response()->json(['Message'=>'Save complete'],201);
+            }
+            else{
+                foreach($found as $item)
+                {
+                    $item->delete();
+                }
+                return response()->json([
+                    'Message'=>'Delete favourite Complete'
+                ],200);
+            }
+           
     }
 
     /**

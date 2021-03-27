@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\App;
 
 class Buddhist extends Model
 {
@@ -15,16 +16,16 @@ class Buddhist extends Model
     }
     public function favorite()
     {
-        $this->hasMany("App\favourite");
+       return $this->hasMany(favourite::class);
     }
     public function user()
     {
-        $this->belongsTo("App\User");
+       return $this->belongsTo(User::class);
 
     }
     public function comments()
     {
-        $this->hasMany("App\comment");
+       return $this->hasMany(comment::class);
     }
     
 

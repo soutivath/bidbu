@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Type;
+use Auth;
+use File;
 use Illuminate\Http\Request;
 use Image;
-use File;
+
 class TypeController extends Controller
 {
     /**
@@ -15,12 +17,12 @@ class TypeController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:api')->except(["index","show"]);
+        $this->middleware('auth:api')->except(["index", "show"]);
     }
     public function index()
     {
         $type = Type::all();
-        return response(['data'=>$type],200);
+        return response(['data' => $type], 200);
     }
 
     /**
@@ -41,26 +43,30 @@ class TypeController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'name'=>'required|string|max:30',
-            'image' =>'required|',
-            'image.*'=>'image|mimes:jpeg,png,jpg,PNG|max:8192',
-        ]);
-        if(!\File::isDirectory(public_path("/type_images")))
-               {
-                   \File::makeDirectory(public_path('/type_images'),493,true);
-               }
-        $file = $request->image;
-        $fileExtension = $file->getClientOriginalExtension();
-        $fileName = 'type_image'.'_'.time().'_'.\uniqid().'.'.$fileExtension;
-        $location =public_path("/type_image/".$fileName);
-        Image::make($file)->resize(300,300)->save($location);
-        
-        $type = Type::create([
-            'name'=>$request->name,
-            'image_path'=>$fileName,
-        ]);
-        return response(['data'=>$type],201);
+        if (Auth::user()->hasRole("admin")) {
+
+            $request->validate([
+                'name' => 'required|string|max:30',
+                'image' => 'required',
+                'image.*' => 'image|mimes:jpeg,png,jpg|max:8192',
+            ]);
+            if (!\File::isDirectory(public_path("/type_images"))) {
+                \File::makeDirectory(public_path('/type_images'), 493, true);
+            }
+            $file = $request->image;
+            $fileExtension = $file->getClientOriginalExtension();
+            $fileName = 'type_image' . '_' . time() . '_' . \uniqid() . '.' . $fileExtension;
+            $location = public_path("/type_images/" . $fileName);
+            Image::make($file)->resize(300, 300)->save($location);
+
+            $type = Type::create([
+                'name' => $request->name,
+                'image_path' => $fileName,
+            ]);
+            return response(['data' => $type], 201);
+        } else {
+            return response(['message' => 'Permission denied'], 404);
+        }
     }
 
     /**
@@ -72,7 +78,7 @@ class TypeController extends Controller
     public function show($id)
     {
         $type = Type::findOrFail($id);
-        return response(['data'=>$type],200);
+        return response(['data' => $type], 200);
     }
 
     /**
@@ -83,7 +89,7 @@ class TypeController extends Controller
      */
     public function edit(Type $type)
     {
-        
+
     }
 
     /**
@@ -93,34 +99,35 @@ class TypeController extends Controller
      * @param  \App\Models\Type  $type
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request,$id)
+    public function update(Request $request, $id)
     {
-        $this->validate($request, array(  // Removed `[]` from the array.
-            'name'=>'required|string|max:30',
-            'image'=>'sometimes|image|mimes:jpeg,png,jpg,PNG|max:8192'
-        ));
+        if (Auth::user()->hasRole("admin")) {
+
+            $this->validate($request, array( // Removed `[]` from the array.
+                'name' => 'required|string|max:30',
+                'image' => 'sometimes|image|mimes:jpeg,png,jpg|max:8192',
+            ));
             $type = Type::findOrFail($id);
-            $type->name =$request->name;
-            if($request->hasFile('image'))
-            {
+            $type->name = $request->name;
+            if ($request->hasFile('image')) {
                 $file = $request->image;
                 $fileExtension = $file->getClientOriginalExtension();
-                $fileName = 'type_image'.'_'.time().'_'.\uniqid().'.'.$fileExtension;
-                $location =public_path("/type_image/".$fileName);
-                Image::make($file)->resize(300,300)->save($location);
+                $fileName = 'type_image' . '_' . time() . '_' . \uniqid() . '.' . $fileExtension;
+                $location = public_path("/type_images/" . $fileName);
+                Image::make($file)->resize(300, 300)->save($location);
 
-                $path = public_path().'/type_image/'.$type->image_path;
-                if(\file_exists($path))
-                {
-                 unlink(public_path().'\type_image/'.$type->image_path);
+                $path = public_path() . '/type_images/' . $type->image_path;
+                if (\file_exists($path)) {
+                    unlink(public_path() . '/type_images/' . $type->image_path);
                 }
             }
             $type->save();
-            return response(['data'=>$type],200);
-    
+            return response(['data' => $type], 200);
+        } else {
+            return response(['message' => 'Permission denied'], 404);
+        }
+
     }
-  
-    
 
     /**
      * Remove the specified resource from storage.
@@ -130,15 +137,18 @@ class TypeController extends Controller
      */
     public function destroy($id)
     {
-        $type=Type::findOrFail($id);
-        $path = public_path().'/type_image/'.$type->image_path;
-                if(\file_exists($path))
-                {
-                 unlink(public_path().'\type_image/'.$type->image_path);
-                }
-        $type->delete();
-        return response(['data'=>$type],200);
+        if (Auth::user()->hasRole("admin")) {
+            $type = Type::findOrFail($id);
+            $path = public_path() . '/type_images/' . $type->image_path;
+            if (\file_exists($path)) {
+                unlink(public_path() . '\type_images/' . $type->image_path);
+            }
+            $type->delete();
+            return response(['data' => $type], 200);
+        }
+        else{
+            return response(['message'=>'Permission denied'],404);
+        }
     }
 
-   
 }

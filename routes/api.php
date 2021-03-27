@@ -1,8 +1,8 @@
 <?php
 
+use App\Http\Controllers\apiAuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\apiAuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,67 +13,51 @@ use App\Http\Controllers\apiAuthController;
 | routes are loaded by the RouteServiceProvider within a group which
 | is assigned the "api" middleware group. Enjoy building your API!
 |
-*/
+ */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
+Route::post('/register', [App\Http\Controllers\apiAuthController::class, 'register']);
+Route::post('/bidding/{id}', [App\Http\Controllers\BuddhistController::class, 'bidding']);
+Route::post('/store', [App\Http\Controllers\BuddhistController::class, 'store']);
+Route::post('/login', [App\Http\Controllers\apiAuthController::class, 'login']);
 
-Route::post('/register',[App\Http\Controllers\apiAuthController::class, 'register']);
-Route::post('/bidding/{id}',[App\Http\Controllers\BuddhistController::class, 'bidding']);
-Route::post('/store',[App\Http\Controllers\BuddhistController::class, 'store']);
-Route::post('/login',[App\Http\Controllers\apiAuthController::class,'login']);
 
-Route::post('altLogin',[App\Http\Controllers\apiAuthController::class,'altLogin']);
-Route::apiResource('type',App\Http\Controllers\TypeController::class);
-Route::apiResource('buddhist',App\Http\Controllers\BuddhistController::class);
-//store buddhist
-Route::post('/buddhist',[App\Http\Controllers\BuddhistController::class,'store']);
+Route::apiResource('type', App\Http\Controllers\TypeController::class);
+Route::apiResource('buddhist', App\Http\Controllers\BuddhistController::class);
 
-Route::get('getHigh',[App\Http\Controllers\BuddhistController::class,'getHigh']);
-/*Route::get('/type',[App\Http\Controllers\TypeController::class,'index']);
-Route::post('/type',[App\Http\Controllers\TypeController::class,'store']);
-Route::get('/type/{id}',[App\Http\Controllers\TypeController::class,'show']);
-Route::put('/type/{id}',[App\Http\Controllers\TypeController::class,'update']);
-Route::delete('/type/{id}',[App\Http\Controllers\TypeController::class,'destroy']);*/
-
-//comment
-//Route::apiResource('comment',App\Http\Controllers\CommentController::class);
 
 //post comment
-Route::post('/buddhist/{buddhist_id}/comment',[App\Http\Controllers\CommentController::class,'store']);
+Route::post('/buddhist/{buddhist_id}/comment', [App\Http\Controllers\CommentController::class, 'store']);
 //update Comment
-Route::put('buddhist/{buddhist_id}/comment/{comment_id}',[App\Http\Controllers\CommentController::class,'update']);
+Route::put('buddhist/{buddhist_id}/comment/{comment_id}', [App\Http\Controllers\CommentController::class, 'update']);
 //delete comment
-Route::delete('buddhist/{buddhist_id}/comment/{comment_id}',[App\Http\Controllers\CommentController::class,'destroy']);
-//get one comment
-Route::get('buddhist/{buddhist_id}/comment/{comment_id}',[App\Http\Controllers\CommentController::class,'show']);
+Route::delete('buddhist/{buddhist_id}/comment/{comment_id}', [App\Http\Controllers\CommentController::class, 'destroy']);
+
 
 //Reply
 
 //post reply
 Route::prefix('buddhist/{buddhist_id}/comment/{comment_id}')->group(function () {
-   Route::post('reply',[App\Http\Controllers\ReplyController::class,'store']);
+    Route::post('reply', [App\Http\Controllers\ReplyController::class, 'store']);
 
-   //get reply
-   Route::get('reply/{reply_id}',[App\Http\Controllers\ReplyController::class,'show']);
+    //update reply
+    Route::put('reply/{reply_id}', [App\Http\Controllers\ReplyController::class, 'update']);
 
-   //update reply
-   Route::put('reply/{reply_id}',[App\Http\Controllers\ReplyController::class,'update']);
+    //store reply
+    Route::post('reply', [App\Http\Controllers\ReplyController::class, 'store']);
 
-   //store reply
-   Route::post('reply',[App\Http\Controllers\ReplyController::class,'store']);
-
-   //delete
-   Route::delete('reply/{reply_id}',[App\Http\Controllers\ReplyController::class,'destroy']);
+    //delete
+    Route::delete('reply/{reply_id}', [App\Http\Controllers\ReplyController::class, 'destroy']);
 });
 
-//get buddhist by id
-Route::get('typeBuddhist/{type_id}',[App\Http\Controllers\BuddhistController::class,'buddhistType']);
+//get buddhist by type id
+Route::get('typeBuddhist/{type_id}', [App\Http\Controllers\BuddhistController::class, 'buddhistType']);
 
 //getFavorite
-Route::get(('favorite/buddhist/{buddhist_id}/user/{user_id}'),[App\Http\Controllers\FavouriteController::class,'index']);
-//add into favorite
-Route::post('favorite/buddhist/{buddhist_id}/user/{user_id}',[]);
-//remove favorite
-Route::delete('favorite/buddhist/{buddhist}/user/{user_id}');
+Route::get(('favorite/buddhist/'), [App\Http\Controllers\FavouriteController::class, 'index']);
+//add or delete into favorite
+Route::post('favorite/buddhist/', [App\Http\Controllers\FavouriteController::class, 'store']);
+
+//user
+Route::get('user', [App\Http\Controllers\ProfileController::class, 'show']);
+
+Route::get('nice',[App\Http\Controllers\BuddhistController::class,'testTokenGetData']);

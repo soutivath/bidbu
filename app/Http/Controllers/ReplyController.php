@@ -6,6 +6,8 @@ use App\Models\Reply;
 use Illuminate\Http\Request;
 use Auth;
 use Carbon\carbon;
+use Kreait\Firebase\Messaging\Notification;
+use Kreait\Firebase\Messaging\CloudMessage;
 class ReplyController extends Controller
 {
     /**
@@ -44,13 +46,29 @@ class ReplyController extends Controller
     {
         
         $request->validate([
-            'message'=>'required|string',
+            'message'=>'required|string|max:255',
+            'fcm_token'=>'required|string'
         ]);
+
+        $messaging = app('firebase.messaging');
+        $result = $messaging->validateRegistrationTokens($request->fcm_token);
+        if ($result['invalid'] != null) {
+            return response()->json(['data' => 'your json token is invalid'], 404);
+
+        }
+        $data = Reply::where([
+            ['user_id', Auth::id()],
+            ['comment_id', $comment_id],
+        ])->first();
         $reply = new Reply();
         $reply->message=$request->message;
         $reply->user_id = Auth::user()->id;
         $reply->comment_id= $comment_id;
         $reply->save();
+        if (empty($data)) {
+            $topic = "B".$buddhist_id+"_C".$comment->id;
+            $result = $messaging->subscribeToTopic($topic, $request->fcm_token);
+        }
         try{
             $database = app('firebase.database');
             $reference = $database->getReference('Comments/'.$buddhist_id.'/'.$comment_id.'/replies/'.$reply->id)
@@ -61,6 +79,31 @@ class ReplyController extends Controller
                 'name'=>Auth::user()->name,
                 'datetime'=>Carbon::now(),
             ]);
+
+
+            $notification = Notification::fromArray([
+                'title' => 'ທ່ານມີແຈ້ງເຕຶອນໃໝ່ຈາກ'.Buddhist::find($buddhist_id)->name.'ທີ່ທ່ານໄດ້ລົງປະມູນ',
+                'body' => $request->message,
+                'image' => \public_path("/notification_images/chat.png"),
+            ]);
+            $notification_data = [
+                'buddhist_id' => $buddhist_id,
+                'comment_id' => $comment->id,
+            ];
+            $message = CloudMessage::withTarget('topic', "B".$buddhist_id)
+                ->withNotification($notification)
+                ->withData($notification_data);
+            $messaging->send($message);
+            $notification = Notification::fromArray([
+                'title' => 'ມີຄົນຕອບກັບຄວາມຄິດເຫັນຂອງເຈົ້າຈາກ'.Buddhist::find($buddhist_id)->name,
+                'body' => $request->message,
+                'image' => \public_path("/notification_images/chat.png"),
+            ]);
+            $message = CloudMessage::withTarget('topic', "B".$buddhist_id."C".$comment_id)
+                ->withNotification($notification)
+                ->withData($notification_data);
+            $message->send($message);
+      
             return response()->json(['data'=>$reply],200);
         }catch(Exception $e)
         {
@@ -102,7 +145,7 @@ class ReplyController extends Controller
     public function update(Request $request,$buddhist_id,$comment_id,$reply_id)
     {
         $request->validate([
-            'message'=>'required|string',
+            'message'=>'required|string|max:255',
         ]);
         $reply = Reply::findOrFail($reply_id);
         if(Auth::id()==$reply->user_id)
