@@ -1,20 +1,33 @@
 <?php
 
 namespace App\Http\Controllers;
-
-use App\Models\message;
+use App\Http\Resources\NotificationReSource;
+use App\Models\NotificationFirebase;
 use Illuminate\Http\Request;
-
-class MessageController extends Controller
+use Auth;
+class notificationController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
+
+  
+    public function __construct()
+    {
+        $this->middleware("auth:api");
+    }
+
     public function index()
     {
-        //
+       
+        $data = NotificationFirebase::where("user_id",Auth::id())->get();
+        NotificationFirebase::where("user_id",Auth::id())->update([
+            'read'=>1
+        ]);
+       
+        return NotificationReSource::collection($data);
     }
 
     /**
@@ -41,10 +54,10 @@ class MessageController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\message  $message
+     * @param  \App\Models\NotificationFirebase  $NotificationFirebase
      * @return \Illuminate\Http\Response
      */
-    public function show(message $message)
+    public function show(NotificationFirebase $NotificationFirebase)
     {
         //
     }
@@ -52,10 +65,10 @@ class MessageController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\message  $message
+     * @param  \App\Models\NotificationFirebase  $NotificationFirebase
      * @return \Illuminate\Http\Response
      */
-    public function edit(message $message)
+    public function edit(NotificationFirebase $NotificationFirebase)
     {
         //
     }
@@ -64,10 +77,10 @@ class MessageController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\message  $message
+     * @param  \App\Models\NotificationFirebase  $NotificationFirebase
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, message $message)
+    public function update(Request $request, NotificationFirebase $NotificationFirebase)
     {
         //
     }
@@ -75,10 +88,10 @@ class MessageController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\message  $message
+     * @param  \App\Models\NotificationFirebase  $NotificationFirebase
      * @return \Illuminate\Http\Response
      */
-    public function destroy(message $message)
+    public function destroy(NotificationFirebase $NotificationFirebase)
     {
         //
     }

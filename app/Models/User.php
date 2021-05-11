@@ -31,7 +31,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token',
+        'password', 'remember_token','firebase_uid','email_verified_at'
     ];
 
     /**
@@ -48,11 +48,7 @@ class User extends Authenticatable
         return $this->where('phone_number', $phone_number)->first();
     }
 
-    public function comments()
-    {
-        $this->hasMany("app\comment");
-    }
-  
+   
 
     public function favourites()
     {
@@ -60,8 +56,17 @@ class User extends Authenticatable
     }
     public function buddhists()
     {
-        $this->hasMany("app\Buddhist");
+        return $this->hasMany("app\Buddhist");
     }
 
-  
+    public function notifications()
+    {
+        return $this->hasMany(NotificationFirebase::class);
+    }
+
+    public function getProfilePath()
+    {
+        return Config("values.APP_URL").":".$_SERVER["SERVER_PORT"].
+        "/"."profile_image/".$this->picture;
+    }
 }

@@ -21,6 +21,8 @@ class CreateBuddhistsTable extends Migration
             $table->integer('highest_price');
             $table->dateTime('start_time');
             $table->dateTime('end_time');
+            $table->boolean("active")->default(1);
+            $table->string("winner_fcm_token")->default("empty");
             $table->timestamps();
         });
 

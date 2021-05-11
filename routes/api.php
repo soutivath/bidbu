@@ -22,9 +22,10 @@ Route::post('/login', [App\Http\Controllers\apiAuthController::class, 'login']);
 
 
 Route::apiResource('type', App\Http\Controllers\TypeController::class);
-Route::apiResource('buddhist', App\Http\Controllers\BuddhistController::class);
 
-
+Route::get('buddhist', [App\Http\Controllers\BuddhistController::class,"index"]);
+Route::post('buddhist', [App\Http\Controllers\BuddhistController::class,"store"]);
+Route::delete('buddhist/{id}', [App\Http\Controllers\BuddhistController::class,"destroy"]);
 //post comment
 Route::post('/buddhist/{buddhist_id}/comment', [App\Http\Controllers\CommentController::class, 'store']);
 //update Comment
@@ -37,7 +38,7 @@ Route::delete('buddhist/{buddhist_id}/comment/{comment_id}', [App\Http\Controlle
 
 //post reply
 Route::prefix('buddhist/{buddhist_id}/comment/{comment_id}')->group(function () {
-    Route::post('reply', [App\Http\Controllers\ReplyController::class, 'store']);
+    //Route::get('reply', [App\Http\Controllers\ReplyController::class, 'index']);
 
     //update reply
     Route::put('reply/{reply_id}', [App\Http\Controllers\ReplyController::class, 'update']);
@@ -60,4 +61,20 @@ Route::post('favorite/buddhist/', [App\Http\Controllers\FavouriteController::cla
 //user
 Route::get('user', [App\Http\Controllers\ProfileController::class, 'show']);
 
-Route::get('nice',[App\Http\Controllers\BuddhistController::class,'testTokenGetData']);
+//Route::get('nice',[App\Http\Controllers\BuddhistController::class,'testTokenGetData']);
+Route::get("user/{id}",[App\Http\Controllers\ProfileController::class, 'getUserByID']);
+
+Route::get("notification",[App\Http\Controllers\notificationController::class,'index']);
+
+//custom
+/*$middleware =['api'];
+if (\Request::header('Authorization')) 
+   $middleware = array_merge(['auth:api']);
+Route::group(['namespace' => 'Api', 'middleware' => $middleware], function () {
+    //routes here
+    Route::get('buddhist/{id}', [App\Http\Controllers\BuddhistController::class,"show"]);
+});*/
+
+
+Route::get('buddhist/{id}', [App\Http\Controllers\BuddhistController::class,"show"]);
+Route::get("recommended/{type_id}/{buddhist_id}",[App\Http\Controllers\BuddhistController::class,"recommendedBuddhist"]);

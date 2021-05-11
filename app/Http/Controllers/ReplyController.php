@@ -8,6 +8,7 @@ use Auth;
 use Carbon\carbon;
 use Kreait\Firebase\Messaging\Notification;
 use Kreait\Firebase\Messaging\CloudMessage;
+use App\Models\Buddhist;
 class ReplyController extends Controller
 {
     /**
@@ -51,29 +52,30 @@ class ReplyController extends Controller
         ]);
 
         $messaging = app('firebase.messaging');
+        $database = app('firebase.database');
         $result = $messaging->validateRegistrationTokens($request->fcm_token);
         if ($result['invalid'] != null) {
             return response()->json(['data' => 'your json token is invalid'], 404);
-
         }
-        $data = Reply::where([
-            ['user_id', Auth::id()],
-            ['comment_id', $comment_id],
-        ])->first();
-        $reply = new Reply();
-        $reply->message=$request->message;
-        $reply->user_id = Auth::user()->id;
-        $reply->comment_id= $comment_id;
-        $reply->save();
-        if (empty($data)) {
-            $topic = "B".$buddhist_id+"_C".$comment->id;
+        $reference = $database->getReference('Comments/' . $buddhist_id . '/'.$comment_id.'/replies/');
+        $data = $reference
+                ->orderByChild("uid")
+                ->equalTo(Auth::user()->firebase_uid)
+                ->limitToFirst(1)
+                ->getSnapShot()
+                ->getValue();
+        $data = $reference->getValue();
+        
+        $owner = Buddhist::find($buddhist_id);
+        $ownerID = $owner->user_id;
+        if (empty($data)&&Auth::id()!=$ownerID) {
+            $topic = "B".$buddhist_id."_C".$comment_id;
             $result = $messaging->subscribeToTopic($topic, $request->fcm_token);
         }
         try{
             $database = app('firebase.database');
-            $reference = $database->getReference('Comments/'.$buddhist_id.'/'.$comment_id.'/replies/'.$reply->id)
-            ->set([
-                'reply_id'=>$reply->id,
+            $reference = $database->getReference('Comments/'.$buddhist_id.'/'.$comment_id.'/replies/')
+            ->push([
                 'uid'=>Auth::user()->firebase_uid,
                 'message'=>$request->message,
                 'name'=>Auth::user()->name,
@@ -88,12 +90,15 @@ class ReplyController extends Controller
             ]);
             $notification_data = [
                 'buddhist_id' => $buddhist_id,
-                'comment_id' => $comment->id,
+                'comment_id' => $comment_id,
+                'sender'=>Auth::id(),
+                "page"=> 'listreplies',
             ];
             $message = CloudMessage::withTarget('topic', "B".$buddhist_id)
                 ->withNotification($notification)
                 ->withData($notification_data);
             $messaging->send($message);
+
             $notification = Notification::fromArray([
                 'title' => 'ມີຄົນຕອບກັບຄວາມຄິດເຫັນຂອງເຈົ້າຈາກ'.Buddhist::find($buddhist_id)->name,
                 'body' => $request->message,
@@ -102,7 +107,7 @@ class ReplyController extends Controller
             $message = CloudMessage::withTarget('topic', "B".$buddhist_id."C".$comment_id)
                 ->withNotification($notification)
                 ->withData($notification_data);
-            $message->send($message);
+            $messaging->send($message);
       
             return response()->json(['data'=>$reply],200);
         }catch(Exception $e)
@@ -146,27 +151,36 @@ class ReplyController extends Controller
     {
         $request->validate([
             'message'=>'required|string|max:255',
+            
         ]);
-        $reply = Reply::findOrFail($reply_id);
-        if(Auth::id()==$reply->user_id)
-        {
-            $reply->message = $request->message;
-        $reply->save();
         try{
             $database = app('firebase.database');
-            $reference = $database->getReference('Comments/'.$buddhist_id.'/'.$comment_id.'/replies/'.$reply->id)
-            ->update([
-                'message'=>$request->message
-            ]);
-            return Response()->json(['message'=>'update reply successfully'],200);
-        }catch(Exception $e)
-        {
-            $reply->destroy();
-            return Response()->json(['error'=>'something went wrong'],500);
-        }
-        }
-        else{
-            return Response()->json(['error'=>'You Can\'t Update this reply']);
+            $reference = $database->getReference('Comments/' . $buddhist_id . '/' . $comment_id."/replies/".$reply_id);
+            $ownerID = $reference->getSnapShot()->getValue();
+            if(empty($ownerID)){
+                return response()->json([
+                    "message"=>"Data Not Found"
+                ]);
+               }
+            if($ownerID["uid"]==Auth::user()->firebase_uid)
+            {
+                $reference->update([
+                    "message"=>$request->message
+                ]);
+                return response()->json([
+                    "message"=>"Update your message successfully"
+                ],200);
+            }else{
+                return Response()->json(['error' => 'You can\'t edit this comment'], 400);
+            }
+           
+        } catch (Exception $e) {
+            return response()->json(
+                [
+                    'message' => 'Something went wrong',
+                ],
+                500
+            );
         }
         
     }
@@ -179,12 +193,23 @@ class ReplyController extends Controller
      */
     public function destroy($buddhist_id,$comment_id,$reply_id)
     {
-        $reply = Reply::findOrFail($reply_id);
-        if($reply->user_id===Auth::id()){
-            $database = app('firebase.database');
+        
+        $database = app('firebase.database');
+        $reference = $database->getReference('Comments/' . $buddhist_id . '/' . $comment_id."/replies/".$reply_id);
+        $ownerID = $reference->getSnapShot()->getValue();
+       if(empty($ownerID)){
+        return response()->json([
+            "message"=>"Data Not Found"
+        ]);
+       }
+          
+        
+       
+        if($ownerID["uid"]==Auth::user()->firebase_uid)
+        {
+           
             try{
                 $reference = $database->getReference('Comments/'.$buddhist_id.'/'.$comment_id.'/replies/'.$reply_id)->remove();
-                Reply::destroy($reply_id);
                 return Response()->json(['message'=>'Delete Complete'],200);
             }catch(Exception $e)
             {

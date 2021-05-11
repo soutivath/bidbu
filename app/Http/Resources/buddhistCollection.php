@@ -19,8 +19,8 @@ class buddhistCollection extends JsonResource
         $allImage = array();
         $files= File::files(public_path('/buddhist_images/'.$this->image_path."/"));
         $file_path = pathinfo($files[0]);
-        \array_push($allImage,"buddhist_images/".$this->image_path."/".$file_path['basename']);
-        
+        \array_push($allImage,Config("values.APP_URL").":".$_SERVER["SERVER_PORT"].
+        "/"."buddhist_images/".$this->image_path."/".$file_path['basename']);
         return [
             'id'=>$this->id,
             'name'=>$this->name,

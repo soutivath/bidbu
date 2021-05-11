@@ -25,6 +25,7 @@ class OneBuddhistResource extends JsonResource
         
         $boolLike = 2;
        
+
         if(Auth::guard('api')->check())
         {
             $favorite = favourite::where([
@@ -50,10 +51,10 @@ class OneBuddhistResource extends JsonResource
         $files= File::files(public_path('/buddhist_images/'.$this->image_path."/"));
         foreach($files as $file){
             $file_path = pathinfo($file);
-            \array_push($allImage,"buddhist_images/".$this->image_path."/".$file_path['basename']);
+            \array_push($allImage,Config("values.APP_URL").":".$_SERVER["SERVER_PORT"].
+            "/"."buddhist_images/".$this->image_path."/".$file_path['basename']);
         }
-        return [
-            
+        return [ 
            [ 'id'=>$this->id,
             'name'=>$this->name,
             'detail'=>$this->detail,
@@ -68,7 +69,8 @@ class OneBuddhistResource extends JsonResource
             ],
             
             'user'=>$this->user->name,
-            'favorite'=>$boolLike, // login but unlike 0, login but like 1 , unAuth
+            'owner_id'=>$this->user_id,
+            'favorite'=>$boolLike, // login but unlike 0, login but like 1 , unAuth2
             'image'=>$allImage,
             'pay_choice'=>$this->pay_choice,
             'bank_name'=>$this->bank_name,
@@ -81,7 +83,8 @@ class OneBuddhistResource extends JsonResource
             'place'=>$this->place,
             'status'=>$this->status,
             'highBidUser'=>$this->highBidUser,
-            'favoriteCount'=>favourite::where("buddhist_id",$this->id)->count()
+            'favoriteCount'=>favourite::where("buddhist_id",$this->id)->count(),
+            'priceSmallest'=>$this->priceSmallest,
            ]
         ];
     }

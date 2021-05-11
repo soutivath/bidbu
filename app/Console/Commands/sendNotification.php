@@ -41,14 +41,55 @@ class sendNotification extends Command
     public function handle()
     {
         $messaging = app('firebase.messaging');
-        $message = CloudMessage::withTarget('token',$deviceToken)
-        ->withNotification(MessagingNotification::create('title','body'))
-        ->withData(['buddhist_id'=>'value']);
-        $messaging->send($message);
-
-        $buddhists = Buddhist::where(["end_time","<=",now()],['active','0'])->get();
+        $buddhists = Buddhist::where([["end_time","<=",now()],['active','1']])->get();
         foreach($buddhists as $buddhist)
         {
+            
+            $deviceToken = $buddhist->winner_fcm_token;
+            if($deviceToken=="empty")
+            {
+                $notification = Notification::fromArray([
+                    'title' => 'ທ່ານມີການແຈ້ງເຕືອນໃໝ່ຈາກ '.$buddhist->id.' ທີ່ທ່ານໄດ້ປ່ອຍ',
+                    'body' => 'ການປະມູນຈົບລົງແລ້ວ ບໍ່ມີຄົນເຂົ້າຮ່ວມການປະມູນຂອງທ່ານ',
+                    'image' => \public_path("/notification_images/chat.png"),
+                ]);
+                $notification_data = [
+                    'buddhist_id' => $buddhist->id,
+                    'page'=>'content_detail',
+                ];
+                $message = CloudMessage::withTarget('topic', "B".$id)
+                    ->withNotification($notification)
+                    ->withData($notification_data);
+                $messaging->send($message);
+            }else{
+                $notification = Notification::fromArray([
+                    'title' => 'ທ່ານມີການແຈ້ງເຕືອນໃໝ່ຈາກ '.$buddhist->id.' ທີ່ທ່ານໄດ້ປ່ອຍ',
+                    'body' => 'ການປະມູນຈົບລົງແລ້ວ '.$buddhist->user->name.' ຊະນະການປະມູນດ້ວຍເງິນຈຳນວນ '.$buddhist->highest_price." ກີບ",
+                    'image' => \public_path("/notification_images/chat.png"),
+                ]);
+                $notification_data = [
+                    'buddhist_id' => $buddhist->id,
+                    'page'=>'content_detail',
+                ];
+                $message = CloudMessage::withTarget('topic', "B".$id)
+                    ->withNotification($notification)
+                    ->withData($notification_data);
+                $messaging->send($message);
+//***** Send to winner */
+                $notification = Notification::fromArray([
+                    'title' => 'ທ່ານມີການແຈ້ງເຕືອນໃໝ່ຈາກ '.$buddhist->id.' ທີ່ທ່ານໄດ້ປະມູນ',
+                    'body' => 'ການປະມູນຈົບລົງແລ້ວ ທ່ານຊະນະການປະມູນດ້ວຍເງິນຈຳນວນ '.$buddhist->highest_price." ກີບ",
+                    'image' => \public_path("/notification_images/chat.png"),
+                ]);
+                $notification_data = [
+                    'buddhist_id' => $buddhist->id,
+                    'page'=>'content_detail',
+                ];
+                $message = CloudMessage::withTarget('token', $buddhist->winner_fcm_token)
+                    ->withNotification($notification)
+                    ->withData($notification_data);
+                $messaging->send($message);
+            }
             $buddhist->active = "0";
             $buddhist->save();
         }

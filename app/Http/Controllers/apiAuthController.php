@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use File;
 use App\Models\User;
 use Auth;
 use Firebase\Auth\Token\Exception\InvalidToken;
@@ -9,6 +9,7 @@ use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Response;
 use Image;
+use Carbon\Carbon;
 class apiAuthController extends Controller
 {
 
@@ -20,11 +21,8 @@ class apiAuthController extends Controller
     }
 
     public function login(Request $request)
-    {
-        $myPathUrl = "http://25.37.239.167";
-        $mySecret = "V5PP0aaXT2ITuIMVqIAOtL93e62J8Ck55bcomV9q";
-        $myClientID = 2;
-
+    { 
+       
         $request->validate([
             'firebase_token' => 'required|string',
             'phone_number' => 'required|numeric',
@@ -56,11 +54,11 @@ class apiAuthController extends Controller
                 return response()->json(['message' => 'Unauthorized'], 401);
             }
             try {
-                $response = $client->post($myPathUrl . ':8001/oauth/token', [
+                $response = $client->post( \Config::get("values.APP_URL"). ':8001/oauth/token', [
                     'form_params' => [
                         'grant_type' => 'password',
-                        'client_id' => $myClientID,
-                        'client_secret' => $mySecret,
+                        'client_id' => \Config::get("values.CLIENT_ID"),
+                        'client_secret' => \Config::get("values.CLIENT_SECRET"),
                         'username' => $request->phone_number,
                         'password' => $request->password,
                     ],
@@ -91,9 +89,10 @@ class apiAuthController extends Controller
 
     public function register(Request $request)
     {
-        $myPathUrl = "http://25.37.239.167";
-        $mySecret = "V5PP0aaXT2ITuIMVqIAOtL93e62J8Ck55bcomV9q";
-        $myClientID = 2;
+       
+        
+       
+      
         $request->validate([
             'name' => 'required|max:30|string',
             'surname' => 'required|max:30|string',
@@ -107,15 +106,7 @@ class apiAuthController extends Controller
             'city'=>'required|string',
             'province'=>'required|string',
         ]);
-        $defaultImage = "default_image.jpg";
-        if ($request->hasFile('picture')) {
-            $image = $request->file('picture');
-            $fileExtension = $image->getClientOriginalExtension();
-            $fileName = 'profile_image_' . time() . '.' . $fileExtension;
-            $location = public_path("/profile_image/" . $fileName);
-            Image::make($image)->resize(460, null, function ($c) {$c->aspectRatio();})->save($location);
-            $defaultImage = $fileName;
-        }
+      
         $auth = app('firebase.auth');
         $idTokenString = $request->firebase_token;
         try { // Try to verify the Firebase credential token with Google
@@ -136,6 +127,16 @@ class apiAuthController extends Controller
         // Retrieve the UID (User ID) from the verified Firebase credential's token
         $uid = $verifiedIdToken->claims()->get('sub');
         $user = new User();
+        $defaultImage = "default_image.jpg";
+        $location="";
+        if ($request->hasFile('picture')) {
+            $image = $request->file('picture');
+            $fileExtension = $image->getClientOriginalExtension();
+            $fileName = 'profile_image_' . time() . '.' . $fileExtension;
+            $location = public_path("/profile_image/" . $fileName);
+            Image::make($image)->resize(460, null, function ($c) {$c->aspectRatio();})->save($location);
+            $defaultImage = $fileName;
+        }
         $user->name = $request->name;
         $user->surname = $request->surname;
         $user-> phone_number = $request->phone_number;
@@ -154,17 +155,27 @@ class apiAuthController extends Controller
                 'timeout' => 60,
             ]);
             try {
-                $response = $http->post($myPathUrl . ':8001/oauth/token', [
+                $response = $http->post(\Config::get("values.APP_URL") . ':8001/oauth/token', [
                     'form_params' => [
                         'grant_type' => 'password',
-                        'client_id' => $myClientID,
-                        'client_secret' => $mySecret,
+                        'client_id' => \Config::get("values.CLIENT_ID"),
+                        'client_secret' => \Config::get("values.CLIENT_SECRET"),
                         'username' => $request->phone_number,
                         'password' => $request->password,
                     ],
                 ]);
+
+                $database = app('firebase.database');
+                $reference = $database->getReference('users/' . $uid . '/')
+                ->push([
+                    'profile' => $defaultImage, // new highest price
+                ]);
+
+
                 return $response->getBody();
             } catch (\GuzzleHttp\Exception\BadResponseException $e) {
+                File::delete($location);
+
                 if ($e->getCode() === 400) {
                     return response()->json('Invalid Request. Please enter a Phone number or a password.', $e->getCode());
                 } else if ($e->getCode() === 401) {

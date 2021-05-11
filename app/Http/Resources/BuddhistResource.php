@@ -26,7 +26,8 @@ class BuddhistResource extends JsonResource
             \array_push($allImage,"buddhist_images/".$this->image_path."/".$file_path['basename']);
         }*/
         $file_path = pathinfo($files[0]);
-        \array_push($allImage,"buddhist_images/".$this->image_path."/".$file_path['basename']);
+        \array_push($allImage,Config("values.APP_URL").":".$_SERVER["SERVER_PORT"].
+        "/"."buddhist_images/".$this->image_path."/".$file_path['basename']);
         return [
             'id'=>$this->id,
             'name'=>$this->name,
@@ -38,8 +39,6 @@ class BuddhistResource extends JsonResource
                 'id'=>$this->type->id,
                 'name'=>$this->type->name
             ],
-           
-            
             'image'=>$allImage
         ];
     }

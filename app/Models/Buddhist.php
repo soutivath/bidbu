@@ -23,9 +23,11 @@ class Buddhist extends Model
        return $this->belongsTo(User::class);
 
     }
-    public function comments()
+   
+    
+    public function notifications()
     {
-       return $this->hasMany(comment::class);
+       return $this->hasMany(NotificationFirebase::class);
     }
     
 
