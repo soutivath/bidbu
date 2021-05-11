@@ -22,7 +22,7 @@ class notificationController extends Controller
     public function index()
     {
        
-        $data = NotificationFirebase::where("user_id",Auth::id())->get();
+        $data = NotificationFirebase::where("user_id",Auth::id())->orderBy("created_at","desc")->get();
         NotificationFirebase::where("user_id",Auth::id())->update([
             'read'=>1
         ]);

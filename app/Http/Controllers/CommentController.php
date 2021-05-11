@@ -63,25 +63,30 @@ class CommentController extends Controller
         ->limitToFirst(1)
         ->getSnapshot();
         $data = $reference->getValue();
-        $key = array_keys($data);
-        $comment_id = $key[0];
+        
         //sub to topic
         $owner = Buddhist::find($buddhist_id);
         $ownerID = $owner->user_id;
        
-        if (empty($data)&&Auth::id()!=$ownerID) {
-            
-            $topic = "B".$buddhist_id."_C".$comment_id;
-            $result = $messaging->subscribeToTopic($topic, $request->fcm_token);
-        }
+       
         $reference = $database->getReference('Comments/' . $request->buddhist_id . '/')
                 ->push([
+                    'picture'=>Auth::user()->getProfilePath(),
                     'uid' => Auth::user()->firebase_uid,
                     'message' => $request->message,
                     'name' => Auth::user()->name,
                     'datetime' => Carbon::now(),
                     'replies' => '',
                 ]);
+                $comment_id =$reference->getKey();
+               
+                if (empty($data)&&Auth::id()!=$ownerID) {
+                    
+                    $topic = "B".$buddhist_id."_C".$comment_id;
+                    $result = $messaging->subscribeToTopic($topic, $request->fcm_token);
+                }
+              
+                
 
                 $notification = Notification::fromArray([
                     'title' => 'ທ່ານມີການສະແດງຄວາມຄິດເຫັນໃໝ່ຈາກ '.Buddhist::find($buddhist_id)->name.' ທີ່ທ່ານໄດ້ປ່ອຍ',

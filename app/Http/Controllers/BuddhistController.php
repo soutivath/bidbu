@@ -31,7 +31,7 @@ class BuddhistController extends Controller
     {
 
         #nice
-        $bud = Buddhist::where('end_time', '>', Carbon::now())->with('type')->get();
+        $bud = Buddhist::where('end_time', '>', Carbon::now())->with('type')->orderBy("created_at","desc")->get();
         return BuddhistResource::collection($bud);
     }
     /**
@@ -56,7 +56,7 @@ class BuddhistController extends Controller
             'name' => 'required|min:3|max:30|string',
             'detail' => 'required|string|max:255',
             'end_datetime' => 'required|date|date_format:Y-m-d H:i:s|after:now',
-            'price' => 'required|integer',
+            'price' => 'required|numeric|gt:0',
             'images' => 'required|array|max:5',
             'images.*' => 'image|mimes:jpeg,png,jpg,PNG|max:8192',
             'type_id' => 'required|string',
@@ -223,6 +223,7 @@ class BuddhistController extends Controller
         $bud = Buddhist::findOrFail($id);
         $database = app('firebase.database');
         $reference = $database->getReference('buddhist/' . $bud->id . '/')->remove();
+        $reference = $database->getReference('Comments/' . $bud->id . '/')->remove();
         $path = public_path() . '/buddhist_images/' . $bud->image_path;
 
         if (\File::isDirectory($path)) {
@@ -236,7 +237,7 @@ class BuddhistController extends Controller
     public function bidding(Request $request, $id)
     {
         $request->validate([
-            'bidding_price' => 'required|integer',
+            'bidding_price' => 'required|numeric|gt:0',
             'fcm_token'=>'required|string'
         ]);
         $bud = Buddhist::findOrFail($id);
@@ -367,9 +368,15 @@ class BuddhistController extends Controller
            ['end_time', '>', Carbon::now()],
            ['type_id','=',$type_id],
            ['id','!=',$buddhist_id]
-       ])->with('type')->get()->shuffle();
+       ])->with('type')->orderBy("created_at","desc")->get()->shuffle();
        return BuddhistResource::collection($buddhist);
         
+    }
+
+    public function almostEnd()
+    {
+        $bud = Buddhist::where('end_time', '>', Carbon::now())->with('type')->orderBy("end_time")->get();
+        return BuddhistResource::collection($bud);
     }
 
    

@@ -139,14 +139,14 @@ class apiAuthController extends Controller
         }
         $user->name = $request->name;
         $user->surname = $request->surname;
-        $user-> phone_number = $request->phone_number;
-        $user->  firebase_uid = $uid;
-        $user-> password = bcrypt($request->password);
-        $user -> picture =$defaultImage;
-        $user -> dob = $request->dob;
-        $user -> village=$request->village;
-        $user -> city=$request->city;
-        $user ->province=$request->province;
+        $user->phone_number = $request->phone_number;
+        $user->firebase_uid = $uid;
+        $user->password = bcrypt($request->password);
+        $user->picture =$defaultImage;
+        $user-> dob = $request->dob;
+        $user->village=$request->village;
+        $user->city=$request->city;
+        $user->province=$request->province;
         
 
         if ($user->save()) {
@@ -187,6 +187,46 @@ class apiAuthController extends Controller
         } else {
             return response()->json(['message' => 'Something went Wrong'], 500);
         }
+
+    }
+
+    public function forgetPassword()
+    {
+        $request->validate([
+            'firebase_token' => 'required|string',
+            'password' => 'required|string',
+        ]);
+
+        $auth = app('firebase.auth');
+        $idTokenString = $request->firebase_token;
+        try { // Try to verify the Firebase credential token with Google
+            $verifiedIdToken = $auth->verifyIdToken($idTokenString);
+        } catch (\InvalidArgumentException $e) { // If the token has the wrong format
+            return response()->json(
+                [
+                    'message' => 'Unauthorized - Can\'t parse the token: ' . $e->getMessage(),
+                ], 401
+            );
+        } catch (InvalidToken $e) { // If the token is invalid (expired ...)
+
+            return response()->json([
+                'message' => 'Unauthorized - Token is invalid: ' . $e->getMessage(),
+            ], 401);
+        }
+        $uid = $verifiedIdToken->claims()->get('sub');
+        $user = User::where("firebase_uid",$uid)->get();
+        if(empty($user))
+        {
+            return response()->json([
+                "message"=>"User not found"
+            ]);
+        }
+        $user->password = \bcrypt($request->password);
+        $user->save();
+        return response()->json([
+            "message"=>"Your password change successfully"
+        ]);
+        
 
     }
 

@@ -7,7 +7,7 @@ use Auth;
 use File;
 use Illuminate\Http\Request;
 use Image;
-
+use App\Http\Resources\TypeResources;
 class TypeController extends Controller
 {
     /**
@@ -22,7 +22,7 @@ class TypeController extends Controller
     public function index()
     {
         $type = Type::all();
-        return response(['data' => $type], 200);
+        return TypeResources::collection($type);
     }
 
     /**

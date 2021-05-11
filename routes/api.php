@@ -78,3 +78,4 @@ Route::group(['namespace' => 'Api', 'middleware' => $middleware], function () {
 
 Route::get('buddhist/{id}', [App\Http\Controllers\BuddhistController::class,"show"]);
 Route::get("recommended/{type_id}/{buddhist_id}",[App\Http\Controllers\BuddhistController::class,"recommendedBuddhist"]);
+Route::post("reset",[App\Http\Controllers\BuddhistController::class,"forgetPassword"]);

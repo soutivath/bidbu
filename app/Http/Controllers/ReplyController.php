@@ -76,6 +76,7 @@ class ReplyController extends Controller
             $database = app('firebase.database');
             $reference = $database->getReference('Comments/'.$buddhist_id.'/'.$comment_id.'/replies/')
             ->push([
+                'picture'=>Auth::user()->getProfilePath(),
                 'uid'=>Auth::user()->firebase_uid,
                 'message'=>$request->message,
                 'name'=>Auth::user()->name,

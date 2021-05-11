@@ -14,4 +14,10 @@ class Type extends Model
     {
         return $this->hasMany(Buddhist::class);
     }
+
+    public function getTypePath()
+    {
+        return Config("values.APP_URL").":".$_SERVER["SERVER_PORT"].
+        "/"."type_images/".$this->image_path;
+    }
 }
