@@ -23,6 +23,12 @@ class notificationController extends Controller
     {
        
         $data = NotificationFirebase::where("user_id",Auth::id())->orderBy("created_at","desc")->get();
+        if(empty($data))
+        {
+            return response()->json([
+                "message"=>"no notification"
+            ]);
+        }
         NotificationFirebase::where("user_id",Auth::id())->update([
             'read'=>1
         ]);
