@@ -19,7 +19,7 @@ class FavoriteResource extends JsonResource
         $allImage = array();
         $files= File::files(public_path('/buddhist_images/'.$this->buddhist->image_path."/"));
         $file_path = pathinfo($files[0]);
-        \array_push($anImage,Config("values.APP_URL").":".$_SERVER["SERVER_PORT"].
+        \array_push($allImage,Config("values.APP_URL").":".$_SERVER["SERVER_PORT"].
         "/"."buddhist_images/".$this->buddhist->image_path."/".$file_path['basename']);
         
         return [
