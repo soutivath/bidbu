@@ -25,7 +25,12 @@ class FavouriteController extends Controller
         $favorite = favourite::where(
                 'user_id',Auth::id()
             )->with('buddhist')->orderBy("created_at","desc")->get();
-           
+           if(empty($favorite))
+           {
+               return response()->json([
+                   "message"=>"no favorite yet"
+               ]);
+           }
             //return Response()->json(['data'=>$favorite],200);
             return FavoriteResource::collection($favorite);
     }
