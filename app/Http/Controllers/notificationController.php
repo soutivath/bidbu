@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\Http\Resources\NotificationReSource;
+use App\Http\Resources\NotificationResource;
 use App\Models\NotificationFirebase;
 use Illuminate\Http\Request;
 use Auth;
@@ -27,7 +27,7 @@ class notificationController extends Controller
             'read'=>1
         ]);
        
-        return NotificationReSource::collection($data);
+        return NotificationResource::collection($data);
     }
 
     /**

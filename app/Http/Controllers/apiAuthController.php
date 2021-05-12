@@ -54,7 +54,7 @@ class apiAuthController extends Controller
                 return response()->json(['message' => 'Unauthorized'], 401);
             }
             try {
-                $response = $client->post( \Config::get("values.APP_URL"). ':8001/oauth/token', [
+                $response = $client->post( \Config::get("values.APP_URL"). ':'.$_SERVER["SERVER_PORT"].'/oauth/token', [
                     'form_params' => [
                         'grant_type' => 'password',
                         'client_id' => \Config::get("values.CLIENT_ID"),
@@ -155,7 +155,7 @@ class apiAuthController extends Controller
                 'timeout' => 60,
             ]);
             try {
-                $response = $http->post(\Config::get("values.APP_URL") . ':8001/oauth/token', [
+                $response = $http->post(\Config::get("values.APP_URL") . ':'.$_SERVER["SERVER_PORT"].'/oauth/token', [
                     'form_params' => [
                         'grant_type' => 'password',
                         'client_id' => \Config::get("values.CLIENT_ID"),

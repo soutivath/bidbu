@@ -169,7 +169,12 @@ class BuddhistController extends Controller
     {
         
         $bud = Buddhist::where('id', $id)->with(["type", "user"])->first();
-
+        if(empty($bud))
+        {
+            return response()->json([
+                "message"=>"No Data Found"
+            ]);
+        }
         return new OneBuddhistResource($bud);
     }
 
