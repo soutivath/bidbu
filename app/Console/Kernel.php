@@ -15,6 +15,7 @@ class Kernel extends ConsoleKernel
     protected $commands = [
         //
         Commands\sendNotification::class
+       // 'App\Console\Commands\sendNotification'
     ];
 
     /**

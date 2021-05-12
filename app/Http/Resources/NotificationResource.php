@@ -21,6 +21,8 @@ class NotificationResource extends JsonResource
         $file_path = pathinfo($files[0]);
         \array_push($anImage,Config("values.APP_URL").":".$_SERVER["SERVER_PORT"].
         "/"."buddhist_images/".$this->buddhist->image_path."/".$file_path['basename']);
+
+        
         return [
             'buddhist_id'=>$this->buddhist_id,
             'image'=>$anImage,
