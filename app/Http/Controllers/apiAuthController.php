@@ -165,11 +165,11 @@ class apiAuthController extends Controller
                     ],
                 ]);
 
-                $database = app('firebase.database');
+              /*  $database = app('firebase.database');
                 $reference = $database->getReference('users/' . $uid . '/')
                 ->push([
                     'profile' => $defaultImage, // new highest price
-                ]);
+                ]);*/
 
 
                 return $response->getBody();
