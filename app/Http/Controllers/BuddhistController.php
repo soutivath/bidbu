@@ -226,6 +226,8 @@ class BuddhistController extends Controller
     {
 
         $bud = Buddhist::findOrFail($id);
+        if($bud->user_id==Auth::id||Auth::user()->hasRole("admin"))
+        {
         $database = app('firebase.database');
         $reference = $database->getReference('buddhist/' . $bud->id . '/')->remove();
         $reference = $database->getReference('Comments/' . $bud->id . '/')->remove();
@@ -237,6 +239,12 @@ class BuddhistController extends Controller
         }
         $bud->delete();
         return \response()->json(['message' => 'delete data complete'], 200);
+        }
+        else{
+            return response()->json([
+                "message"=>"You don't have permission to delete it"
+            ]);
+        }
     }
 
     public function bidding(Request $request, $id)
@@ -282,6 +290,8 @@ class BuddhistController extends Controller
                     ->push([
                         'uid' => Auth::user()->firebase_uid, //bidder id
                         'price' => $request->bidding_price, // new highest price
+                        'name'=>Auth::user()->name,
+                        'picture'=>getProfilePath()
                     ]);
                 $bud->highest_price = $request->bidding_price;
                 $bud->highBidUser = Auth::id();
