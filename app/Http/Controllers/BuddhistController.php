@@ -291,7 +291,7 @@ class BuddhistController extends Controller
                         'uid' => Auth::user()->firebase_uid, //bidder id
                         'price' => $request->bidding_price, // new highest price
                         'name'=>Auth::user()->name,
-                        'picture'=>getProfilePath()
+                        'picture'=>Auth::user()->getProfilePath()
                     ]);
                 $bud->highest_price = $request->bidding_price;
                 $bud->highBidUser = Auth::id();
@@ -373,6 +373,7 @@ class BuddhistController extends Controller
     {
 
         $buddhists = Buddhist::where([['type_id', $type_id], ['end_time', '>', Carbon::now()]])->get();
+        
 
         return buddhistCollection::collection($buddhists);
     }
