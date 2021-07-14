@@ -1,32 +1,33 @@
 <?php
 
 namespace App\Http\Controllers;
-use File;
+
 use App\Models\User;
 use Auth;
+use File;
 use Firebase\Auth\Token\Exception\InvalidToken;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
-use Response;
 use Image;
-use Carbon\Carbon;
+use Response;
+
 class apiAuthController extends Controller
 {
 
     public function __construct()
     {
         $this->middleware('auth:api')->only(['logOut']);
-        
-        
+
     }
 
     public function login(Request $request)
-    { 
-       
+    {
+
         $request->validate([
             'firebase_token' => 'required|string',
             'phone_number' => 'required|numeric',
             'password' => 'required|string',
+            'fcm_token' => 'required|string',
         ]);
         $auth = app('firebase.auth');
         $idTokenString = $request->input('firebase_token');
@@ -46,15 +47,14 @@ class apiAuthController extends Controller
         if (User::where('firebase_uid', $uid)->first()) {
             $client = new \GuzzleHttp\Client(
                 [
-                    'timeout' => 15,
-                    
+                    'timeout' => 60,
                 ]
             );
             if (!Auth::attempt(['phone_number' => $request->phone_number, 'password' => $request->password])) {
                 return response()->json(['message' => 'Unauthorized'], 401);
             }
             try {
-                $response = $client->post( \Config::get("values.APP_URL"). ':'.$_SERVER["SERVER_PORT"].'/oauth/token', [
+                $response = $client->post(\Config::get("values.APP_URL") . ':' . \Config::get("values.ANOTHER_PORT") . '/oauth/token', [
                     'form_params' => [
                         'grant_type' => 'password',
                         'client_id' => \Config::get("values.CLIENT_ID"),
@@ -63,7 +63,17 @@ class apiAuthController extends Controller
                         'password' => $request->password,
                     ],
                 ]);
-                return json_decode($response->getBody(), true);
+                $messaging = app('firebase.messaging');
+                $result = $messaging->validateRegistrationTokens($request->fcm_token);
+                if ($result['invalid'] != null) {
+                    return response()->json(['data' => 'your json token is invalid'], 404);
+
+                }
+
+                $messaging->subscribeToTopic(Auth::user()->topic, $request->fcm_token);
+
+                return $response->getBody();
+
                 // return $response->json_decode($response);
             } catch (\Guzzle\Exception\BadResponseException $e) {
                 if ($e->getCode === 400) {
@@ -74,13 +84,25 @@ class apiAuthController extends Controller
                 return response()->json('Something went Wrong on the Server' . $e->getCode());
             }
         } else {
-            return response()->json(['message' => 'Can not found the User'], 401);
+            return response()->json(['message' => 'User not found'], 404);
         }
 
     }
 
-    public function logOut()
+    public function logOut(Request $request)
     {
+        $request->validate([
+            "fcm_token" => "required",
+        ]);
+        $messaging = app('firebase.messaging');
+        $result = $messaging->validateRegistrationTokens($request->fcm_token);
+        if ($result['invalid'] != null) {
+            return response()->json(['data' => 'your json token is invalid'], 404);
+
+        }
+
+        $messaging->unsubscribeFromTopic(Auth::user()->topic, $request->fcm_token);
+
         auth()->user()->tokens->each(function ($token, $key) {
             $token->delete();
         });
@@ -89,10 +111,6 @@ class apiAuthController extends Controller
 
     public function register(Request $request)
     {
-       
-        
-       
-      
         $request->validate([
             'name' => 'required|max:30|string',
             'surname' => 'required|max:30|string',
@@ -102,11 +120,12 @@ class apiAuthController extends Controller
             'password' => 'required|string|min:6|max:18',
             'picture' => 'sometimes|image|mimes:jpeg,png,jpg|max:8192',
             'dob' => 'required|date_format:Y-m-d',
-            'village'=>'required|string',
-            'city'=>'required|string',
-            'province'=>'required|string',
+            'village' => 'required|string',
+            'city' => 'required|string',
+            'province' => 'required|string',
+            'fcm_token' => 'required|string',
         ]);
-      
+
         $auth = app('firebase.auth');
         $idTokenString = $request->firebase_token;
         try { // Try to verify the Firebase credential token with Google
@@ -124,11 +143,18 @@ class apiAuthController extends Controller
             ], 401);
         }
 
+        $messaging = app('firebase.messaging');
+        $result = $messaging->validateRegistrationTokens($request->fcm_token);
+        if ($result['invalid'] != null) {
+            return response()->json(['data' => 'your json token is invalid'], 404);
+
+        }
+
         // Retrieve the UID (User ID) from the verified Firebase credential's token
         $uid = $verifiedIdToken->claims()->get('sub');
         $user = new User();
         $defaultImage = "default_image.jpg";
-        $location="";
+        $location = "";
         if ($request->hasFile('picture')) {
             $image = $request->file('picture');
             $fileExtension = $image->getClientOriginalExtension();
@@ -142,12 +168,12 @@ class apiAuthController extends Controller
         $user->phone_number = $request->phone_number;
         $user->firebase_uid = $uid;
         $user->password = bcrypt($request->password);
-        $user->picture =$defaultImage;
-        $user-> dob = $request->dob;
-        $user->village=$request->village;
-        $user->city=$request->city;
-        $user->province=$request->province;
-        
+        $user->picture = $defaultImage;
+        $user->dob = $request->dob;
+        $user->village = $request->village;
+        $user->city = $request->city;
+        $user->province = $request->province;
+        $user->topic = "notification_topic_" . $uid;
 
         if ($user->save()) {
             $user->attachRole("bond");
@@ -155,7 +181,7 @@ class apiAuthController extends Controller
                 'timeout' => 60,
             ]);
             try {
-                $response = $http->post(\Config::get("values.APP_URL") . ':'.$_SERVER["SERVER_PORT"].'/oauth/token', [
+                $response = $http->post(\Config::get("values.APP_URL") . ':' . \Config::get("values.ANOTHER_PORT") . '/oauth/token', [
                     'form_params' => [
                         'grant_type' => 'password',
                         'client_id' => \Config::get("values.CLIENT_ID"),
@@ -165,14 +191,10 @@ class apiAuthController extends Controller
                     ],
                 ]);
 
-              /*  $database = app('firebase.database');
-                $reference = $database->getReference('users/' . $uid . '/')
-                ->push([
-                    'profile' => $defaultImage, // new highest price
-                ]);*/
-
+                $messaging->subscribeToTopic($user->topic, $request->fcm_token);
 
                 return $response->getBody();
+
             } catch (\GuzzleHttp\Exception\BadResponseException $e) {
                 File::delete($location);
 
@@ -194,7 +216,7 @@ class apiAuthController extends Controller
     {
         $request->validate([
             'firebase_token' => 'required|string',
-            'password' => 'required|string',
+            'password' => 'required|string|min:6|max:18',
         ]);
 
         $auth = app('firebase.auth');
@@ -214,19 +236,17 @@ class apiAuthController extends Controller
             ], 401);
         }
         $uid = $verifiedIdToken->claims()->get('sub');
-        $user = User::where("firebase_uid",$uid)->get();
-        if(empty($user))
-        {
+        $user = User::where("firebase_uid", $uid)->get();
+        if (empty($user)) {
             return response()->json([
-                "message"=>"User not found"
+                "message" => "User not found",
             ]);
         }
         $user->password = \bcrypt($request->password);
         $user->save();
         return response()->json([
-            "message"=>"Your password change successfully"
+            "message" => "Your password change successfully",
         ]);
-        
 
     }
 

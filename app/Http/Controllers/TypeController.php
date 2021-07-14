@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\TypeResources;
 use App\Models\Type;
 use Auth;
 use File;
 use Illuminate\Http\Request;
 use Image;
-use App\Http\Resources\TypeResources;
+
 class TypeController extends Controller
 {
     /**
@@ -43,7 +44,7 @@ class TypeController extends Controller
      */
     public function store(Request $request)
     {
-        if (Auth::user()->hasRole("admin")) {
+        if (Auth::user()->hasRole("admin") || Auth::user()->hasRole("superadmin")) {
 
             $request->validate([
                 'name' => 'required|string|max:30',
@@ -65,7 +66,7 @@ class TypeController extends Controller
             ]);
             return response(['data' => $type], 201);
         } else {
-            return response(['message' => 'Permission denied'], 404);
+            return response(['message' => 'Permission denied'], 403);
         }
     }
 
@@ -78,7 +79,11 @@ class TypeController extends Controller
     public function show($id)
     {
         $type = Type::findOrFail($id);
-        return response(['data' => $type], 200);
+        if ($type != null) {
+            return response()->json(['data' => $type], 200);
+
+        }
+        return response()->json(["message" => "Data not found"], 404);
     }
 
     /**
@@ -101,13 +106,15 @@ class TypeController extends Controller
      */
     public function update(Request $request, $id)
     {
-        if (Auth::user()->hasRole("admin")) {
+        if (Auth::user()->hasRole("admin") || Auth::user()->hasRole("superadmin")) {
 
             $this->validate($request, array( // Removed `[]` from the array.
                 'name' => 'required|string|max:30',
                 'image' => 'sometimes|image|mimes:jpeg,png,jpg|max:8192',
             ));
+
             $type = Type::findOrFail($id);
+
             $type->name = $request->name;
             if ($request->hasFile('image')) {
                 $file = $request->image;
@@ -120,11 +127,12 @@ class TypeController extends Controller
                 if (\file_exists($path)) {
                     unlink(public_path() . '/type_images/' . $type->image_path);
                 }
+                $type->image_path = $fileName;
             }
             $type->save();
             return response(['data' => $type], 200);
         } else {
-            return response(['message' => 'Permission denied'], 404);
+            return response(['message' => 'Permission denied'], 403);
         }
 
     }
@@ -135,19 +143,21 @@ class TypeController extends Controller
      * @param  \App\Models\Type  $type
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request)
     {
-        if (Auth::user()->hasRole("admin")) {
-            $type = Type::findOrFail($id);
+        $request->validate([
+            "id" => "required|integer",
+        ]);
+        if (Auth::user()->hasRole("admin") || Auth::user()->hasRole("superAdmin")) {
+            $type = Type::findOrFail($request->id);
             $path = public_path() . '/type_images/' . $type->image_path;
             if (\file_exists($path)) {
                 unlink(public_path() . '\type_images/' . $type->image_path);
             }
             $type->delete();
             return response(['data' => $type], 200);
-        }
-        else{
-            return response(['message'=>'Permission denied'],404);
+        } else {
+            return response(['message' => 'Permission denied'], 403);
         }
     }
 

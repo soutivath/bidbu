@@ -17,12 +17,14 @@ class CreateUsersTable extends Migration
             $table->id();
             $table->string('name');
             $table->string('surname');
-          //  $table->string('email')->unique(); // should delete 
+            //  $table->string('email')->unique(); // should delete
             $table->string('phone_number')->unique();
             $table->string('firebase_uid')->nullable()->unique();
             $table->string('password');
             $table->string('picture');
             $table->timestamp('email_verified_at')->nullable();
+            $table->string("topic");
+            $table->string("active")->default("1");
             $table->rememberToken();
             $table->timestamps();
         });

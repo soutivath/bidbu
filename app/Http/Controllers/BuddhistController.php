@@ -5,16 +5,16 @@ namespace App\Http\Controllers;
 use App\Http\Resources\buddhistCollection;
 use App\Http\Resources\BuddhistResource;
 use App\Http\Resources\OneBuddhistResource;
-use App\Models\NotificationFirebase;
 use App\Models\Buddhist;
+use App\Models\NotificationFirebase;
 use Auth;
 use Carbon\Carbon;
 use File;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Image;
-use Kreait\Firebase\Messaging\Notification;
 use Kreait\Firebase\Messaging\CloudMessage;
+use Kreait\Firebase\Messaging\Notification;
 
 class BuddhistController extends Controller
 {
@@ -25,13 +25,12 @@ class BuddhistController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:api')->except('index', 'show','buddhistType','recommendedBuddhist');
+        $this->middleware('auth:api')->except('index', 'show', 'buddhistType', 'recommendedBuddhist');
     }
     public function index()
     {
 
-        #nice
-        $bud = Buddhist::where('end_time', '>', Carbon::now())->with('type')->orderBy("created_at","desc")->get();
+        $bud = Buddhist::where('end_time', '>', Carbon::now())->with('type')->orderBy("created_at", "desc")->get();
         return BuddhistResource::collection($bud);
     }
     /**
@@ -61,7 +60,7 @@ class BuddhistController extends Controller
             'images.*' => 'image|mimes:jpeg,png,jpg,PNG|max:8192',
             'type_id' => 'required|string',
 
-            'pay_choice' => 'required|string',
+            /*  'pay_choice' => 'required|string',
             'bank_name' => 'sometimes|string',
             'account_name' => 'sometimes|string',
             'account_number' => 'sometimes|string|max:12',
@@ -69,14 +68,14 @@ class BuddhistController extends Controller
             'sending_choice' => 'required|string',
             'place_send' => 'sometimes|string',
             'tel' => 'sometimes|string',
-            'more_info' => 'sometimes|string',
+            'more_info' => 'sometimes|string',*/
 
             'place' => 'required|string',
             'status' => 'required|string',
-            
-            'price_smallest'=>'required|integer',
 
-            'fcm_token'=>'required|string'
+            'price_smallest' => 'required|integer',
+
+            'fcm_token' => 'required|string',
         ]);
         $messaging = app('firebase.messaging');
         $result = $messaging->validateRegistrationTokens($request->fcm_token);
@@ -91,29 +90,29 @@ class BuddhistController extends Controller
         $bud->start_time = Carbon::now();
         $bud->end_time = $request->end_datetime;
         $bud->highest_price = $request->price;
-        $bud->pay_choice = $request->pay_choice;
-        $bud->sending_choice = $request->sending_choice;
+        //$bud->pay_choice = $request->pay_choice;
+        //$bud->sending_choice = $request->sending_choice;
         $bud->place = $request->place;
         $bud->status = $request->status;
         $bud->priceSmallest = $request->price_smallest;
-        if ($request->has('bank_name')) {
-            $bud->bank_name = $request->bank_name;
+        /* if ($request->has('bank_name')) {
+        $bud->bank_name = $request->bank_name;
         }
         if ($request->has('account_name')) {
-            $bud->account_name = $request->account_name;
+        $bud->account_name = $request->account_name;
         }
         if ($request->has('account_number')) {
-            $bud->account_number = $request->account_number;
+        $bud->account_number = $request->account_number;
         }
         if ($request->has('place_send')) {
-            $bud->place_send = $request->place_send;
+        $bud->place_send = $request->place_send;
         }
         if ($request->has('tel')) {
-            $bud->tel = $request->tel;
+        $bud->tel = $request->tel;
         }
         if ($request->has('more_info')) {
-            $bud->more_info = $request->more_info;
-        }
+        $bud->more_info = $request->more_info;
+        }*/
 
         $folderName = uniqid() . "_" . time();
         if (!\File::isDirectory(public_path("/buddhist_images"))) {
@@ -123,16 +122,15 @@ class BuddhistController extends Controller
             \File::makeDirectory(public_path('/buddhist_images/' . $folderName), 493, true);
         }
 
-        
-
         $bud->image_path = $folderName;
-
+        $bud->topic = "buddhist_topic_" . \uniqid() . "_" . time();
+        $bud->comment_topic = "comment_topic" . \time() . "_" . \uniqid();
         $bud->user_id = Auth::id();
         $bud->type_id = $request->type_id;
         $bud->highBidUser = Auth::id();
         $bud->save();
-        $topic = "B".$bud->id;
-        $messaging->subscribeToTopic($topic, $request->fcm_token);
+
+        $messaging->subscribeToTopic($bud->topic, $request->fcm_token);
 
         foreach ($request->images as $image) {
             $fileExtension = $image->getClientOriginalExtension();
@@ -147,16 +145,16 @@ class BuddhistController extends Controller
                 ->push([
                     'uid' => Auth::user()->firebase_uid, //owner id
                     'price' => $request->price, // owner start price
-                    'buddhist_id' => $request->buddhist_id,
+                    'name' => Auth::user()->name,
+                    'picture' => Auth::user()->getProfilePath(),
                 ]);
             return response()->json(['data' => $bud], 201);
 
         } catch (Exception $e) {
             $bud->destroy();
-            return response()->json(['Message' => 'Something went wrong'],500);
+            return response()->json(['Message' => 'Something went wrong'], 500);
         }
 
-     
     }
 
     /**
@@ -167,13 +165,12 @@ class BuddhistController extends Controller
      */
     public function show($id)
     {
-        
+
         $bud = Buddhist::where('id', $id)->with(["type", "user"])->first();
-        if(empty($bud))
-        {
+        if (empty($bud)) {
             return response()->json([
-                "message"=>"No Data Found"
-            ]);
+                "message" => "No Data Found",
+            ], 404);
         }
         return new OneBuddhistResource($bud);
     }
@@ -222,40 +219,49 @@ class BuddhistController extends Controller
      * @param  \App\Models\Buddhist  $buddhist
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request)
     {
-
+        $request->validate([
+            "id" => "required",
+        ]);
         $bud = Buddhist::findOrFail($id);
-        if($bud->user_id==Auth::id||Auth::user()->hasRole("admin"))
-        {
-        $database = app('firebase.database');
-        $reference = $database->getReference('buddhist/' . $bud->id . '/')->remove();
-        $reference = $database->getReference('Comments/' . $bud->id . '/')->remove();
-        $path = public_path() . '/buddhist_images/' . $bud->image_path;
-
-        if (\File::isDirectory($path)) {
-            \File::deleteDirectory($path);
-
+        if (empty($bud)) {
+            return response()->json(["message" => "No data found"], 404);
         }
-        $bud->delete();
-        return \response()->json(['message' => 'delete data complete'], 200);
-        }
-        else{
+        if ($bud->user_id == Auth::id) {
+            $database = app('firebase.database');
+            $reference = $database->getReference('buddhist/' . $bud->id . '/')->remove();
+            $reference = $database->getReference('Comments/' . $bud->id . '/')->remove();
+            $path = public_path() . '/buddhist_images/' . $bud->image_path;
+
+            if (\File::isDirectory($path)) {
+                \File::deleteDirectory($path);
+            }
+            $bud->delete();
+            return \response()->json(['message' => 'delete data complete'], 200);
+        } else {
             return response()->json([
-                "message"=>"You don't have permission to delete it"
-            ]);
+                "message" => "You don't have permission to delete it",
+            ], 403);
         }
     }
 
-    public function bidding(Request $request, $id)
+    public function bidding(Request $request)
     {
         $request->validate([
             'bidding_price' => 'required|numeric|gt:0',
-            'fcm_token'=>'required|string'
+            'fcm_token' => 'required|string',
+            'buddhist_id' => 'required|string',
         ]);
-        $bud = Buddhist::findOrFail($id);
+        if (Auth::user()->hasRole("admin") || Auth::user()->hasRole("superadmin")) {
+            return response()->json(["message" => "only user can't use this function"], 403);
+        }
+        $bud = Buddhist::findOrFail($request->buddhist_id);
+        if (Auth::id() == $bud->user_id) {
+            return response()->json(["message" => "You can't bid your buddhist"], 403);
+        }
         //get Highest Price
-        
+
         if (Carbon::now()->lessThan(Carbon::parse($bud->end_time))) {
             $database = app('firebase.database');
             $reference = $database->getReference('buddhist/' . $bud->id . '/')
@@ -269,29 +275,24 @@ class BuddhistController extends Controller
                 $highest_price = $eachData['price'];
             }
 
-
-        
             $reference1 = $database->getReference('buddhist/' . $bud->id . '/')
-            ->orderByChild('uid')
-            ->equalTo(Auth::user()->firebase_uid)
-            ->getSnapshot();
+                ->orderByChild('uid')
+                ->equalTo(Auth::user()->firebase_uid)
+                ->getSnapshot();
             $data = $reference1->getValue();
 
-
-          
-            if ((int)$request->bidding_price > (int)$highest_price) {
-                if((int)$request->bidding_price-(int)$highest_price<(int)$bud->priceSmallest)
-                {
-                return response()->json([
-                    "message"=>"ຂັ້ນຕ່ຳໃນການປະມູນແມ່ນ ".$bud->priceSmallest." ກີບ"
-                ]);
+            if ((int) $request->bidding_price > (int) $highest_price) {
+                if ((int) $request->bidding_price - (int) $highest_price < (int) $bud->priceSmallest) {
+                    return response()->json([
+                        "message" => "ຂັ້ນຕ່ຳໃນການປະມູນແມ່ນ " . $bud->priceSmallest . " ກີບ",
+                    ]);
                 }
                 $reference = $database->getReference('buddhist/' . $bud->id . '/')
                     ->push([
                         'uid' => Auth::user()->firebase_uid, //bidder id
                         'price' => $request->bidding_price, // new highest price
-                        'name'=>Auth::user()->name,
-                        'picture'=>Auth::user()->getProfilePath()
+                        'name' => Auth::user()->name,
+                        'picture' => Auth::user()->getProfilePath(),
                     ]);
                 $bud->highest_price = $request->bidding_price;
                 $bud->highBidUser = Auth::id();
@@ -299,73 +300,66 @@ class BuddhistController extends Controller
                     $bud->end_time = Carbon::parse($bud->end_time)->addMinutes(3);
                 }
                 $bud->winner_fcm_token = $request->fcm_token;
+                $bud->winner_user_id = Auth::user()->firebase_uid;
+
                 $bud->save();
-                
-              
 
-                
-                $owner = Buddhist::find($id);
-                $ownerID = $owner->user_id;
-               
+                $ownerBuddhist = Buddhist::find($request->buddhist_id);
+                $ownerID = $ownerBuddhist->user_id;
+                $ownerTopic = $ownerBuddhist->user->topic;
+
                 $messaging = app('firebase.messaging');
-                if(empty($data)&&Auth::id()!=$ownerID)
-                {
-                    $result = $messaging->subscribeToTopic("A".$id, $request->fcm_token);
+                if (empty($data) && Auth::id() != $ownerID) {
+                    $messaging->subscribeToTopic($ownerBuddhist->topic, $request->fcm_token);
                 }
-               
-              
-                $notification = Notification::fromArray([
-                    'title' => 'ທ່ານມີການແຈ້ງເຕືອນໃໝ່ຈາກ '.Buddhist::find($id)->name.' ທີ່ທ່ານໄດ້ປະມູນ',
-                    'body' => 'ມີຄົນໃຫ້ລາຄາສູງກວ່າໃນລາຄາ '.$request->bidding_price.' ກີບ',
-                    'image' => \public_path("/notification_images/chat.png"),
-                    
-                ]);
-                $notification_data = [
-                    'sender'=>Auth::id(),
-                    'buddhist_id' => $id,
-                    'page'=>'homepage',
-                    'sender'=>Auth::id(),
-                ];
-                $message = CloudMessage::withTarget('topic', "A".$id)
-                    ->withNotification($notification)
-                    ->withData($notification_data);
-                $messaging->send($message);
 
-                $notification1 = Notification::fromArray([
-                    'title' => 'ທ່ານມີການແຈ້ງເຕືອນໃໝ່ຈາກ '.Buddhist::find($id)->name.' ທີ່ທ່ານໄດ້ປ່ອຍ',
-                    'body' => 'ມີຄົນສະເໜີລາຄາ '.$request->bidding_price.' ກີບ',
+                $bidding_notification = Notification::fromArray([
+                    'title' => 'ທ່ານມີການແຈ້ງເຕືອນໃໝ່ຈາກ ' . $ownerBuddhist->name,
+                    'body' => 'ມີຄົນໃຫ້ລາຄາສູງກວ່າໃນລາຄາ ' . $request->bidding_price . ' ກີບ',
+                    'image' => \public_path("/notification_images/chat.png"),
+
+                ]);
+                $bidding_notification_data = [
+                    'sender' => Auth::id(),
+                    'buddhist_id' => $request->buddhist_id,
+                    'page' => 'homepage',
+
+                ];
+                $bidding_message = CloudMessage::withTarget('topic', $ownerBuddhist->topic)
+                    ->withNotification($bidding_notification)
+                    ->withData($bidding_notification_data);
+                $messaging->send($bidding_message);
+
+                $owner_notification = Notification::fromArray([
+                    'title' => 'ທ່ານມີການແຈ້ງເຕືອນໃໝ່ຈາກ ' . $ownerBuddhist->name . ' ທີ່ທ່ານໄດ້ປ່ອຍ',
+                    'body' => 'ມີຄົນສະເໜີລາຄາ ' . $request->bidding_price . ' ກີບ',
                     'image' => \public_path("/notification_images/chat.png"),
                 ]);
-                $notification_data1 = [
-                    'sender'=>Auth::id(),
-                    'buddhist_id' => $id,
-                    'page'=>'content_detail',
-                    'sender'=>Auth::id(),
+                $owner_notification_data = [
+                    'sender' => Auth::id(),
+                    'buddhist_id' => $request->buddhist_id,
+                    'page' => 'content_detail',
+
                 ];
-                $message1 = CloudMessage::withTarget('topic', "B".$id)
-                    ->withNotification($notification1)
-                    ->withData($notification_data1);
-                $messaging->send($message1);
+                $owner_message = CloudMessage::withTarget('topic', $ownerTopic)
+                    ->withNotification($owner_notification)
+                    ->withData($owner_notification_data);
+                $messaging->send($owner_message);
 
                 $newNotification = NotificationFirebase::create([
-                    'notification_time'=>date('Y-m-d H:i:s'),
-                    'read'=>0,
-                    'buddhist_id'=>$id,
-                    'user_id'=>Auth::id(),
-                    'biddingPrice'=>$request->bidding_price
+                    'notification_time' => date('Y-m-d H:i:s'),
+                    'read' => 0,
+                    'buddhist_id' => $request->buddhist_id,
+                    'user_id' => Auth::id(),
+                    'biddingPrice' => $request->bidding_price,
                 ]);
 
-
-
-
-
-
-                return response()->json(["data" => "Successfully"], 200);
+                return response()->json(["message" => "Successfully"], 200);
             } else {
-                return response()->json(["data" => "Your bidding price must more than ".$highest_price." ກີບ"], 400);
+                return response()->json(["message" => "Your bidding price must more than " . $highest_price . " ກີບ"], 400);
             }
         } else {
-            return response()->json(['data' => 'this item is expired'], 404);
+            return response()->json(['message' => 'this item is expired'], 404);
         }
     }
 
@@ -373,20 +367,19 @@ class BuddhistController extends Controller
     {
 
         $buddhists = Buddhist::where([['type_id', $type_id], ['end_time', '>', Carbon::now()]])->get();
-        
 
         return buddhistCollection::collection($buddhists);
     }
 
-    public function recommendedBuddhist(Request $request,$type_id,$buddhist_id)
+    public function recommendedBuddhist(Request $request, $type_id, $buddhist_id)
     {
-       $buddhist = Buddhist::where([
-           ['end_time', '>', Carbon::now()],
-           ['type_id','=',$type_id],
-           ['id','!=',$buddhist_id]
-       ])->with('type')->orderBy("created_at","desc")->get()->shuffle();
-       return BuddhistResource::collection($buddhist);
-        
+        $buddhist = Buddhist::where([
+            ['end_time', '>', Carbon::now()],
+            ['type_id', '=', $type_id],
+            ['id', '!=', $buddhist_id],
+        ])->with('type')->orderBy("created_at", "desc")->get()->shuffle();
+        return BuddhistResource::collection($buddhist);
+
     }
 
     public function almostEnd()
@@ -394,6 +387,102 @@ class BuddhistController extends Controller
         $bud = Buddhist::where('end_time', '>', Carbon::now())->with('type')->orderBy("end_time")->get();
         return BuddhistResource::collection($bud);
     }
+    public function myActiveBuddhist()
+    {
+        $buddhist = Buddhist::where([
+            ["active", "1"],
+            ["user_id", Auth::id()],
+            ["end_time", '>', Carbon::now()],
+        ])->orderBy("end_time")->get();
+        if (empty($buddhist)) {
+            return response()->json(["message" => "No data found"], 200);
+        }
+        return BuddhistResource::collection($buddhist);
 
-   
+    }
+    public function myDisabledBuddhist()
+    {
+        $buddhist = Buddhist::where([
+            ["active", "disabled"],
+            ["user_id", Auth::id()],
+        ])->orderBy("end_time")->get();
+        if (empty($buddhist)) {
+            return response()->json(["message" => "No data found"], 200);
+        }
+        return BuddhistResource::collection($buddhist);
+
+    }
+    public function myNonDisabledBuddhist()
+    {
+        $buddhist = Buddhist::where([
+            ["active", "!=", "disabled"],
+            ["user_id", Auth::id()],
+        ])->orderBy("end_time")->get();
+        if (empty($buddhist)) {
+            return response()->json(["message" => "No data found"], 200);
+        }
+        return BuddhistResource::collection($buddhist);
+
+    }
+    public function biddingLose()
+    {
+        #check if it's not your buddhist
+        #get UID last from firebase
+        #check my uid with uid from firebase
+        #find buddhist that end
+
+        /**
+         * ເຄື່ອງທີ່ປະມູນພະນັ້ນບໍ້
+         * ້ເບິ່ງກ່່ອນວ່າມຶງປິມູນພະນັ່ນບໍ່
+         * ກວດເວລາຫມົດກັບຜູ້ຊະນະ
+         */
+
+        $database = app('firebase.database');
+        $reference = $database->getReference('buddhist/')
+            ->getSnapshot();
+
+        $data = $reference->getValue();
+        $emptyData = array();
+        $buddhist_key_array = array();
+        foreach ($data as $buddhistKey) {
+            $isFound = false;
+            $counter = 0;
+            $firebase_uid_match_data = array();
+            foreach ($key as $eachData) {
+                if ($counter++ == 0) {
+                    continue;
+                }
+
+                if ($eachData["uid"] == Auth::user()->firebase_uid) {
+                    array_push($firebase_uid_match_data, $eachData);
+                }
+            }
+            if (count($firebase_uid_match_data) > 0) {
+                array_push($buddhist_key_array, $buddhistKey);
+            }
+        }
+        $buddhist = Buddhist::where([
+            ["end_time", '<', Carbon::now()],
+            ["winner_user_id", "!=", Auth::user()->firebase_uid],
+
+        ])
+            ->whereIn('id', $firebase_uid_match_data)->get();
+
+        return BuddhistResource::collection($buddhist);
+
+
+    }
+    public function biddingWin()
+    {
+        $buddhist = Buddhist::where([
+            ["end_time", '<', Carbon::now()],
+            ["winner_user_id", Auth::user()->firebase_uid],
+        ])->get();
+        if (empty($buddhist)) {
+            return response()->json(["message" => "No data found"], 200);
+        }
+        return BuddhistResource::collection($buddhist);
+
+    }
+
 }

@@ -29,11 +29,22 @@ class notificationController extends Controller
                 "message"=>"no notification"
             ]);
         }
-        NotificationFirebase::where("user_id",Auth::id())->update([
+        NotificationFirebase::where([
+            ["user_id",Auth::id()],
+            ["read","0"]
+            ])->update([
             'read'=>1
         ]);
        
         return NotificationResource::collection($data);
+    }
+
+    public function notificationCount()
+    {
+        $data = NotificationFirebase::where("user_id",Auth::id())->orderBy("created_at","desc")->get();
+        return response()->json([
+            "notification_count"=>$data->count()
+        ]);
     }
 
     /**
