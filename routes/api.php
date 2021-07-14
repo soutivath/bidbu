@@ -98,3 +98,5 @@ Route::get("/biddingWin", [App\Http\Controllers\BuddhistController::class, "bidd
 Route::get("/myActiveBuddhist", [App\Http\Controllers\BuddhistController::class, "myActiveBuddhist"]);
 Route::get("/myDisabledBuddhist", [App\Http\Controllers\BuddhistController::class, "myDisabledBuddhist"]);
 Route::get("/myNonDisabledBuddhist", [App\Http\Controllers\BuddhistController::class, "myNonDisabledBuddhist"]);
+
+Route::get("/notificationCount", [App\Http\Controllers\notificationController::class, "notificationCount"]);

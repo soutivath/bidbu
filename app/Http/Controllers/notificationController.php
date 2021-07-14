@@ -41,7 +41,7 @@ class notificationController extends Controller
 
     public function notificationCount()
     {
-        $data = NotificationFirebase::where("user_id",Auth::id())->orderBy("created_at","desc")->get();
+        $data = NotificationFirebase::where(["user_id",Auth::id()],["read","0"])->orderBy("created_at","desc")->get();
         return response()->json([
             "notification_count"=>$data->count()
         ]);
