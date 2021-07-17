@@ -437,9 +437,14 @@ class BuddhistController extends Controller
          * ກວດເວລາຫມົດກັບຜູ້ຊະນະ
          */
 
-       $buddhist = Buddhist::where([
-           ["user_id",""]
-       ])
+        $buddhist = Buddhist::where([
+            ["user_id", Auth::id()],
+            ["winner_user_id", "empty"],
+        ])->get();
+        if (empty($buddhist)) {
+            return response()->json(["message" => "No data found"], 200);
+        }
+        return response()->json(["data" => $buddhist], 200);
 
     }
     public function biddingWin()
