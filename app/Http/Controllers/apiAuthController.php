@@ -236,7 +236,7 @@ class apiAuthController extends Controller
             ], 401);
         }
         $uid = $verifiedIdToken->claims()->get('sub');
-        $user = User::where("firebase_uid", $uid)->get();
+        $user = User::where("firebase_uid", $uid)->first();
         if (empty($user)) {
             return response()->json([
                 "message" => "User not found",
