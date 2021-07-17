@@ -4,9 +4,9 @@ namespace App\Console\Commands;
 
 use App\Models\Buddhist;
 use App\Models\User;
-use Google\Cloud\Storage\Notification;
 use Illuminate\Console\Command;
 use Kreait\Firebase\Messaging\CloudMessage;
+use Kreait\Firebase\Messaging\Notification;
 
 class sendNotification extends Command
 {
@@ -61,9 +61,10 @@ class sendNotification extends Command
                     ->withData($notification_data);
                 $messaging->send($message);
             } else {
+                $userData = User::find($buddhist->winner_user_id);
                 $notification = Notification::fromArray([
                     'title' => 'ທ່ານມີການແຈ້ງເຕືອນໃໝ່ຈາກ ' . $buddhist->id . ' ທີ່ທ່ານໄດ້ປ່ອຍ',
-                    'body' => 'ການປະມູນຈົບລົງແລ້ວ ' . $buddhist->user->name . ' ຊະນະການປະມູນດ້ວຍເງິນຈຳນວນ ' . $buddhist->highest_price . " ກີບ",
+                    'body' => 'ການປະມູນຈົບລົງແລ້ວ ' . $userData->name . ' ຊະນະການປະມູນດ້ວຍເງິນຈຳນວນ ' . $buddhist->highest_price . " ກີບ",
                     'image' => \public_path("/notification_images/chat.png"),
                 ]);
                 $notification_data = [
@@ -84,10 +85,48 @@ class sendNotification extends Command
                     'buddhist_id' => $buddhist->id,
                     'page' => 'content_detail',
                 ];
-                $message = CloudMessage::withTarget('token', $buddhist->user->topic)
+                $message = CloudMessage::withTarget('token', $userData->topic)
                     ->withNotification($notification)
                     ->withData($notification_data);
                 $messaging->send($message);
+
+                $notificationData = NotificationFirebase::
+                    where([
+                    ["buddhist_id", $buddhist->id],
+                    ["notification_type", "bidding"],
+                    ["user_id", "!=", $buddhist->user_id],
+                ])->select("user_id")->distinct()->get();
+
+                for ($i = 0; $i < count($notificationData); $i++) {
+                    NotificationFirebase::create([
+                        'notification_time' => date('Y-m-d H:i:s'),
+                        'read' => 0,
+                        'data' => $userData->id, //winner id
+                        'buddhist_id' => $request->buddhist_id,
+                        'user_id' => $notificationData[$i]["user_id"],
+                        'notification_type' => "bidding_result",
+                        'comment_path' => 'empty',
+                    ]);
+
+                }
+
+                $bidding_notification = Notification::fromArray([
+                    'title' => 'ທ່ານມີການແຈ້ງເຕືອນໃໝ່ຈາກ ' . $buddhist->name,
+                    'body' => 'ການປະມູນຈົບລົງແລ້ວ ທ່ານປະມູນບໍ່ຊະນະ',
+                    'image' => \public_path("/notification_images/chat.png"),
+
+                ]);
+                $bidding_notification_data = [
+                    'sender' => $userData->id,
+                    'buddhist_id' => $buddhist->id,
+                    'page' => 'homepage',
+
+                ];
+                $bidding_message = CloudMessage::withTarget('topic', $buddhist->topic)
+                    ->withNotification($bidding_notification)
+                    ->withData($bidding_notification_data);
+                $messaging->send($bidding_message);
+
             }
             $buddhist->active = "0";
             $buddhist->save();

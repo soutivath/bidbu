@@ -357,6 +357,7 @@ class BuddhistController extends Controller
                     $notificationData = NotificationFirebase::
                         where([
                         ["buddhist_id", $request->buddhist_id],
+                        ["notification_type", "bidding"],
                         ["user_id", "!=", Auth::id()],
                     ])->select("user_id")->distinct()->get();
 
@@ -364,9 +365,11 @@ class BuddhistController extends Controller
                         NotificationFirebase::create([
                             'notification_time' => date('Y-m-d H:i:s'),
                             'read' => 0,
-                            'biddingPrice' => $request->bidding_price,
+                            'data' => $request->bidding_price,
                             'buddhist_id' => $request->buddhist_id,
                             'user_id' => $notificationData[$i]["user_id"],
+                            'notification_type' => "bidding",
+                            'comment_path' => 'empty',
                         ]);
 
                     }

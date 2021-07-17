@@ -1,10 +1,12 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Http\Resources\NotificationResource;
 use App\Models\NotificationFirebase;
-use Illuminate\Http\Request;
 use Auth;
+use Illuminate\Http\Request;
+
 class notificationController extends Controller
 {
     /**
@@ -13,7 +15,6 @@ class notificationController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-  
     public function __construct()
     {
         $this->middleware("auth:api");
@@ -21,29 +22,54 @@ class notificationController extends Controller
 
     public function index()
     {
-       
-        $data = NotificationFirebase::where("user_id",Auth::id())->orderBy("created_at","desc")->get();
-        if(empty($data))
-        {
+
+        $data = NotificationFirebase::where([
+            ["user_id", Auth::id()],
+            ["notification_type", "bidding"],
+        ])->orderBy("created_at", "desc")->get();
+        if (empty($data)) {
             return response()->json([
-                "message"=>"no notification"
+                "message" => "no notification",
             ]);
         }
         NotificationFirebase::where([
-            ["user_id",Auth::id()],
-            ["read","0"]
-            ])->update([
-            'read'=>1
+            ["user_id", Auth::id()],
+            ["read", "0"],
+        ])->update([
+            'read' => 1,
         ]);
-       
+
         return NotificationResource::collection($data);
+    }
+
+    //get message notification
+    public function messageNotification()
+    {
+        $data = NotificationFirebase::where([
+            ["user_id", Auth::id()],
+            ["notification_type", "message"],
+        ])->orderBy("created_at", "desc")->get();
+        if (empty($data)) {
+            return response()->json([
+                "message" => "no notification",
+            ]);
+        }
+        NotificationFirebase::where([
+            ["user_id", Auth::id()],
+            ["read", "0"],
+        ])->update([
+            'read' => 1,
+        ]);
+
+        return NotificationResource::collection($data);
+
     }
 
     public function notificationCount()
     {
-        $data = NotificationFirebase::where(["user_id",Auth::id()],["read","0"])->orderBy("created_at","desc")->get();
+        $data = NotificationFirebase::where(["user_id", Auth::id()], ["read", "0"])->orderBy("created_at", "desc")->get();
         return response()->json([
-            "notification_count"=>$data->count()
+            "notification_count" => $data->count(),
         ]);
     }
 

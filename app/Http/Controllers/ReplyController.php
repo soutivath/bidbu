@@ -85,6 +85,7 @@ class ReplyController extends Controller
                     'name' => Auth::user()->name,
                     'datetime' => Carbon::now(),
                 ]);
+            $reply_key = $reference->getKey();
 
             $owner_notification = Notification::fromArray([
                 'title' => 'ທ່ານມີແຈ້ງເຕຶອນໃໝ່ຈາກ' . $ownerBuddhist->name . 'ທີ່ທ່ານໄດ້ລົງປະມູນ',
@@ -119,9 +120,31 @@ class ReplyController extends Controller
                 ->withData($comment_notification_data);
             $messaging->send($comment_message);
 
+            if (Auth::id != $bud->user_id) {
+                $notificationData = NotificationFirebase::
+                    where([
+                    ["buddhist_id", $request->buddhist_id],
+                    ["notification_type", "message"],
+                    ["user_id", "!=", Auth::id()],
+                ])->select("user_id")->distinct()->get();
+
+                for ($i = 0; $i < count($notificationData); $i++) {
+                    NotificationFirebase::create([
+                        'notification_time' => date('Y-m-d H:i:s'),
+                        'read' => 0,
+                        'data' => $request->message,
+                        'buddhist_id' => $request->buddhist_id,
+                        'user_id' => $notificationData[$i]["user_id"],
+                        'notification_type' => "reply",
+                        'comment_path' => 'Comments/' . $request->buddhist_id . '/' . $request->comment_id . '/replies/' . $reply_key,
+                    ]);
+
+                }
+            }
+
             return response()->json(['message' => "successfully"], 200);
         } catch (Exception $e) {
-            
+
             return response()->json(['message' => 'Something went wrong'], 500);
         }
 
