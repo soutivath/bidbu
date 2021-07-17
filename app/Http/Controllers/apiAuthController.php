@@ -212,7 +212,7 @@ class apiAuthController extends Controller
 
     }
 
-    public function forgetPassword()
+    public function forgetPassword(Request $request)
     {
         $request->validate([
             'firebase_token' => 'required|string',
