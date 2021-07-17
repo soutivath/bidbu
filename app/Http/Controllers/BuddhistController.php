@@ -248,6 +248,7 @@ class BuddhistController extends Controller
 
     public function bidding(Request $request)
     {
+
         $request->validate([
             'bidding_price' => 'required|numeric|gt:0',
             'fcm_token' => 'required|string',
@@ -346,13 +347,31 @@ class BuddhistController extends Controller
                     ->withData($owner_notification_data);
                 $messaging->send($owner_message);
 
-                $newNotification = NotificationFirebase::create([
-                    'notification_time' => date('Y-m-d H:i:s'),
-                    'read' => 0,
-                    'buddhist_id' => $request->buddhist_id,
-                    'user_id' => Auth::id(),
-                    'biddingPrice' => $request->bidding_price,
-                ]);
+                // get all data from notification to found all user that bid this round
+                $notificationData = NotificationFirebase::where([
+                    ["buddhist_id", $request->buddhist_id],
+                    ["user_id", "!=", Auth::id()],
+                ])->distinct()->get();
+
+                if (Auth::id != $bud->user_id) {
+                    $notificationData = NotificationFirebase::
+                        where([
+                        ["buddhist_id", $request->buddhist_id],
+                        ["user_id", "!=", Auth::id()],
+                    ])->select("user_id")->distinct()->get();
+
+                    for ($i = 0; $i < count($notificationData); $i++) {
+                        NotificationFirebase::create([
+                            'notification_time' => date('Y-m-d H:i:s'),
+                            'read' => 0,
+                            'biddingPrice' => $request->bidding_price,
+                            'buddhist_id' => $request->buddhist_id,
+                            'user_id' => $notificationData[$i]["user_id"],
+                        ]);
+
+                    }
+
+                }
 
                 return response()->json(["message" => "Successfully"], 200);
             } else {
