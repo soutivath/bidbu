@@ -74,7 +74,7 @@ Route::get('buddhist/{id}', [App\Http\Controllers\BuddhistController::class,"sho
 
 Route::get('buddhist/{id}', [App\Http\Controllers\BuddhistController::class, "show"]);
 Route::get("recommended/{type_id}/{buddhist_id}", [App\Http\Controllers\BuddhistController::class, "recommendedBuddhist"]);
-Route::post("reset", [App\Http\Controllers\BuddhistController::class, "forgetPassword"]);
+Route::post("reset", [App\Http\Controllers\apiAuthController::class, "forgetPassword"]);
 
 //admin
 
