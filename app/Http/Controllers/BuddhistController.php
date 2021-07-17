@@ -437,38 +437,9 @@ class BuddhistController extends Controller
          * ກວດເວລາຫມົດກັບຜູ້ຊະນະ
          */
 
-        $database = app('firebase.database');
-        $reference = $database->getReference('buddhist/')
-            ->getSnapshot();
-
-        $data = $reference->getValue();
-        $emptyData = array();
-        $buddhist_key_array = array();
-        foreach ($data as $buddhistKey) {
-            $isFound = false;
-            $counter = 0;
-            $firebase_uid_match_data = array();
-            foreach ($key as $eachData) {
-                if ($counter++ == 0) {
-                    continue;
-                }
-
-                if ($eachData["uid"] == Auth::user()->firebase_uid) {
-                    array_push($firebase_uid_match_data, $eachData);
-                }
-            }
-            if (count($firebase_uid_match_data) > 0) {
-                array_push($buddhist_key_array, $buddhistKey);
-            }
-        }
-        $buddhist = Buddhist::where([
-            ["end_time", '<', Carbon::now()],
-            ["winner_user_id", "!=", Auth::user()->firebase_uid],
-
-        ])
-            ->whereIn('id', $firebase_uid_match_data)->get();
-
-        return BuddhistResource::collection($buddhist);
+       $buddhist = Buddhist::where([
+           ["user_id",""]
+       ])
 
     }
     public function biddingWin()
