@@ -30,7 +30,7 @@ class BuddhistController extends Controller
     public function index()
     {
 
-        $bud = Buddhist::where('end_time', '>', Carbon::now())->with('type')->orderBy("created_at", "desc")->get();
+        $bud = Buddhist::where([['end_time', '>', Carbon::now()], ["active", "1"]])->with('type')->orderBy("created_at", "desc")->get();
         return BuddhistResource::collection($bud);
     }
     /**
@@ -258,6 +258,9 @@ class BuddhistController extends Controller
             return response()->json(["message" => "only user can't use this function"], 403);
         }
         $bud = Buddhist::findOrFail($request->buddhist_id);
+        if ($bud->active == 0) {
+            return response()->json(["message" => "this buddhist not available to bid"], 200);
+        }
         if (Auth::id() == $bud->user_id) {
             return response()->json(["message" => "You can't bid your buddhist"], 403);
         }
@@ -348,10 +351,7 @@ class BuddhistController extends Controller
                 $messaging->send($owner_message);
 
                 // get all data from notification to found all user that bid this round
-                $notificationData = NotificationFirebase::where([
-                    ["buddhist_id", $request->buddhist_id],
-                    ["user_id", "!=", Auth::id()],
-                ])->distinct()->get();
+             
 
                 if (Auth::id != $bud->user_id) {
                     $notificationData = NotificationFirebase::
@@ -388,7 +388,7 @@ class BuddhistController extends Controller
     public function buddhistType($type_id)
     {
 
-        $buddhists = Buddhist::where([['type_id', $type_id], ['end_time', '>', Carbon::now()]])->get();
+        $buddhists = Buddhist::where([['type_id', $type_id], ['end_time', '>', Carbon::now()], ["active", "1"]])->get();
 
         return buddhistCollection::collection($buddhists);
     }
@@ -399,6 +399,7 @@ class BuddhistController extends Controller
             ['end_time', '>', Carbon::now()],
             ['type_id', '=', $type_id],
             ['id', '!=', $buddhist_id],
+            ["active", "1"],
         ])->with('type')->orderBy("created_at", "desc")->get()->shuffle();
         return BuddhistResource::collection($buddhist);
 
@@ -406,7 +407,7 @@ class BuddhistController extends Controller
 
     public function almostEnd()
     {
-        $bud = Buddhist::where('end_time', '>', Carbon::now())->with('type')->orderBy("end_time")->get();
+        $bud = Buddhist::where([['end_time', '>', Carbon::now()], ["active", "1"]])->with('type')->orderBy("end_time")->get();
         return BuddhistResource::collection($bud);
     }
     public function myActiveBuddhist()
@@ -415,6 +416,7 @@ class BuddhistController extends Controller
             ["active", "1"],
             ["user_id", Auth::id()],
             ["end_time", '>', Carbon::now()],
+
         ])->orderBy("end_time")->get();
         if (empty($buddhist)) {
             return response()->json(["message" => "No data found"], 200);
@@ -427,6 +429,7 @@ class BuddhistController extends Controller
         $buddhist = Buddhist::where([
             ["active", "disabled"],
             ["user_id", Auth::id()],
+
         ])->orderBy("end_time")->get();
         if (empty($buddhist)) {
             return response()->json(["message" => "No data found"], 200);
