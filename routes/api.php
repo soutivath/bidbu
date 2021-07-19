@@ -61,7 +61,7 @@ Route::get('user', [App\Http\Controllers\ProfileController::class, 'show']);
 //Route::get('nice',[App\Http\Controllers\BuddhistController::class,'testTokenGetData']);
 Route::get("user/{id}", [App\Http\Controllers\ProfileController::class, 'getUserByID']);
 
-Route::get("notification", [App\Http\Controllers\notificationController::class, 'index']);
+
 
 //custom
 /*$middleware =['api'];
@@ -99,4 +99,11 @@ Route::get("/myActiveBuddhist", [App\Http\Controllers\BuddhistController::class,
 Route::get("/myDisabledBuddhist", [App\Http\Controllers\BuddhistController::class, "myDisabledBuddhist"]);
 Route::get("/myNonDisabledBuddhist", [App\Http\Controllers\BuddhistController::class, "myNonDisabledBuddhist"]);
 
-Route::get("/notificationCount", [App\Http\Controllers\notificationController::class, "notificationCount"]);
+Route::get("/biddingNotification", [App\Http\Controllers\notificationController::class, "biddingNotification"]);
+Route::get("/messageNotification", [App\Http\Controllers\notificationController::class, "messageNotification"]);
+Route::get("/biddingResultNotification", [App\Http\Controllers\notificationController::class, "biddingResultNotification"]);
+
+Route::get("unreadBiddingCount", [App\Http\Controllers\notificationController::class, 'unreadBiddingCount']);
+Route::get("unreadMessageCount", [App\Http\Controllers\notificationController::class, 'unreadMessageCount']);
+Route::get("unReadBiddingResult", [App\Http\Controllers\notificationController::class, 'unReadBiddingResult']);
+
