@@ -117,7 +117,7 @@ class CommentController extends Controller
                 ->withData($comment_notification_data);
             $messaging->send($comment_message);
 
-            if (Auth::id != $ownerID) {
+            if (Auth::id() != $ownerID) {
                 $notificationData = NotificationFirebase::
                     where([
                     ["buddhist_id", $request->buddhist_id],

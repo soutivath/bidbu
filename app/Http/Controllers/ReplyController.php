@@ -120,7 +120,7 @@ class ReplyController extends Controller
                 ->withData($comment_notification_data);
             $messaging->send($comment_message);
 
-            if (Auth::id != $bud->user_id) {
+            if (Auth::id() != $bud->user_id) {
                 $notificationData = NotificationFirebase::
                     where([
                     ["buddhist_id", $request->buddhist_id],
