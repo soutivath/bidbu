@@ -61,8 +61,6 @@ Route::get('user', [App\Http\Controllers\ProfileController::class, 'show']);
 //Route::get('nice',[App\Http\Controllers\BuddhistController::class,'testTokenGetData']);
 Route::get("user/{id}", [App\Http\Controllers\ProfileController::class, 'getUserByID']);
 
-
-
 //custom
 /*$middleware =['api'];
 if (\Request::header('Authorization'))
@@ -107,3 +105,4 @@ Route::get("unreadBiddingCount", [App\Http\Controllers\notificationController::c
 Route::get("unreadMessageCount", [App\Http\Controllers\notificationController::class, 'unreadMessageCount']);
 Route::get("unReadBiddingResult", [App\Http\Controllers\notificationController::class, 'unReadBiddingResult']);
 
+Route::get("checkToken", [App\Http\Controllers\apiAuthController::class, "checkToken"]);
