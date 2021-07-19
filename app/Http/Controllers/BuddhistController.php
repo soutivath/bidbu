@@ -130,7 +130,7 @@ class BuddhistController extends Controller
         $bud->highBidUser = Auth::id();
         $bud->save();
 
-        $messaging->subscribeToTopic($bud->topic, $request->fcm_token);
+        // $messaging->subscribeToTopic($bud->topic, $request->fcm_token);
 
         foreach ($request->images as $image) {
             $fileExtension = $image->getClientOriginalExtension();
