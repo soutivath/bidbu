@@ -62,6 +62,7 @@ class sendNotification extends Command
                 $messaging->send($message);
             } else {
                 $userData = User::find($buddhist->winner_user_id);
+                echo $userData;
                 $notification = Notification::fromArray([
                     'title' => 'ທ່ານມີການແຈ້ງເຕືອນໃໝ່ຈາກ ' . $buddhist->id . ' ທີ່ທ່ານໄດ້ປ່ອຍ',
                     'body' => 'ການປະມູນຈົບລົງດ້ວຍເງິນຈຳນວນ ' . $buddhist->highest_price . " ກີບ",
