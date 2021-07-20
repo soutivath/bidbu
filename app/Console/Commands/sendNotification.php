@@ -3,11 +3,11 @@
 namespace App\Console\Commands;
 
 use App\Models\Buddhist;
+use App\Models\NotificationFirebase;
 use App\Models\User;
 use Illuminate\Console\Command;
-use Kreait\Firebase\Messaging\Notification;
 use Kreait\Firebase\Messaging\CloudMessage;
-
+use Kreait\Firebase\Messaging\Notification;
 
 class sendNotification extends Command
 {
