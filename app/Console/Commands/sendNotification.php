@@ -61,8 +61,8 @@ class sendNotification extends Command
                     ->withData($notification_data);
                 $messaging->send($message);
             } else {
-                $userData = User::find($buddhist->winner_user_id);
-                echo $userData;
+                $userData = User::where("firebase_uid", $buddhist->winner_user_id);
+
                 $notification = Notification::fromArray([
                     'title' => 'ທ່ານມີການແຈ້ງເຕືອນໃໝ່ຈາກ ' . $buddhist->id . ' ທີ່ທ່ານໄດ້ປ່ອຍ',
                     'body' => 'ການປະມູນຈົບລົງດ້ວຍເງິນຈຳນວນ ' . $buddhist->highest_price . " ກີບ",
