@@ -5,8 +5,9 @@ namespace App\Console\Commands;
 use App\Models\Buddhist;
 use App\Models\User;
 use Illuminate\Console\Command;
-use Kreait\Firebase\Messaging\CloudMessage;
 use Kreait\Firebase\Messaging\Notification;
+use Kreait\Firebase\Messaging\CloudMessage;
+
 
 class sendNotification extends Command
 {
@@ -86,7 +87,7 @@ class sendNotification extends Command
                     'buddhist_id' => $buddhist->id,
                     'page' => 'content_detail',
                 ];
-                $message = CloudMessage::withTarget('token', $userData->topic)
+                $message = CloudMessage::withTarget('topic', $userData->topic)
                     ->withNotification($notification)
                     ->withData($notification_data);
                 $messaging->send($message);
