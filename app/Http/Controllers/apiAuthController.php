@@ -252,11 +252,9 @@ class apiAuthController extends Controller
 
     public function checkToken()
     {
-        if (Auth::check()) {
-            return response()->json(["message" => "Logged"], 200);
-        } else {
-            return response()->json(["message" => "unauthorized"], 401);
-        }
+
+        return response()->json(["message" => "loggedIn"], 200);
+
     }
 
 }
