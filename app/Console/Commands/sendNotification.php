@@ -61,7 +61,7 @@ class sendNotification extends Command
                     ->withData($notification_data);
                 $messaging->send($message);
             } else {
-                $userData = User::where("firebase_uid", $buddhist->winner_user_id);
+                $userData = User::where("firebase_uid", $buddhist->winner_user_id)->get();
 
                 $notification = Notification::fromArray([
                     'title' => 'ທ່ານມີການແຈ້ງເຕືອນໃໝ່ຈາກ ' . $buddhist->id . ' ທີ່ທ່ານໄດ້ປ່ອຍ',
