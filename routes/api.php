@@ -18,8 +18,13 @@ Route::post('/register', [App\Http\Controllers\apiAuthController::class, 'regist
 Route::post('/bidding', [App\Http\Controllers\BuddhistController::class, 'bidding']);
 Route::post('/store', [App\Http\Controllers\BuddhistController::class, 'store']);
 Route::post('/login', [App\Http\Controllers\apiAuthController::class, 'login']);
-Route::post("/logout", [App\Http\Ccontrollers\apiAuthController::class, 'logOut']);
-Route::apiResource('type', App\Http\Controllers\TypeController::class);
+Route::post("/logout", [App\Http\Controllers\apiAuthController::class, 'logOut']);
+
+Route::get('type', [App\Http\Controllers\TypeController::class, "index"]);
+Route::post('type', [App\Http\Controllers\TypeController::class, "store"]);
+Route::get('type/{id}', [App\Http\Controllers\TypeController::class, "show"]);
+Route::put('type', [App\Http\Controllers\TypeController::class, "update"]);
+Route::delete('type/{id}', [App\Http\Controllers\TypeController::class, "destroy"]);
 
 Route::get('buddhist', [App\Http\Controllers\BuddhistController::class, "index"]);
 Route::post('buddhist', [App\Http\Controllers\BuddhistController::class, "store"]);

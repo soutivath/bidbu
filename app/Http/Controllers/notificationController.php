@@ -106,7 +106,10 @@ class notificationController extends Controller
     }
     public function unReadBiddingResult()
     {
-        $data = NotificationFirebase::where(["user_id", Auth::id()], ["read", "0"], ["notification_type", "bidding_result"], )->orderBy("created_at", "desc")->get();
+        $data = NotificationFirebase::where([
+            ["user_id", Auth::id()], 
+            ["read", "0"], 
+            ["notification_type", "bidding_result"]] )->orderBy("created_at", "desc")->get();
         return response()->json([
             "notification_count" => $data->count(),
         ]);
