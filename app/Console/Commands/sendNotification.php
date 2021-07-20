@@ -64,7 +64,7 @@ class sendNotification extends Command
                 $userData = User::find($buddhist->winner_user_id);
                 $notification = Notification::fromArray([
                     'title' => 'ທ່ານມີການແຈ້ງເຕືອນໃໝ່ຈາກ ' . $buddhist->id . ' ທີ່ທ່ານໄດ້ປ່ອຍ',
-                    'body' => 'ການປະມູນຈົບລົງແລ້ວ ' . $userData->name . ' ຊະນະການປະມູນດ້ວຍເງິນຈຳນວນ ' . $buddhist->highest_price . " ກີບ",
+                    'body' => 'ການປະມູນຈົບລົງດ້ວຍເງິນຈຳນວນ ' . $buddhist->highest_price . " ກີບ",
                     'image' => \public_path("/notification_images/chat.png"),
                 ]);
                 $notification_data = [
