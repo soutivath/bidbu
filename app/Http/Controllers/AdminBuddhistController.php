@@ -31,14 +31,12 @@ class AdminBuddhistController extends Controller
     public function getActive()
     {
         $buddhist = Buddhist::where('end_time', '>', Carbon::now())->where('active', '1')->with('type')->orderBy("created_at", "desc")->get();
-
         return AdminBuddhistResource::collection($buddhist);
-
     }
 
     public function getNonActive()
     {
-        $buddhist = Buddhist::where('end_time', '<=', Carbon::now())->where('active', '1')->with('type')->orderBy("created_at", "desc")->get();
+        $buddhist = Buddhist::where('end_time', '<=', Carbon::now())->where('active', '0')->with('type')->orderBy("created_at", "desc")->get();
 
         return AdminBuddhistResource::collection($buddhist);
 
@@ -66,8 +64,10 @@ class AdminBuddhistController extends Controller
         ]);
         $buddhist = Buddhist::find($request->id);
         if ($buddhist != null) {
-            $buddhist->active = 0;
+            $buddhist->active = "disabled";
+            $buddhist->end_time = now();
             $buddhist->save();
+
             return response()->json(["message" => "Disable buddhist successfully"], 200);
         } else {
             return response()->json(["message" => "This is not found"], 404);

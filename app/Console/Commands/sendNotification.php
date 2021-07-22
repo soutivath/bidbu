@@ -79,7 +79,7 @@ class sendNotification extends Command
                 $messaging->send($message);
 //***** Send to winner */
                 $notification = Notification::fromArray([
-                    'title' => 'ທ່ານມີການແຈ້ງເຕືອນໃໝ່ຈາກ ' . $buddhist->id . ' ທີ່ທ່ານໄດ້ປະມູນ',
+                    'title' => 'ທ່ານມີການແຈ້ງເຕືອນໃໝ່ຈາກ ' . $buddhist->name . ' ທີ່ທ່ານໄດ້ປະມູນ',
                     'body' => 'ການປະມູນຈົບລົງແລ້ວ ທ່ານຊະນະການປະມູນດ້ວຍເງິນຈຳນວນ ' . $buddhist->highest_price . " ກີບ",
                     'image' => \public_path("/notification_images/chat.png"),
                 ]);

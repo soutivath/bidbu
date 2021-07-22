@@ -25,8 +25,8 @@ class apiAuthController extends Controller
 
         $request->validate([
             'firebase_token' => 'required|string',
-            'phone_number' => 'required|numeric',
-            'password' => 'required|string',
+            'phone_number' => 'required|string',
+            'password' => 'required|string|min:6|max:18',
             'fcm_token' => 'required|string',
         ]);
         $auth = app('firebase.auth');
