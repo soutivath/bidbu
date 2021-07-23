@@ -32,11 +32,9 @@ class AdminBuddhistResource extends JsonResource
             $highBidUser = null;
         }
         $active;
-        if($this->active==0)
-        {
-            $active = "disable";
-        }
-        else{
+        if ($this->active == "disabled") {
+            $active = "disabled";
+        } else {
             $active = Carbon::now()->lessThan(Carbon::parse($this->end_time)) ? 1 : 0;
         }
         return [
