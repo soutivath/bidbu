@@ -9,6 +9,8 @@ use Carbon\carbon;
 use Illuminate\Http\Request;
 use Kreait\Firebase\Messaging\CloudMessage;
 use Kreait\Firebase\Messaging\Notification;
+use App\Models\NotificationFirebase;
+
 
 class ReplyController extends Controller
 {

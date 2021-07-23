@@ -60,7 +60,7 @@ class AdminBuddhistResource extends JsonResource
 
             'images' => $allImage,
 
-            'tel' => $this->user->tel,
+            'tel' => $this->user->phone_number,
 
             'place' => $this->place,
             'status' => $this->status,

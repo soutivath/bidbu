@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Buddhist;
 use App\Models\comment;
+use App\Models\NotificationFirebase;
 use Auth;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
