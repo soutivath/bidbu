@@ -23,7 +23,7 @@ class AdminBuddhistController extends Controller
 
     public function index()
     {
-        $buddhist = Buddhist::all()->orderBy('created_at', 'desc')->with(["type", "user"])->get();
+        $buddhist = Buddhist::all()->orderBy('created_at', 'desc')->with(["type", "user"]);
 
         return AdminBuddhistResource::collection($buddhist);
     }
@@ -67,6 +67,21 @@ class AdminBuddhistController extends Controller
             $buddhist->active = "disabled";
             $buddhist->end_time = now();
             $buddhist->save();
+
+            $notification = Notification::fromArray([
+                'title' => 'ແຈ້ງເຕຶອນໃໝ່ຈາກ ' . $buddhist->name,
+                'body' => "ພະຂອງທ່ານໄດ້ຖຶກລົບເນື່ອງຈາກລະບົບ",
+                'image' => \public_path("/notification_images/chat.png"),
+            ]);
+            $notification_data = [
+                'sender' => Auth::id(),
+                'buddhist_id' => $buddhist->id,
+                'page' => 'content_detail',
+            ];
+            $message = CloudMessage::withTarget('topic', $buddhist->user->topic)
+                ->withNotification($notification)
+                ->withData($notification_data);
+            $messaging->send($message);
 
             return response()->json(["message" => "Disable buddhist successfully"], 200);
         } else {
