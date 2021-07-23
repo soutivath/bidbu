@@ -355,10 +355,10 @@ class BuddhistController extends Controller
                     'notification_time' => date('Y-m-d H:i:s'),
                     'read' => 1,
                     'data' => $request->bidding_price,
-                    'buddhist_id' => $request->buddhist_id,
-                    'user_id' => Auth::id(),
                     'notification_type' => "bidding_participant",
                     'comment_path' => 'empty',
+                    'buddhist_id' => $request->buddhist_id,
+                    'user_id' => Auth::id(),
                 ]);
                 if (Auth::id() != $bud->user_id) {
 
