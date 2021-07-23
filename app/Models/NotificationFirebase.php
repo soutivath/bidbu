@@ -8,8 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class NotificationFirebase extends Model
 {
+
     use HasFactory;
-    protected $fillable = ['notification_time', 'buddhist_id', 'user_id', 'read', 'data'];
+    protected $fillable = ['notification_time', 'buddhist_id', 'user_id', 'read', 'data', 'notification_type', 'bidding'];
     protected $table = "notification";
     public function buddhist()
     {

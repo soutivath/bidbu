@@ -53,7 +53,7 @@ class OneBuddhistResource extends JsonResource
                 'highest_price' => $this->highest_price,
                 'start_time' => $this->start_time,
                 'end_time' => $this->end_time,
-                'time_remain' => Carbon::now()->lessThan(Carbon::parse($this->end_time)) ? Carbon::now()->diffInSeconds(Carbon::parse($this->end_time)) : "0",
+                'time_remain' => Carbon::now()->lessThan(Carbon::parse($this->end_time)) ? Carbon::now()->diffInSeconds(Carbon::parse($this->end_time)) : 1,
                 'type' => [
                     'id' => $this->type->id,
                     'name' => $this->type->name,

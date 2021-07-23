@@ -318,7 +318,7 @@ class BuddhistController extends Controller
                 }
 
                 $bidding_notification = Notification::fromArray([
-                    'title' => 'ທ່ານມີການແຈ້ງເຕືອນໃໝ່ຈາກ ' . $ownerBuddhist->name,
+                    'title' => 'ຈາກ ' . $ownerBuddhist->name,
                     'body' => 'ມີຄົນໃຫ້ລາຄາສູງກວ່າໃນລາຄາ ' . $request->bidding_price . ' ກີບ',
                     'image' => \public_path("/notification_images/chat.png"),
 
@@ -335,7 +335,7 @@ class BuddhistController extends Controller
                 $messaging->send($bidding_message);
 
                 $owner_notification = Notification::fromArray([
-                    'title' => 'ທ່ານມີການແຈ້ງເຕືອນໃໝ່ຈາກ ' . $ownerBuddhist->name . ' ທີ່ທ່ານໄດ້ປ່ອຍ',
+                    'title' => 'ຈາກ ' . $ownerBuddhist->name . ' ທີ່ທ່ານໄດ້ປ່ອຍ',
                     'body' => 'ມີຄົນສະເໜີລາຄາ ' . $request->bidding_price . ' ກີບ',
                     'image' => \public_path("/notification_images/chat.png"),
                 ]);
@@ -358,18 +358,21 @@ class BuddhistController extends Controller
                         ["buddhist_id", $request->buddhist_id],
                         ["notification_type", "bidding"],
                         ["user_id", "!=", Auth::id()],
-                    ])->select("user_id")->distinct()->get();
 
-                    for ($i = 0; $i < count($notificationData); $i++) {
-                        NotificationFirebase::create([
-                            'notification_time' => date('Y-m-d H:i:s'),
-                            'read' => 0,
-                            'data' => $request->bidding_price,
-                            'buddhist_id' => $request->buddhist_id,
-                            'user_id' => $notificationData[$i]["user_id"],
-                            'notification_type' => "bidding",
-                            'comment_path' => 'empty',
-                        ]);
+                    ])->select("user_id")->distinct()->get();
+                    if ($notificationData != null) {
+                        for ($i = 0; $i < count($notificationData); $i++) {
+                            NotificationFirebase::create([
+                                'notification_time' => date('Y-m-d H:i:s'),
+                                'read' => 0,
+                                'data' => $request->bidding_price,
+                                'buddhist_id' => $request->buddhist_id,
+                                'user_id' => $notificationData[$i]["user_id"],
+                                'notification_type' => "bidding",
+                                'comment_path' => 'empty',
+                            ]);
+
+                        }
 
                     }
 
