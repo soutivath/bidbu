@@ -351,12 +351,21 @@ class BuddhistController extends Controller
                 $messaging->send($owner_message);
 
                 // get all data from notification to found all user that bid this round
-
+                NotificationFirebase::create([
+                    'notification_time' => date('Y-m-d H:i:s'),
+                    'read' => 1,
+                    'data' => $request->bidding_price,
+                    'buddhist_id' => $request->buddhist_id,
+                    'user_id' => Auth::id(),
+                    'notification_type' => "bidding_participant",
+                    'comment_path' => 'empty',
+                ]);
                 if (Auth::id() != $bud->user_id) {
+
                     $notificationData = NotificationFirebase::
                         where([
                         ["buddhist_id", $request->buddhist_id],
-                        ["notification_type", "bidding"],
+                        ["notification_type", "bidding_participant"],
                         ["user_id", "!=", Auth::id()],
 
                     ])->select("user_id")->distinct()->get();
