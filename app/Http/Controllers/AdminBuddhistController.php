@@ -23,20 +23,20 @@ class AdminBuddhistController extends Controller
 
     public function index()
     {
-        $buddhist = Buddhist::where('active', '1')->orderBy('created_at', 'desc')->with(["type", "user"])->get();
+        $buddhist = Buddhist::all()->orderBy('created_at', 'desc')->with(["type", "user"])->get();
 
         return AdminBuddhistResource::collection($buddhist);
     }
 
     public function getActive()
     {
-        $buddhist = Buddhist::where('end_time', '>', Carbon::now())->where('active', '1')->with('type')->orderBy("created_at", "desc")->get();
+        $buddhist = Buddhist::where('end_time', '>', Carbon::now())->with('type')->orderBy("created_at", "desc")->get();
         return AdminBuddhistResource::collection($buddhist);
     }
 
     public function getNonActive()
     {
-        $buddhist = Buddhist::where('end_time', '<=', Carbon::now())->where('active', '0')->with('type')->orderBy("created_at", "desc")->get();
+        $buddhist = Buddhist::where('end_time', '<=', Carbon::now())->where('active', "!=", "disabled")->with('type')->orderBy("created_at", "desc")->get();
 
         return AdminBuddhistResource::collection($buddhist);
 
@@ -76,7 +76,7 @@ class AdminBuddhistController extends Controller
 
     public function getDisableBuddhist()
     {
-        $buddhist = Buddhist::where("active", "0")->with('type')->orderBy("created_at", "desc")->get();
+        $buddhist = Buddhist::where("active", "disabled")->with('type')->orderBy("created_at", "desc")->get();
         return AdminBuddhistResource::collection($buddhist);
     }
 
