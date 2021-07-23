@@ -23,7 +23,7 @@ class AdminBuddhistController extends Controller
 
     public function index()
     {
-        $buddhist = Buddhist::all()->orderBy('created_at', 'desc')->with(["type", "user"]);
+        $buddhist = Buddhist::orderBy('created_at', 'desc')->with(["type", "user"])->get();
 
         return AdminBuddhistResource::collection($buddhist);
     }
