@@ -120,11 +120,21 @@ class ReplyController extends Controller
                 ->withData($comment_notification_data);
             $messaging->send($comment_message);
 
+            NotificationFirebase::create([
+                'notification_time' => date('Y-m-d H:i:s'),
+                'read' => 1,
+                'data' => $request->message,
+                'buddhist_id' => $request->buddhist_id,
+                'user_id' => Auth::id(),
+                'notification_type' => "message_participant",
+                'comment_path' => 'Comments/' . $request->buddhist_id . '/' . $request->comment_id . '/replies/' . $reply_key,
+            ]);
+
             if (Auth::id() != $bud->user_id) {
                 $notificationData = NotificationFirebase::
                     where([
                     ["buddhist_id", $request->buddhist_id],
-                    ["notification_type", "message"],
+                    ["notification_type", "message_participant"],
                     ["user_id", "!=", Auth::id()],
                 ])->select("user_id")->distinct()->get();
 
