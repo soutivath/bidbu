@@ -369,19 +369,17 @@ class BuddhistController extends Controller
                         ["user_id", "!=", Auth::id()],
 
                     ])->select("user_id")->distinct()->get();
-                    if ($notificationData != null) {
-                        for ($i = 0; $i < count($notificationData); $i++) {
-                            NotificationFirebase::create([
-                                'notification_time' => date('Y-m-d H:i:s'),
-                                'read' => 0,
-                                'data' => $request->bidding_price,
-                                'buddhist_id' => $request->buddhist_id,
-                                'user_id' => $notificationData[$i]["user_id"],
-                                'notification_type' => "bidding",
-                                'comment_path' => 'empty',
-                            ]);
 
-                        }
+                    for ($i = 0; $i < count($notificationData); $i++) {
+                        NotificationFirebase::create([
+                            'notification_time' => date('Y-m-d H:i:s'),
+                            'read' => 0,
+                            'data' => $request->bidding_price,
+                            'buddhist_id' => $request->buddhist_id,
+                            'user_id' => $notificationData[$i]["user_id"],
+                            'notification_type' => "bidding",
+                            'comment_path' => 'empty',
+                        ]);
 
                     }
 
