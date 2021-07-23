@@ -356,10 +356,11 @@ class BuddhistController extends Controller
                     'read' => 1,
                     'data' => $request->bidding_price,
                     'notification_type' => "bidding_participant",
-                    'comment_path' => 'empty',
-                    'buddhist_id' => $request->buddhist_id,
                     'user_id' => Auth::id(),
+                    'buddhist_id' => $request->buddhist_id,
+                    'comment_path' => 'empty',
                 ]);
+
                 if (Auth::id() != $bud->user_id) {
 
                     $notificationData = NotificationFirebase::

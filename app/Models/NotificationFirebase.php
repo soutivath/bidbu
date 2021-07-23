@@ -10,7 +10,7 @@ class NotificationFirebase extends Model
 {
 
     use HasFactory;
-    protected $fillable = ['notification_time', 'buddhist_id', 'user_id', 'read', 'data', 'notification_type', 'bidding'];
+    protected $fillable = ['notification_time', 'buddhist_id', 'user_id', 'read', 'data', 'notification_type', 'bidding', 'comment_path'];
     protected $table = "notification";
     public function buddhist()
     {
