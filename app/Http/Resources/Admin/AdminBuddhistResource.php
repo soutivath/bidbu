@@ -28,7 +28,7 @@ class AdminBuddhistResource extends JsonResource
         $highBidUser;
         try {
             $highBidUser = User::find($this->highBidUser);
-            if ($highBidUser->id == $buddhist->user_id) {
+            if ($highBidUser->id == $this->user_id) {
                 $highBidUser = null;
             }
         } catch (ModelNotFoundException $e) {
