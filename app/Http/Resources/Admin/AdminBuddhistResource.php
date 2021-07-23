@@ -28,6 +28,9 @@ class AdminBuddhistResource extends JsonResource
         $highBidUser;
         try {
             $highBidUser = User::find($this->highBidUser);
+            if ($highBidUser->id == $buddhist->user_id) {
+                $highBidUser = null;
+            }
         } catch (ModelNotFoundException $e) {
             $highBidUser = null;
         }
@@ -56,14 +59,9 @@ class AdminBuddhistResource extends JsonResource
             'owner_id' => $this->user_id,
 
             'images' => $allImage,
-            'pay_choice' => $this->pay_choice,
-            'bank_name' => $this->bank_name,
-            'account_name' => $this->account_name,
-            'account_number' => $this->account_number,
-            'sending_choice' => $this->sending_choice,
-            'place_send' => $this->place_send,
-            'tel' => $this->tel,
-            'more_info' => $this->more_info,
+
+            'tel' => $this->user->tel,
+
             'place' => $this->place,
             'status' => $this->status,
             'highBidUserName' => $highBidUser != null ? $highBidUser->name : "NOT FOUND",
