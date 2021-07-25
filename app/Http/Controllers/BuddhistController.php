@@ -260,7 +260,7 @@ class BuddhistController extends Controller
         }
         $bud = Buddhist::findOrFail($request->buddhist_id);
         if ($bud->active == 0) {
-            return response()->json(["message" => "this buddhist not available to bid"], 200);
+            return response()->json(["message" => "this buddhist not available to bid"], 404);
         }
         if (Auth::id() == $bud->user_id) {
             return response()->json(["message" => "You can't bid your buddhist"], 403);

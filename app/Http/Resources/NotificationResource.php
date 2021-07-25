@@ -28,7 +28,7 @@ class NotificationResource extends JsonResource
             'image' => $anImage,
             'buddhist_name' => $this->buddhist->name,
             'data' => $this->buddhist->price,
-            'time' => $this->created_at,
+            'time' => $this->notification_time,
             'read' => $this->read,
             'notification_type' => $this->notification_type,
             'comment_path' => $this->comment_path,
