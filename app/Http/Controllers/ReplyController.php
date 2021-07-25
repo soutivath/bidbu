@@ -3,14 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\Buddhist;
+use App\Models\NotificationFirebase;
 use App\Models\Reply;
 use Auth;
 use Carbon\carbon;
 use Illuminate\Http\Request;
 use Kreait\Firebase\Messaging\CloudMessage;
 use Kreait\Firebase\Messaging\Notification;
-use App\Models\NotificationFirebase;
-
 
 class ReplyController extends Controller
 {
@@ -101,7 +100,7 @@ class ReplyController extends Controller
                 'sender' => Auth::id(),
                 "page" => 'listreplies',
             ];
-            $owner_message = CloudMessage::withTarget('topic', $ownerBuddhist->topic)
+            $owner_message = CloudMessage::withTarget('topic', $ownerBuddhist->user->topic)
                 ->withNotification($owner_notification)
                 ->withData($owner_notification_data);
             $messaging->send($owner_message);

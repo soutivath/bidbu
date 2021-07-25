@@ -88,7 +88,7 @@ class CommentController extends Controller
             }
 
             $owner_notification = Notification::fromArray([
-                'title' => 'ທ່ານມີການສະແດງຄວາມຄິດເຫັນໃໝ່ຈາກ ' . $ownerBuddhist->name . ' ທີ່ທ່ານໄດ້ປ່ອຍ',
+                'title' => 'ຄວາມຄິດເຫັນໃໝ່ຈາກ ' . $ownerBuddhist->name . ' ທີ່ທ່ານໄດ້ປ່ອຍ',
                 'body' => $request->message,
                 'image' => \public_path("/notification_images/chat.png"),
             ]);
@@ -98,14 +98,14 @@ class CommentController extends Controller
                 'comment_id' => $comment_id,
                 'page' => 'content_detail',
             ];
-            $owner_message = CloudMessage::withTarget('topic', $ownerBuddhist->topic)
+            $owner_message = CloudMessage::withTarget('topic', $ownerBuddhist->user->topic)
                 ->withNotification($owner_notification)
                 ->withData($owner_notification_data);
             $messaging->send($owner_message);
 
             //*******/
             $comment_notification = Notification::fromArray([
-                'title' => 'ທ່ານມີແຈ້ງເຕຶອນໃໝ່ຈາກ ' . $ownerBuddhist->name . ' ທີ່ທ່ານໄດ້ສະແດງຄວາມຄິດເຫັນ',
+                'title' => 'ຄວາມຄິດເຫັນໃຫມ່ຈາກ ' . $ownerBuddhist->name,
                 'body' => $request->message,
                 'image' => \public_path("/notification_images/chat.png"),
             ]);
@@ -115,7 +115,7 @@ class CommentController extends Controller
                 'comment_id' => $comment_id,
                 'page' => 'content_detail',
             ];
-            $comment_message = CloudMessage::withTarget('topic', $ownerBuddhist->comment_topic)
+            $comment_message = CloudMessage::withTarget('topic', $ownerBuddhist->comment_topic . $comment_id)
                 ->withNotification($comment_notification)
                 ->withData($comment_notification_data);
             $messaging->send($comment_message);
