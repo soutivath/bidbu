@@ -285,6 +285,8 @@ class BuddhistController extends Controller
                 ->equalTo(Auth::user()->firebase_uid)
                 ->getSnapshot();
             $data = $reference1->getValue();
+            $ownerBuddhist = Buddhist::find($request->buddhist_id);
+
             $ownerID = $ownerBuddhist->user_id;
 
             if (empty($data) && Auth::id() != $ownerID) {
