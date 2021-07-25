@@ -310,7 +310,7 @@ class BuddhistController extends Controller
                 $bud->save();
 
                 $ownerBuddhist = Buddhist::find($request->buddhist_id);
-                $ownerID = $ownerBuddhist->user_id;
+                $ownerID = $ownerBuddhist->user->id;
                 $ownerFcmToken = $ownerBuddhist->user->firebase_uid;
                 $ownerTopic = $ownerBuddhist->user->topic;
 
