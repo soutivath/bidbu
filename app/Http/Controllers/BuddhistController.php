@@ -285,6 +285,10 @@ class BuddhistController extends Controller
                 ->equalTo(Auth::user()->firebase_uid)
                 ->getSnapshot();
             $data = $reference1->getValue();
+            if (empty($data) && Auth::id() != $ownerID) {
+                $messaging->subscribeToTopic($ownerBuddhist->topic, $request->fcm_token);
+            }
+
             return response()->json(["message" => $data], 200);
             if ((int) $request->bidding_price > (int) $highest_price) {
                 if ((int) $request->bidding_price - (int) $highest_price < (int) $bud->priceSmallest) {
