@@ -19,6 +19,7 @@ class TypeController extends Controller
     public function __construct()
     {
         $this->middleware('auth:api')->except(["index", "show"]);
+        $this->middleware('isUserActive:api')->except(["index", "show"]);
     }
     public function index()
     {

@@ -45,6 +45,9 @@ class apiAuthController extends Controller
 
         $uid = $verifiedIdToken->claims()->get('sub');
         if (User::where('firebase_uid', $uid)->first()) {
+            if (User::where('firebase_uid', $uid)->first()->active == 0) {
+                return response()->json(["message" => "Your account has been shutdown"], 403);
+            }
             $client = new \GuzzleHttp\Client(
                 [
                     'timeout' => 60,
@@ -246,7 +249,7 @@ class apiAuthController extends Controller
         $user->save();
         return response()->json([
             "message" => "Your password change successfully",
-        ]);
+        ],200);
 
     }
 

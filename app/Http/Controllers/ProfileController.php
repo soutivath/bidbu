@@ -2,15 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\User;
 use App\Http\Resources\UserProfile;
+use App\Models\User;
 use Auth;
+
 class ProfileController extends Controller
 {
     public function __construct()
     {
         $this->middleware("auth:api")->only("show");
+        $this->middleware('isUserActive:api')->only("show");
 
     }
     public function show()

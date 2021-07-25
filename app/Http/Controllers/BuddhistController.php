@@ -26,6 +26,7 @@ class BuddhistController extends Controller
     public function __construct()
     {
         $this->middleware('auth:api')->except('index', 'show', 'buddhistType', 'recommendedBuddhist');
+        $this->middleware('isUserActive:api')->except('index', 'show', 'buddhistType', 'recommendedBuddhist');
     }
     public function index()
     {

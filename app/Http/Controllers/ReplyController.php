@@ -23,6 +23,7 @@ class ReplyController extends Controller
     public function __construct()
     {
         $this->middleware('auth:api');
+        $this->middleware('isUserActive:api');
     }
 
     public function index()
