@@ -14,7 +14,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Image;
 use Kreait\Firebase\Messaging\CloudMessage;
-use Kreait\Firebase\Messaging\Notification;
 
 class BuddhistController extends Controller
 {
@@ -319,37 +318,63 @@ class BuddhistController extends Controller
                     $messaging->subscribeToTopic($ownerBuddhist->topic, $request->fcm_token);
                 }
 
-                $bidding_notification = Notification::fromArray([
-                    'title' => 'ຈາກ ' . $ownerBuddhist->name,
-                    'body' => 'ມີຄົນໃຫ້ລາຄາສູງກວ່າໃນລາຄາ ' . $request->bidding_price . ' ກີບ',
-                    'image' => \public_path("/notification_images/chat.png"),
+                /* $bidding_notification = Notification::fromArray([
+                'title' => 'ຈາກ ' . $ownerBuddhist->name,
+                'body' => 'ມີຄົນໃຫ້ລາຄາສູງກວ່າໃນລາຄາ ' . $request->bidding_price . ' ກີບ',
+                'image' => \public_path("/notification_images/chat.png"),
 
                 ]);
                 $bidding_notification_data = [
-                    'sender' => Auth::id(),
-                    'buddhist_id' => $request->buddhist_id,
-                    'page' => 'homepage',
+                'sender' => Auth::id(),
+                'buddhist_id' => $request->buddhist_id,
+                'page' => 'homepage',
 
                 ];
                 $bidding_message = CloudMessage::withTarget('topic', $ownerBuddhist->topic)
-                    ->withNotification($bidding_notification)
-                    ->withData($bidding_notification_data);
+                ->withNotification($bidding_notification)
+                ->withData($bidding_notification_data);
+                $messaging->send($bidding_message);*/
+                $bidding_message = CloudMessage::withTarget('topic', $ownerBuddhist->topic)
+                    ->withNotification([
+                        'title' => 'ຈາກ ' . $ownerBuddhist->name,
+                        'body' => 'ມີຄົນໃຫ້ລາຄາສູງກວ່າໃນລາຄາ ' . $request->bidding_price . ' ກີບ',
+                        'image' => \public_path("/notification_images/chat.png"),
+                    ])
+                    ->withData([
+                        'sender' => Auth::id(),
+                        'buddhist_id' => $request->buddhist_id,
+                        'page' => 'homepage',
+
+                    ]);
                 $messaging->send($bidding_message);
 
-                $owner_notification = Notification::fromArray([
-                    'title' => 'ຈາກ ' . $ownerBuddhist->name . ' ທີ່ທ່ານໄດ້ປ່ອຍ',
-                    'body' => 'ມີຄົນສະເໜີລາຄາ ' . $request->bidding_price . ' ກີບ',
-                    'image' => \public_path("/notification_images/chat.png"),
+                /* $owner_notification = Notification::fromArray([
+                'title' => 'ຈາກ ' . $ownerBuddhist->name . ' ທີ່ທ່ານໄດ້ປ່ອຍ',
+                'body' => 'ມີຄົນສະເໜີລາຄາ ' . $request->bidding_price . ' ກີບ',
+                'image' => \public_path("/notification_images/chat.png"),
                 ]);
                 $owner_notification_data = [
-                    'sender' => Auth::id(),
-                    'buddhist_id' => $request->buddhist_id,
-                    'page' => 'content_detail',
+                'sender' => Auth::id(),
+                'buddhist_id' => $request->buddhist_id,
+                'page' => 'content_detail',
 
                 ];
                 $owner_message = CloudMessage::withTarget('topic', $ownerTopic)
-                    ->withNotification($owner_notification)
-                    ->withData($owner_notification_data);
+                ->withNotification($owner_notification)
+                ->withData($owner_notification_data);
+                $messaging->send($owner_message);*/
+                $owner_message = CloudMessage::withTarget('topic', $ownerTopic)
+                    ->withNotification([
+                        'title' => 'ຈາກ ' . $ownerBuddhist->name . ' ທີ່ທ່ານໄດ້ປ່ອຍ',
+                        'body' => 'ມີຄົນສະເໜີລາຄາ ' . $request->bidding_price . ' ກີບ',
+                        'image' => \public_path("/notification_images/chat.png"),
+                    ])
+                    ->withData([
+                        'sender' => Auth::id(),
+                        'buddhist_id' => $request->buddhist_id,
+                        'page' => 'content_detail',
+
+                    ]);
                 $messaging->send($owner_message);
 
                 // get all data from notification to found all user that bid this round
