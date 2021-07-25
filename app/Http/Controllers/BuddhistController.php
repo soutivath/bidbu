@@ -315,7 +315,7 @@ class BuddhistController extends Controller
                 $ownerTopic = $ownerBuddhist->user->topic;
 
                 $messaging = app('firebase.messaging');
-                if (empty($data) && Auth::user()->firebase_uid != $ownerFcmToken) {
+                if (empty($data) && Auth::id() != $ownerID) {
                     $messaging->subscribeToTopic($ownerBuddhist->topic, $request->fcm_token);
                 }
 
