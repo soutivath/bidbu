@@ -286,6 +286,7 @@ class BuddhistController extends Controller
                 ->getSnapshot();
             $data = $reference1->getValue();
             if (empty($data) && Auth::id() != $ownerID) {
+                return response()->json(["message" => "sub"], 200);
                 $messaging->subscribeToTopic($ownerBuddhist->topic, $request->fcm_token);
             }
 
