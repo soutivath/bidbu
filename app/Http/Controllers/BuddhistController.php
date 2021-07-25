@@ -250,11 +250,11 @@ class BuddhistController extends Controller
     public function bidding(Request $request)
     {
 
-        /* $request->validate([
-        'bidding_price' => 'required|numeric|gt:0',
-        'fcm_token' => 'required|string',
-        'buddhist_id' => 'required|string',
-        ]);*/
+        $request->validate([
+            'bidding_price' => 'required|numeric|gt:0',
+            'fcm_token' => 'required|string',
+            'buddhist_id' => 'required|string',
+        ]);
         if (Auth::user()->hasRole("admin") || Auth::user()->hasRole("superadmin")) {
             return response()->json(["message" => "only user can't use this function"], 403);
         }
@@ -285,16 +285,7 @@ class BuddhistController extends Controller
                 ->equalTo(Auth::user()->firebase_uid)
                 ->getSnapshot();
             $data = $reference1->getValue();
-            $ownerBuddhist = Buddhist::find($request->buddhist_id);
 
-            $ownerID = $ownerBuddhist->user_id;
-
-            if (empty($data) && Auth::id() != $ownerID) {
-                return response()->json(["message" => "sub"], 200);
-                $messaging->subscribeToTopic($ownerBuddhist->topic, $request->fcm_token);
-            }
-
-            return response()->json(["message" => $data], 200);
             if ((int) $request->bidding_price > (int) $highest_price) {
                 if ((int) $request->bidding_price - (int) $highest_price < (int) $bud->priceSmallest) {
                     return response()->json([
