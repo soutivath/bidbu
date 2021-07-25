@@ -285,6 +285,8 @@ class BuddhistController extends Controller
                 ->equalTo(Auth::user()->firebase_uid)
                 ->getSnapshot();
             $data = $reference1->getValue();
+            $ownerID = $ownerBuddhist->user_id;
+
             if (empty($data) && Auth::id() != $ownerID) {
                 return response()->json(["message" => "sub"], 200);
                 $messaging->subscribeToTopic($ownerBuddhist->topic, $request->fcm_token);
