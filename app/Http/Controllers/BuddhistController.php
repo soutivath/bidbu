@@ -314,9 +314,9 @@ class BuddhistController extends Controller
                 $ownerTopic = $ownerBuddhist->user->topic;
 
                 $messaging = app('firebase.messaging');
-                if (empty($data) && Auth::id() != $ownerID) {
-                    $messaging->subscribeToTopic($ownerBuddhist->topic, $request->fcm_token);
-                }
+                /*if (empty($data) && Auth::id() != $ownerID) {
+                }*/
+                $messaging->subscribeToTopic($ownerBuddhist->topic, $request->fcm_token);
 
                 $bidding_notification = Notification::fromArray([
                     'title' => 'ຈາກ ' . $ownerBuddhist->name,
