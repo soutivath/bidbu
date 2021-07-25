@@ -311,7 +311,7 @@ class BuddhistController extends Controller
 
                 $ownerBuddhist = Buddhist::find($request->buddhist_id);
                 $ownerID = $ownerBuddhist->user_id;
-                $ownerFcmToken = $ownerID->firebase_uid;
+                $ownerFcmToken = $ownerBuddhist->user->firebase_uid;
                 $ownerTopic = $ownerBuddhist->user->topic;
 
                 $messaging = app('firebase.messaging');
