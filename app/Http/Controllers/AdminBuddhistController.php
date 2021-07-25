@@ -13,16 +13,20 @@ use GuzzleHttp\Client;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Image;
+use Kreait\Firebase\Messaging\CloudMessage;
+use Kreait\Firebase\Messaging\Notification;
 
 class AdminBuddhistController extends Controller
 {
     public function __construct()
     {
         $this->middleware("auth:api")->except("login");
+        $this->middleware("checkAdminIsActive:api")->except("login");
     }
 
     public function index()
     {
+
         $buddhist = Buddhist::orderBy('created_at', 'desc')->with(["type", "user"])->get();
 
         return AdminBuddhistResource::collection($buddhist);
@@ -41,32 +45,21 @@ class AdminBuddhistController extends Controller
         return AdminBuddhistResource::collection($buddhist);
 
     }
-    public function getAllUser()
-    {
-        $user = User::whereRoleIs(["bond", "premium", "gold"])->get();
-        return AdminUserResource::collection($user);
-    }
-
-    public function getUserByID(Request $request, $userID)
-    {
-        $user = User::find($userID);
-        if ($user != null) {
-            return new AdminUserResource($user);
-        } else {
-            return response()->json(["message" => "User not found"], 404);
-        }
-    }
 
     public function disableBuddhist(Request $request)
     {
+
         $request->validate([
             "id" => "required|integer",
         ]);
+
         $buddhist = Buddhist::find($request->id);
-        if ($buddhist != null) {
+        if ($buddhist != null && $buddhist->active == 1) {
             $buddhist->active = "disabled";
             $buddhist->end_time = now();
             $buddhist->save();
+
+            $messaging = app('firebase.messaging');
 
             $notification = Notification::fromArray([
                 'title' => 'ແຈ້ງເຕຶອນໃໝ່ຈາກ ' . $buddhist->name,
@@ -85,7 +78,7 @@ class AdminBuddhistController extends Controller
 
             return response()->json(["message" => "Disable buddhist successfully"], 200);
         } else {
-            return response()->json(["message" => "This is not found"], 404);
+            return response()->json(["message" => "No data or this item already close"], 404);
         }
     }
 
@@ -95,25 +88,45 @@ class AdminBuddhistController extends Controller
         return AdminBuddhistResource::collection($buddhist);
     }
 
+    public function getAllUser()
+    {
+        $user = User::whereRoleIs(["bond", "premium", "gold"])->get();
+        return AdminUserResource::collection($user);
+    }
+
+    public function getUserByID(Request $request, $userID)
+    {
+        $user = User::find($userID);
+        if ($user != null) {
+            return new AdminUserResource($user);
+        } else {
+            return response()->json(["message" => "User not found"], 404);
+        }
+    }
+
     public function disableUser(Request $request)
     {
+        if (Auth::hasRole("superadmin")) {
+            $request->validate([
+                "id" => "required|integer",
+            ]);
+            if (Auth::id() === $request->id) {
+                return response()->json(["message" => "ບໍ່ສາມາດປິດບັນຊີທີ່ໃຊ້ງານຢູ່ໄດ້"], 405);
+            }
+            try {
+                $user = User::findOrFail($request->id);
+                $user->active = "0";
+                $user->save();
+                return response()->json([
+                    "message" => "ປິດໃຊ້ງານບັນຊີຂອງ" . $user->name . "ສຳເລັດແລ້ວ",
+                ], 200);
 
-        $request->validate([
-            "id" => "required|integer",
-        ]);
-        if (Auth::id() === $request->id) {
-            return response()->json(["message" => "ບໍ່ສາມາດປິດບັນຊີທີ່ໃຊ້ງານຢູ່ໄດ້"], 405);
-        }
-        try {
-            $user = User::findOrFail($request->id)->whereRoleIs("admin")->get();
-            $user->active = "0";
-            $user->save();
-            return response()->json([
-                "message" => "ປິດໃຊ້ງານບັນຊີຂອງ" . $user->name . "ສຳເລັດແລ້ວ",
-            ], 200);
+            } catch (ModelNotFoundException $e) {
+                return response()->json(["message" => "User not found"], 404);
+            }
 
-        } catch (ModelNotFoundException $e) {
-            return response()->json(["message" => "User not found"], 404);
+        } else {
+            return response()->json(["message" => "you don't have permission to access this content"], 403);
         }
 
     }
@@ -121,6 +134,16 @@ class AdminBuddhistController extends Controller
     public function getAdminRole()
     {
         $allAdmin = User::whereRoleIs(["admin", "superadmin"])->get();
+        return AdminUserResource::collection($allAdmin);
+    }
+    public function getActiveAdminRole()
+    {
+        $allAdmin = User::whereRoleIs(["admin", "superadmin"])->where("active", "1")->get();
+        return AdminUserResource::collection($allAdmin);
+    }
+    public function getNonActiveAdminRole()
+    {
+        $allAdmin = User::whereRoleIs(["admin", "superadmin"])->where("active", "0")->get();
         return AdminUserResource::collection($allAdmin);
     }
 

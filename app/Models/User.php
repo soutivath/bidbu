@@ -67,4 +67,14 @@ class User extends Authenticatable
         "/" . "profile_image/" . $this->picture;
     }
 
+    public function isActiveAdmin()
+    {
+        if ($this->hasRole(["superadmin", "admin"]) && $this->active == 1) {
+            return true;
+        } else {
+            return false;
+        }
+
+    }
+
 }

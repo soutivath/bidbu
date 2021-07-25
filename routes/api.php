@@ -89,10 +89,14 @@ Route::get("/admin/user", [App\Http\Controllers\AdminBuddhistController::class, 
 
 Route::post("/admin/user/disable/", [App\Http\Controllers\AdminBuddhistController::class, "disableUser"]);
 
+//all admin
 Route::get("/admin/allAdmin", [App\Http\Controllers\AdminBuddhistController::class, "getAdminRole"]);
+Route::get("/admin/allActiveAdmin", [App\Http\Controllers\AdminBuddhistController::class, "getActiveAdminRole"]);
+Route::get("/admin/allNonActiveAdmin", [App\Http\Controllers\AdminBuddhistController::class, "getNonActiveAdminRole"]);
+
 Route::post("/admin/register", [App\Http\Controllers\AdminBuddhistController::class, "register"]);
 Route::get("/admin/user/{id}", [App\Http\Controllers\AdminBuddhistController::class, "getUserByID"]);
-Route::delete("/admin/buddhist/disable/", [App\Http\Controllers\AdminBuddhistController::class, "disableBuddhist"]);
+Route::put("/admin/buddhist/disable/", [App\Http\Controllers\AdminBuddhistController::class, "disableBuddhist"]);
 Route::get("/admin/buddhist/disabled/", [App\Http\Controllers\AdminBuddhistController::class, "getDisableBuddhist"]);
 Route::post("/admin/login", [App\Http\Controllers\AdminBuddhistController::class, "login"]);
 
