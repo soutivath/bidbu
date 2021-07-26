@@ -26,6 +26,7 @@ class AdminUserResource extends JsonResource
             "province" => $this->province,
             "created_at" => $this->created_at,
             "role" => $this->roles[0]->display_name,
+            "active" => $this->active,
         ];
     }
 }
