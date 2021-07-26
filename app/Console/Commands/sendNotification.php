@@ -7,7 +7,6 @@ use App\Models\NotificationFirebase;
 use App\Models\User;
 use Illuminate\Console\Command;
 use Kreait\Firebase\Messaging\CloudMessage;
-use Kreait\Firebase\Messaging\Notification;
 
 class sendNotification extends Command
 {
@@ -48,49 +47,80 @@ class sendNotification extends Command
 
             $deviceToken = $buddhist->winner_fcm_token;
             if ($deviceToken == "empty") {
-                $notification = Notification::fromArray([
-                    'title' => 'ທ່ານມີການແຈ້ງເຕືອນໃໝ່ຈາກ ' . $buddhist->name . ' ທີ່ທ່ານໄດ້ປ່ອຍ',
-                    'body' => 'ການປະມູນຈົບລົງແລ້ວ ບໍ່ມີຄົນເຂົ້າຮ່ວມການປະມູນຂອງທ່ານ',
-                    'image' => \public_path("/notification_images/chat.png"),
+                /* $notification = Notification::fromArray([
+                'title' => 'ທ່ານມີການແຈ້ງເຕືອນໃໝ່ຈາກ ' . $buddhist->name . ' ທີ່ທ່ານໄດ້ປ່ອຍ',
+                'body' => 'ການປະມູນຈົບລົງແລ້ວ ບໍ່ມີຄົນເຂົ້າຮ່ວມການປະມູນຂອງທ່ານ',
+                'image' => \public_path("/notification_images/chat.png"),
                 ]);
                 $notification_data = [
-                    'buddhist_id' => $buddhist->id,
-                    'page' => 'content_detail',
+                'buddhist_id' => $buddhist->id,
+                'page' => 'content_detail',
                 ];
                 $message = CloudMessage::withTarget("topic", $buddhist->user->topic)
-                    ->withNotification($notification)
-                    ->withData($notification_data);
+                ->withNotification($notification)
+                ->withData($notification_data);*/
+                $message = CloudMessage::withTarget("topic", $buddhist->user->topic)
+                    ->withNotification([
+                        'title' => 'ຈາກ ' . $buddhist->name . ' ທີ່ທ່ານໄດ້ປ່ອຍ',
+                        'body' => 'ການປະມູນຈົບລົງແລ້ວ ບໍ່ມີຄົນເຂົ້າຮ່ວມການປະມູນຂອງທ່ານ',
+                        'image' => \public_path("/notification_images/chat.png"),
+                    ])
+                    ->withData([
+                        'buddhist_id' => $buddhist->id,
+                        'page' => 'content_detail',
+                    ]);
                 $messaging->send($message);
             } else {
                 $userData = User::where("firebase_uid", $buddhist->winner_user_id)->first();
 
-                $notification = Notification::fromArray([
-                    'title' => 'ທ່ານມີການແຈ້ງເຕືອນໃໝ່ຈາກ ' . $buddhist->name . ' ທີ່ທ່ານໄດ້ປ່ອຍ',
-                    'body' => 'ການປະມູນຈົບລົງດ້ວຍເງິນຈຳນວນ ' . $buddhist->highest_price . " ກີບ",
-                    'image' => \public_path("/notification_images/chat.png"),
+                /*$notification = Notification::fromArray([
+                'title' => 'ທ່ານມີການແຈ້ງເຕືອນໃໝ່ຈາກ ' . $buddhist->name . ' ທີ່ທ່ານໄດ້ປ່ອຍ',
+                'body' => 'ການປະມູນຈົບລົງດ້ວຍເງິນຈຳນວນ ' . $buddhist->highest_price . " ກີບ",
+                'image' => \public_path("/notification_images/chat.png"),
                 ]);
                 $notification_data = [
-                    'buddhist_id' => $buddhist->id,
-                    'page' => 'content_detail',
+                'buddhist_id' => $buddhist->id,
+                'page' => 'content_detail',
                 ];
                 $message = CloudMessage::withTarget('topic', $buddhist->user->topic)
-                    ->withNotification($notification)
-                    ->withData($notification_data);
+                ->withNotification($notification)
+                ->withData($notification_data);*/
+                $message = CloudMessage::withTarget('topic', $buddhist->user->topic)
+                    ->withNotification([
+                        'title' => 'ຈາກ ' . $buddhist->name . ' ທີ່ທ່ານໄດ້ປ່ອຍ',
+                        'body' => 'ການປະມູນຈົບລົງດ້ວຍເງິນຈຳນວນ ' . $buddhist->highest_price . " ກີບ",
+                        'image' => \public_path("/notification_images/chat.png"),
+                    ])
+                    ->withData([
+                        'buddhist_id' => $buddhist->id,
+                        'page' => 'content_detail',
+                    ]);
+
                 $messaging->send($message);
 //***** Send to winner */
-                $notification = Notification::fromArray([
-                    'title' => 'ທ່ານມີການແຈ້ງເຕືອນໃໝ່ຈາກ ' . $buddhist->name . ' ທີ່ທ່ານໄດ້ປະມູນ',
-                    'body' => 'ການປະມູນຈົບລົງແລ້ວ ທ່ານຊະນະການປະມູນດ້ວຍເງິນຈຳນວນ ' . $buddhist->highest_price . " ກີບ",
-                    'image' => \public_path("/notification_images/chat.png"),
+                /* $notification = Notification::fromArray([
+                'title' => 'ທ່ານມີການແຈ້ງເຕືອນໃໝ່ຈາກ ' . $buddhist->name . ' ທີ່ທ່ານໄດ້ປະມູນ',
+                'body' => 'ການປະມູນຈົບລົງແລ້ວ ທ່ານຊະນະການປະມູນດ້ວຍເງິນຈຳນວນ ' . $buddhist->highest_price . " ກີບ",
+                'image' => \public_path("/notification_images/chat.png"),
                 ]);
                 $notification_data = [
-                    'buddhist_id' => $buddhist->id,
-                    'page' => 'content_detail',
+                'buddhist_id' => $buddhist->id,
+                'page' => 'content_detail',
                 ];
                 $message = CloudMessage::withTarget('topic', $userData->topic)
-                    ->withNotification($notification)
-                    ->withData($notification_data);
-                $messaging->send($message);
+                ->withNotification($notification)
+                ->withData($notification_data);*/
+                $messageWinner = CloudMessage::withTarget('topic', $userData->topic)
+                    ->withNotification([
+                        'title' => 'ຈາກ ' . $buddhist->name . ' ທີ່ທ່ານໄດ້ປະມູນ',
+                        'body' => 'ທ່ານຊະນະການປະມູນດ້ວຍເງິນຈຳນວນ ' . $buddhist->highest_price . " ກີບ",
+                        'image' => \public_path("/notification_images/chat.png"),
+                    ])
+                    ->withData([
+                        'buddhist_id' => $buddhist->id,
+                        'page' => 'content_detail',
+                    ]);
+                $messaging->send($messageWinner);
 
                 $notificationData = NotificationFirebase::
                     where([
@@ -112,21 +142,35 @@ class sendNotification extends Command
 
                 }
 
-                $bidding_notification = Notification::fromArray([
-                    'title' => 'ທ່ານມີການແຈ້ງເຕືອນໃໝ່ຈາກ ' . $buddhist->name,
-                    'body' => 'ການປະມູນຈົບລົງແລ້ວ ທ່ານປະມູນບໍ່ຊະນະ',
-                    'image' => \public_path("/notification_images/chat.png"),
+                /*  $bidding_notification = Notification::fromArray([
+                'title' => 'ຈາກ ' . $buddhist->name,
+                'body' => 'ການປະມູນຈົບລົງແລ້ວ ທ່ານປະມູນບໍ່ຊະນະ',
+                'image' => \public_path("/notification_images/chat.png"),
 
                 ]);
                 $bidding_notification_data = [
-                    'sender' => $userData->id,
-                    'buddhist_id' => $buddhist->id,
-                    'page' => 'homepage',
+                'sender' => $userData->id,
+                'buddhist_id' => $buddhist->id,
+                'page' => 'homepage',
 
                 ];
                 $bidding_message = CloudMessage::withTarget('topic', $buddhist->topic)
-                    ->withNotification($bidding_notification)
-                    ->withData($bidding_notification_data);
+                ->withNotification($bidding_notification)
+                ->withData($bidding_notification_data);
+                $messaging->send($bidding_message);*/
+                $bidding_message = CloudMessage::withTarget('topic', $buddhist->topic)
+                    ->withNotification([
+                        'title' => 'ຈາກ ' . $buddhist->name,
+                        'body' => 'ການປະມູນຈົບລົງແລ້ວ ທ່ານປະມູນບໍ່ຊະນະ',
+                        'image' => \public_path("/notification_images/chat.png"),
+
+                    ])
+                    ->withData([
+                        'sender' => $userData->id,
+                        'buddhist_id' => $buddhist->id,
+                        'page' => 'homepage',
+
+                    ]);
                 $messaging->send($bidding_message);
 
             }
