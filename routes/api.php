@@ -106,9 +106,9 @@ Route::get("/myActiveBuddhist", [App\Http\Controllers\BuddhistController::class,
 Route::get("/myDisabledBuddhist", [App\Http\Controllers\BuddhistController::class, "myDisabledBuddhist"]);
 Route::get("/myNonDisabledBuddhist", [App\Http\Controllers\BuddhistController::class, "myNonDisabledBuddhist"]);
 
-Route::get("admin/getAllUser", [App\Http\Controllers\BuddhistController::class, "getAllUser"]);
-Route::get("admin/getActiveUser", [App\Http\Controllers\BuddhistController::class, "getActiveUser"]);
-Route::get("admin/getDisabledUser", [App\Http\Controllers\BuddhistController::class, "getDisabledUser"]);
+Route::get("admin/getAllUser", [App\Http\Controllers\AdminBuddhistController::class, "getAllUser"]);
+Route::get("admin/getActiveUser", [App\Http\Controllers\AdminBuddhistController::class, "getActiveUser"]);
+Route::get("admin/getDisabledUser", [App\Http\Controllers\AdminBuddhistController::class, "getDisabledUser"]);
 
 Route::get("/biddingNotification", [App\Http\Controllers\notificationController::class, "biddingNotification"]);
 Route::get("/messageNotification", [App\Http\Controllers\notificationController::class, "messageNotification"]);
