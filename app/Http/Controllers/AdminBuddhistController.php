@@ -93,6 +93,16 @@ class AdminBuddhistController extends Controller
         $user = User::whereRoleIs(["bond", "premium", "gold"])->get();
         return AdminUserResource::collection($user);
     }
+    public function getActiveUser()
+    {
+        $user = User::whereRoleIs(["bond", "premium", "gold"])->where(["active", "1"])->get();
+        return AdminUserResource::collection($user);
+    }
+    public function getDisabledUser()
+    {
+        $user = User::whereRoleIs(["bond", "premium", "gold"])->where("active","0")->get();
+        return AdminUserResource::collection($user);
+    }
 
     public function getUserByID(Request $request, $userID)
     {
