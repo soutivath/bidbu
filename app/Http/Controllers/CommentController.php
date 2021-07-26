@@ -84,7 +84,7 @@ class CommentController extends Controller
 
             if (empty($data) && Auth::id() != $ownerID) {
 
-                $result = $messaging->subscribeToTopic($ownerBuddhist->comment_topic . $comment_id, $request->fcm_token);
+                $result = $messaging->subscribeToTopic($ownerBuddhist->comment_topic, $request->fcm_token);
             }
 
             $owner_notification = Notification::fromArray([
