@@ -9,7 +9,6 @@ use Auth;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Kreait\Firebase\Messaging\CloudMessage;
-use Kreait\Firebase\Messaging\Notification;
 
 class CommentController extends Controller
 {
@@ -69,7 +68,7 @@ class CommentController extends Controller
 
             //sub to topic
             $ownerBuddhist = Buddhist::find($request->buddhist_id);
-            $ownerID = $ownerBuddhist->user_id;
+            $ownerID = $ownerBuddhist->user->id;
 
             $reference = $database->getReference('Comments/' . $request->buddhist_id . '/')
                 ->push([
@@ -87,37 +86,63 @@ class CommentController extends Controller
                 $result = $messaging->subscribeToTopic($ownerBuddhist->comment_topic, $request->fcm_token);
             }
 
-            $owner_notification = Notification::fromArray([
-                'title' => 'ຄວາມຄິດເຫັນໃໝ່ຈາກ ' . $ownerBuddhist->name . ' ທີ່ທ່ານໄດ້ປ່ອຍ',
-                'body' => $request->message,
-                'image' => \public_path("/notification_images/chat.png"),
+            /*  $owner_notification = Notification::fromArray([
+            'title' => 'ຄວາມຄິດເຫັນໃໝ່ຈາກ ' . $ownerBuddhist->name . ' ທີ່ທ່ານໄດ້ປ່ອຍ',
+            'body' => $request->message,
+            'image' => \public_path("/notification_images/chat.png"),
             ]);
             $owner_notification_data = [
-                'sender' => Auth::id(),
-                'buddhist_id' => $request->buddhist_id,
-                'comment_id' => $comment_id,
-                'page' => 'content_detail',
+            'sender' => Auth::id(),
+            'buddhist_id' => $request->buddhist_id,
+            'comment_id' => $comment_id,
+            'page' => 'content_detail',
             ];
             $owner_message = CloudMessage::withTarget('topic', $ownerBuddhist->user->topic)
-                ->withNotification($owner_notification)
-                ->withData($owner_notification_data);
+            ->withNotification($owner_notification)
+            ->withData($owner_notification_data);
+            $messaging->send($owner_message);*/
+            $owner_message = CloudMessage::withTarget('topic', $ownerBuddhist->user->topic)
+                ->withNotification([
+                    'title' => 'ຄວາມຄິດເຫັນໃໝ່ຈາກ ' . $ownerBuddhist->name . ' ທີ່ທ່ານໄດ້ປ່ອຍ',
+                    'body' => $request->message,
+                    'image' => \public_path("/notification_images/chat.png"),
+                ])
+                ->withData([
+                    'sender' => Auth::id(),
+                    'buddhist_id' => $request->buddhist_id,
+                    'comment_id' => $comment_id,
+                    'page' => 'content_detail',
+                ]);
             $messaging->send($owner_message);
 
             //*******/
-            $comment_notification = Notification::fromArray([
-                'title' => 'ຄວາມຄິດເຫັນໃຫມ່ຈາກ ' . $ownerBuddhist->name,
-                'body' => $request->message,
-                'image' => \public_path("/notification_images/chat.png"),
+            /*  $comment_notification = Notification::fromArray([
+            'title' => 'ຄວາມຄິດເຫັນໃຫມ່ຈາກ ' . $ownerBuddhist->name,
+            'body' => $request->message,
+            'image' => \public_path("/notification_images/chat.png"),
             ]);
             $comment_notification_data = [
-                'sender' => Auth::id(),
-                'buddhist_id' => $request->buddhist_id,
-                'comment_id' => $comment_id,
-                'page' => 'content_detail',
+            'sender' => Auth::id(),
+            'buddhist_id' => $request->buddhist_id,
+            'comment_id' => $comment_id,
+            'page' => 'content_detail',
             ];
-            $comment_message = CloudMessage::withTarget('topic', $ownerBuddhist->comment_topic . $comment_id)
-                ->withNotification($comment_notification)
-                ->withData($comment_notification_data);
+            $comment_message = CloudMessage::withTarget('topic', $ownerBuddhist->comment_topic)
+            ->withNotification($comment_notification)
+            ->withData($comment_notification_data);
+            $messaging->send($comment_message);*/
+            $comment_message = CloudMessage::withTarget('topic', $ownerBuddhist->comment_topic)
+                ->withNotification([
+                    'title' => 'ຄວາມຄິດເຫັນໃຫມ່ຈາກ ' . $ownerBuddhist->name,
+                    'body' => $request->message,
+                    'image' => \public_path("/notification_images/chat.png"),
+                ])
+                ->withData([
+                    'sender' => Auth::id(),
+                    'buddhist_id' => $request->buddhist_id,
+                    'comment_id' => $comment_id,
+                    'page' => 'content_detail',
+                ]);
             $messaging->send($comment_message);
 
             NotificationFirebase::create([
