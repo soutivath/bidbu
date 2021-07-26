@@ -87,6 +87,7 @@ Route::get("/admin/active-buddhist", [App\Http\Controllers\AdminBuddhistControll
 Route::get("/admin/non-active-buddhist", [App\Http\Controllers\AdminBuddhistController::class, "getNonActive"]);
 
 Route::put("/admin/user/disable/", [App\Http\Controllers\AdminBuddhistController::class, "disableUser"]);
+Route::put("/admin/user/disable/admin", [App\Http\Controllers\AdminBuddhistController::class, "disableAdmin"]);
 
 //all admin
 Route::get("/admin/allAdmin", [App\Http\Controllers\AdminBuddhistController::class, "getAdminRole"]);

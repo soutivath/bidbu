@@ -8,6 +8,7 @@ use App\Models\Buddhist;
 use App\Models\User;
 use Auth;
 use carbon\Carbon;
+use File;
 use Firebase\Auth\Token\Exception\InvalidToken;
 use GuzzleHttp\Client;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -116,6 +117,52 @@ class AdminBuddhistController extends Controller
 
     public function disableUser(Request $request)
     {
+        $request->validate([
+            "id" => "required",
+        ]);
+        if (Auth::hasRole(["superadmin", "admin"])) {
+            $request->validate([
+                "id" => "required|integer",
+            ]);
+            if (Auth::id() === $request->id) {
+                return response()->json(["message" => "ບໍ່ສາມາດປິດບັນຊີທີ່ໃຊ້ງານຢູ່ໄດ້"], 405);
+            }
+            try {
+                $user = User::findOrFail($request->id);
+                if ($user->hasRole("superadmin")) {
+                    return response()->json(["message" => "you can't change super admin status"], 200);
+                }
+                if ($user->active == "0") {
+                    $user->active = "1";
+                    $user->save();
+                    return response()->json([
+                        "message" => "ເປິດໃຊ້ງານບັນຊີຂອງ" . $user->name . "ສຳເລັດແລ້ວ",
+                    ], 200);
+
+                } else {
+
+                    $user->active = "0";
+
+                    $user->save();
+                    return response()->json([
+                        "message" => "ປິດໃຊ້ງານບັນຊີຂອງ" . $user->name . "ສຳເລັດແລ້ວ",
+                    ], 200);
+                }
+
+            } catch (ModelNotFoundException $e) {
+                return response()->json(["message" => "User not found"], 404);
+            }
+
+        } else {
+            return response()->json(["message" => "you don't have permission to access this content"], 403);
+        }
+
+    }
+    public function disableAdmin(Request $request)
+    {
+        $request->validate([
+            "id" => "required",
+        ]);
         if (Auth::hasRole("superadmin")) {
             $request->validate([
                 "id" => "required|integer",
@@ -125,11 +172,25 @@ class AdminBuddhistController extends Controller
             }
             try {
                 $user = User::findOrFail($request->id);
-                $user->active = "0";
-                $user->save();
-                return response()->json([
-                    "message" => "ປິດໃຊ້ງານບັນຊີຂອງ" . $user->name . "ສຳເລັດແລ້ວ",
-                ], 200);
+                if ($user->hasRole("superadmin")) {
+                    return response()->json(["message" => "you can't change super admin status"], 200);
+                }
+                if ($user->active == "0") {
+                    $user->active = "1";
+                    $user->save();
+                    return response()->json([
+                        "message" => "ເປິດໃຊ້ງານບັນຊີຂອງ" . $user->name . "ສຳເລັດແລ້ວ",
+                    ], 200);
+
+                } else {
+
+                    $user->active = "0";
+
+                    $user->save();
+                    return response()->json([
+                        "message" => "ປິດໃຊ້ງານບັນຊີຂອງ" . $user->name . "ສຳເລັດແລ້ວ",
+                    ], 200);
+                }
 
             } catch (ModelNotFoundException $e) {
                 return response()->json(["message" => "User not found"], 404);
@@ -298,4 +359,36 @@ class AdminBuddhistController extends Controller
 
     }
 
+    public function updateProfile(Request $request)
+    {
+        $request->validate([
+            "name" => "required",
+            "surname" => "required",
+            "village" => "required",
+            "city" => "required",
+            "province" => "required",
+            'picture' => 'sometimes|image|mimes:jpeg,png,jpg|max:8192',
+        ]);
+        $user = User::find(Auth::id());
+        $user->name = $request->name;
+        $user->surname = $request->surname;
+        $user->village = $request->village;
+        $user->city = $request->city;
+        $user->province = $request->province;
+
+        if ($request->hasFile('picture')) {
+            $image = $request->file('picture');
+            $fileExtension = $image->getClientOriginalExtension();
+            $fileName = 'profile_image_' . time() . '.' . $fileExtension;
+            $location = public_path("/profile_image/" . $fileName);
+            Image::make($image)->resize(460, null, function ($c) {$c->aspectRatio();})->save($location);
+            $path = public_path() . '/profile_image/' . $user->picture;
+            if (\file_exists($path)) {
+                unlink(public_path() . '/profile_image/' . $user->picture);
+            }
+            $user->picture = $fileName;
+        }
+        $user->save();
+        return response()->json(["message" => "update your information successfully"], 200);
+    }
 }
