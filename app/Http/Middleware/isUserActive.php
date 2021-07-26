@@ -21,8 +21,8 @@ class isUserActive
             return $next($request);
         } else {
             return response()->json([
-                "message" => "you don't have permission",
-            ], 403);
+                "message" => "you don't have permission because your account has been disabled",
+            ], 404);
         }
     }
 }
