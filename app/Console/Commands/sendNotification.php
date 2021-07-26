@@ -134,7 +134,7 @@ class sendNotification extends Command
                         'notification_time' => date('Y-m-d H:i:s'),
                         'read' => 0,
                         'data' => $userData->id, //winner id
-                        'buddhist_id' => $request->buddhist_id,
+                        'buddhist_id' => $buddhist->id,
                         'user_id' => $notificationData[$i]["user_id"],
                         'notification_type' => "bidding_result",
                         'comment_path' => 'empty',
