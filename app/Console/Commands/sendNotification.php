@@ -125,11 +125,11 @@ class sendNotification extends Command
                 $notificationData = NotificationFirebase::
                     where([
                     ["buddhist_id", $buddhist->id],
-                    ["notification_type", "bidding"],
-                    ["user_id", "!=", $buddhist->user_id],
-                ])->select("user_id")->distinct()->get();
+                    ["notification_type", "bidding_participant"],
+                ])->select("user_id")->get();
 
                 for ($i = 0; $i < count($notificationData); $i++) {
+
                     NotificationFirebase::create([
                         'notification_time' => date('Y-m-d H:i:s'),
                         'read' => 0,
