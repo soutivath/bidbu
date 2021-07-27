@@ -117,10 +117,11 @@ class AdminBuddhistController extends Controller
 
     public function disableUser(Request $request)
     {
+
         $request->validate([
             "id" => "required",
         ]);
-        if (Auth::hasRole(["superadmin", "admin"])) {
+        if (Auth::user()->hasRole(["superadmin", "admin"])) {
             $request->validate([
                 "id" => "required|integer",
             ]);
@@ -163,7 +164,7 @@ class AdminBuddhistController extends Controller
         $request->validate([
             "id" => "required",
         ]);
-        if (Auth::hasRole("superadmin")) {
+        if (Auth::user()->hasRole("superadmin")) {
             $request->validate([
                 "id" => "required|integer",
             ]);
