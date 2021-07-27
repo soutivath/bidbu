@@ -132,26 +132,24 @@ class ReplyController extends Controller
                 'comment_path' => 'Comments/' . $request->buddhist_id . '/' . $request->comment_id . '/replies/' . $reply_key,
             ]);
 
-            if (Auth::id() != $bud->user_id) {
-                $notificationData = NotificationFirebase::
-                    where([
-                    ["buddhist_id", $request->buddhist_id],
-                    ["notification_type", "message_participant"],
-                    ["user_id", "!=", Auth::id()],
-                ])->select("user_id")->distinct()->get();
+            $notificationData = NotificationFirebase::
+                where([
+                ["buddhist_id", $request->buddhist_id],
+                ["notification_type", "message_participant"],
+                ["user_id", "!=", Auth::id()],
+            ])->select("user_id")->distinct()->get();
 
-                for ($i = 0; $i < count($notificationData); $i++) {
-                    NotificationFirebase::create([
-                        'notification_time' => date('Y-m-d H:i:s'),
-                        'read' => 0,
-                        'data' => $request->message,
-                        'buddhist_id' => $request->buddhist_id,
-                        'user_id' => $notificationData[$i]["user_id"],
-                        'notification_type' => "reply",
-                        'comment_path' => 'Comments/' . $request->buddhist_id . '/' . $request->comment_id . '/replies/' . $reply_key,
-                    ]);
+            for ($i = 0; $i < count($notificationData); $i++) {
+                NotificationFirebase::create([
+                    'notification_time' => date('Y-m-d H:i:s'),
+                    'read' => 0,
+                    'data' => $request->message,
+                    'buddhist_id' => $request->buddhist_id,
+                    'user_id' => $notificationData[$i]["user_id"],
+                    'notification_type' => "reply",
+                    'comment_path' => 'Comments/' . $request->buddhist_id . '/' . $request->comment_id . '/replies/' . $reply_key,
+                ]);
 
-                }
             }
 
             return response()->json(['message' => "successfully"], 200);
