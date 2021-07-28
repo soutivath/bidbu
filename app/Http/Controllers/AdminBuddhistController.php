@@ -359,7 +359,7 @@ class AdminBuddhistController extends Controller
                 ],
             ]);
 
-            return $response->getBody();
+            return new AdminLoginResponseResource($response->getBody());
 
             // return $response->json_decode($response);
         } catch (\Guzzle\Exception\BadResponseException $e) {
