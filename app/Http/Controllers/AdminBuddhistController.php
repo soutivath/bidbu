@@ -298,17 +298,9 @@ class AdminBuddhistController extends Controller
                     ->push([
                     'profile' => $defaultImage, // new highest price
                     ]);*/
-                    return response()->json(["data" => [
-                        "token_type" => $response->getBody()->token_type,
-                        "Bearer" => $response->getBody()->Bearer,
-                        "expires_in" => $response->getBody()->expires_in,
-                        "access_token" => $response->getBody()->access_token,
-                        "refresh_token" => $response->getBody()->refresh_token,
-                        "role" => Auth::user()->roles[0]->name,
-                        "username" => Auth::user()->name,
-                    ]], 200);
+
                     // new AdminLoginResponseResource($response->getBody());
-                    // return $response->getBody();
+                    return $response->getBody();
                 } catch (\GuzzleHttp\Exception\BadResponseException $e) {
                     File::delete($location);
 
@@ -359,18 +351,8 @@ class AdminBuddhistController extends Controller
                 ],
             ]);
             $data = $response->json_decode($response);
-            
 
-            //  return $response->getBody();
-            return response()->json(["data" => [
-                "token_type" => $data->token_type,
-                "Bearer" => $data->Bearer,
-                "expires_in" => $data->expires_in,
-                "access_token" => $data->access_token,
-                "refresh_token" => $data->refresh_token,
-                "role" => Auth::user()->roles[0]->name,
-                "username" => Auth::user()->name,
-            ]], 200);
+            return $response->getBody();
 
             // return $response->json_decode($response);
         } catch (\Guzzle\Exception\BadResponseException $e) {
