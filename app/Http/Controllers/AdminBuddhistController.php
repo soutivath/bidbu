@@ -275,6 +275,7 @@ class AdminBuddhistController extends Controller
             $user->village = $request->village;
             $user->city = $request->city;
             $user->province = $request->province;
+            $user->topic = "notification_topic_" . $uid . time();
 
             if ($user->save()) {
                 $user->attachRole("admin");
