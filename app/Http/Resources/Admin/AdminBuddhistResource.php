@@ -2,8 +2,8 @@
 
 namespace App\Http\Resources\Admin;
 
+use App\Models\User;
 use Carbon\carbon;
-
 use File;
 use Illuminate\Http\Resources\Json\JsonResource;
 
