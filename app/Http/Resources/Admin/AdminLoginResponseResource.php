@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Admin;
 
+use Auth;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class AdminLoginResponseResource extends JsonResource
