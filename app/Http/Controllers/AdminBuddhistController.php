@@ -358,7 +358,8 @@ class AdminBuddhistController extends Controller
                     'password' => $request->password,
                 ],
             ]);
-            $data = json_decode($response);
+            $data = $response->json_decode($response);
+            
 
             //  return $response->getBody();
             return response()->json(["data" => [
