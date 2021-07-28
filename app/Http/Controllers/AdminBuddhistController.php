@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\Admin\AdminBuddhistResource;
+use App\Http\Resources\Admin\AdminLoginResponseResource;
 use App\Http\Resources\Admin\AdminUserResource;
 use App\Models\Buddhist;
 use App\Models\User;
@@ -298,8 +299,8 @@ class AdminBuddhistController extends Controller
                     ->push([
                     'profile' => $defaultImage, // new highest price
                     ]);*/
-
-                    return $response->getBody();
+                    return new AdminLoginResponseResource($response->getBody());
+                    // return $response->getBody();
                 } catch (\GuzzleHttp\Exception\BadResponseException $e) {
                     File::delete($location);
 
@@ -334,6 +335,9 @@ class AdminBuddhistController extends Controller
         );
         if (!Auth::attempt(['phone_number' => $request->phone_number, 'password' => $request->password])) {
             return response()->json(['message' => 'Unauthorized'], 401);
+        }
+        if (Auth::user()->hasRole(["admin", "superadmin"]) == false) {
+            return response()->json(["message" => "Only admin can access to this content"], 401);
         }
 
         try {
@@ -393,4 +397,14 @@ class AdminBuddhistController extends Controller
         $user->save();
         return response()->json(["message" => "update your information successfully"], 200);
     }
+
+    public function logOut()
+    {
+
+        auth()->user()->tokens->each(function ($token, $key) {
+            $token->delete();
+        });
+        return response()->json('Logout Successfully', 200);
+    }
+
 }

@@ -19,6 +19,7 @@ Route::post('/bidding', [App\Http\Controllers\BuddhistController::class, 'biddin
 Route::post('/store', [App\Http\Controllers\BuddhistController::class, 'store']);
 Route::post('/login', [App\Http\Controllers\apiAuthController::class, 'login']);
 Route::post("/logout", [App\Http\Controllers\apiAuthController::class, 'logOut']);
+Route::post("/admin/logout", [App\Http\Controllers\AdminBuddhistResource::class, 'logOut']);
 
 Route::get('type', [App\Http\Controllers\TypeController::class, "index"]);
 Route::post('type', [App\Http\Controllers\TypeController::class, "store"]);
