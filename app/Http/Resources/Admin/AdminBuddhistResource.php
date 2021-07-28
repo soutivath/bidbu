@@ -2,10 +2,6 @@
 
 namespace App\Http\Resources\Admin;
 
-use App\Models\User;
-use carbon\Carbon;
-use File;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class AdminBuddhistResource extends JsonResource
