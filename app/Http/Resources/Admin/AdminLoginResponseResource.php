@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Resources\Admin;
 
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -21,7 +22,6 @@ class AdminLoginResponseResource extends JsonResource
             "refresh_token" => $this->refresh_token,
             "role" => $this->roles[0]->name,
             "username" => $this->name,
-
         ];
     }
 }
