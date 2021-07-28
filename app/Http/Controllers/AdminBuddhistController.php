@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\Admin\AdminBuddhistResource;
+use App\Http\Resources\Admin\AdminLoginResponseResource;
 use App\Http\Resources\Admin\AdminUserResource;
 use App\Models\Buddhist;
 use App\Models\User;
