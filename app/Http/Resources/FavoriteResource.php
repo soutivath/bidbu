@@ -29,7 +29,7 @@ class FavoriteResource extends JsonResource
             'user_id' => $this->user->id,
             'name' => $this->buddhist->name,
             'place' => $this->buddhist->place,
-            'time_remain' => Carbon::now()->lessThan(Carbon::parse($this->end_time)) ? Carbon::now()->diffInSeconds(Carbon::parse($this->end_time)) : "0",
+            'time_remain' => Carbon::now()->lessThan(Carbon::parse($this->end_time)) ? Carbon::now()->diffInSeconds(Carbon::parse($this->end_time)) : 0,
             'picture' => $allImage,
 
         ];

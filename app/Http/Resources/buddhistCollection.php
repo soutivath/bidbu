@@ -26,7 +26,7 @@ class buddhistCollection extends JsonResource
             'name'=>$this->name,
             'place'=>$this->place,
             'picture'=>$allImage,
-            'time_remain'=>Carbon::now()->lessThan(Carbon::parse($this->end_time))?Carbon::now()->diffInSeconds(Carbon::parse($this->end_time)):"0",
+            'time_remain'=>Carbon::now()->lessThan(Carbon::parse($this->end_time))?Carbon::now()->diffInSeconds(Carbon::parse($this->end_time)):0,
         ];
     }
 }

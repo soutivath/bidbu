@@ -48,7 +48,7 @@ class AdminBuddhistResource extends JsonResource
             'start_time' => $this->start_time,
             'end_time' => $this->end_time,
 
-            'time_remain' => Carbon::now()->lessThan(Carbon::parse($this->end_time)) ? Carbon::now()->diffInSeconds(Carbon::parse($this->end_time)) : "Item is expired",
+            'time_remain' => Carbon::now()->lessThan(Carbon::parse($this->end_time)) ? Carbon::now()->diffInSeconds(Carbon::parse($this->end_time)) : 0,
             'type' => [
                 'id' => $this->type->id,
                 'name' => $this->type->name,
