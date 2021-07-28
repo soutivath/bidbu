@@ -53,7 +53,7 @@ class User extends Authenticatable
     }
     public function buddhists()
     {
-        return $this->hasMany("app\Buddhist");
+        return $this->hasMany("app\Buddhist", "user_id");
     }
 
     public function notifications()
