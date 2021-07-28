@@ -336,6 +336,10 @@ class AdminBuddhistController extends Controller
         if (!Auth::attempt(['phone_number' => $request->phone_number, 'password' => $request->password])) {
             return response()->json(['message' => 'Unauthorized'], 401);
         }
+        if (Auth::user()->active == 0) {
+            return response()->json(['message' => 'Your account has been dismiss'], 403);
+
+        }
         if (Auth::user()->hasRole(["admin", "superadmin"]) == false) {
             return response()->json(["message" => "Only admin can access to this content"], 401);
         }
