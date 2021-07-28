@@ -358,16 +358,18 @@ class AdminBuddhistController extends Controller
                     'password' => $request->password,
                 ],
             ]);
-            return $response->getBody();
-            /*  return response()->json(["data" => [
-            "token_type" => $response->getBody()->token_type,
-            "Bearer" => $response->getBody()->Bearer,
-            "expires_in" => $response->getBody()->expires_in,
-            "access_token" => $response->getBody()->access_token,
-            "refresh_token" => $response->getBody()->refresh_token,
-            "role" => Auth::user()->roles[0]->name,
-            "username" => Auth::user()->name,
-            ]], 200);*/
+            $data = json_decode($response);
+
+            //  return $response->getBody();
+            return response()->json(["data" => [
+                "token_type" => $data->token_type,
+                "Bearer" => $data->Bearer,
+                "expires_in" => $data->expires_in,
+                "access_token" => $data->access_token,
+                "refresh_token" => $data->refresh_token,
+                "role" => Auth::user()->roles[0]->name,
+                "username" => Auth::user()->name,
+            ]], 200);
 
             // return $response->json_decode($response);
         } catch (\Guzzle\Exception\BadResponseException $e) {
