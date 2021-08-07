@@ -474,7 +474,7 @@ class BuddhistController extends Controller
         return BuddhistResource::collection($buddhist);
 
     }
-    public function myNonSoleOutBuddhist()
+    public function myNonSoldOutBuddhist()
     {
         $buddhist = Buddhist::where([
             ["user_id", Auth::id()],
