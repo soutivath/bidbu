@@ -345,7 +345,7 @@ class BuddhistController extends Controller
                         'buddhist_id' => $request->buddhist_id,
                         'page' => 'homepage',
 
-                    ]);
+                    ])->withHighestPossiblePriority();
                 $messaging->send($bidding_message);
 
                 /* $owner_notification = Notification::fromArray([
@@ -374,7 +374,7 @@ class BuddhistController extends Controller
                         'buddhist_id' => $request->buddhist_id,
                         'page' => 'content_detail',
 
-                    ]);
+                    ])->withHighestPossiblePriority();
                 $messaging->send($owner_message);
 
                 // get all data from notification to found all user that bid this round
@@ -461,12 +461,12 @@ class BuddhistController extends Controller
         return BuddhistResource::collection($buddhist);
 
     }
-    public function myDisabledBuddhist()
+    public function mySoldOutBuddhist()
     {
         $buddhist = Buddhist::where([
-            ["active", "disabled"],
+            ["winner_user_id", "!=", "empty"],
+            ["end_time", '<', Carbon::now()],
             ["user_id", Auth::id()],
-
         ])->orderBy("end_time")->get();
         if (empty($buddhist)) {
             return response()->json(["message" => "No data found"], 200);
@@ -474,11 +474,12 @@ class BuddhistController extends Controller
         return BuddhistResource::collection($buddhist);
 
     }
-    public function myNonDisabledBuddhist()
+    public function myNonSoleOutBuddhist()
     {
         $buddhist = Buddhist::where([
-            ["active", "!=", "disabled"],
             ["user_id", Auth::id()],
+            ["end_time", '<', Carbon::now()],
+            ["winner_user_id", "empty"],
         ])->orderBy("end_time")->get();
         if (empty($buddhist)) {
             return response()->json(["message" => "No data found"], 200);

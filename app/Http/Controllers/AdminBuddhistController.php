@@ -300,7 +300,19 @@ class AdminBuddhistController extends Controller
                     ]);*/
 
                     // new AdminLoginResponseResource($response->getBody());
-                    return $response->getBody();
+                    //return $response->getBody();
+                    /* return response()->json([
+                    "role" => Auth::user()->roles[0]->name,
+                    "data" => $response->getBody(),
+
+                    ], 200);*/
+                    return response()->json([
+                        "role" => Auth::user()->roles[0]->name,
+                        "name" => Auth::user()->name,
+                        "data" => json_decode($response->getBody()->getContents()),
+
+                    ], 200);
+
                 } catch (\GuzzleHttp\Exception\BadResponseException $e) {
                     File::delete($location);
 
@@ -355,7 +367,12 @@ class AdminBuddhistController extends Controller
                 ],
             ]);
 
-            return $response->getBody();
+            return response()->json([
+                "role" => Auth::user()->roles[0]->name,
+                "name" => Auth::user()->name,
+                "data" => json_decode($response->getBody()->getContents()),
+
+            ], 200);
 
             // return $response->json_decode($response);
         } catch (\Guzzle\Exception\BadResponseException $e) {

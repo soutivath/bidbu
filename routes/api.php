@@ -105,8 +105,9 @@ Route::get("/biddingLose", [App\Http\Controllers\BuddhistController::class, "bid
 Route::get("/biddingWin", [App\Http\Controllers\BuddhistController::class, "biddingWin"]);
 
 Route::get("/myActiveBuddhist", [App\Http\Controllers\BuddhistController::class, "myActiveBuddhist"]);
-Route::get("/myDisabledBuddhist", [App\Http\Controllers\BuddhistController::class, "myDisabledBuddhist"]);
-Route::get("/myNonDisabledBuddhist", [App\Http\Controllers\BuddhistController::class, "myNonDisabledBuddhist"]);
+
+Route::get("/mySoldBuddhist", [App\Http\Controllers\BuddhistController::class, "mySoldBuddhist"]);
+Route::get("/myNonSoldOutBuddhist", [App\Http\Controllers\BuddhistController::class, "myNonSoleOutBuddhist"]);
 
 Route::get("admin/getAllUser", [App\Http\Controllers\AdminBuddhistController::class, "getAllUser"]);
 Route::get("admin/getActiveUser", [App\Http\Controllers\AdminBuddhistController::class, "getActiveUser"]);
