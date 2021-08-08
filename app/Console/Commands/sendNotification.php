@@ -68,7 +68,7 @@ class sendNotification extends Command
                     ->withData([
                         'buddhist_id' => $buddhist->id,
                         'page' => 'content_detail',
-                    ])->withHighestPossiblePriority();
+                    ]);
                 $messaging->send($message);
             } else {
                 $userData = User::where("firebase_uid", $buddhist->winner_user_id)->first();
@@ -94,7 +94,7 @@ class sendNotification extends Command
                     ->withData([
                         'buddhist_id' => $buddhist->id,
                         'page' => 'content_detail',
-                    ])->withHighestPossiblePriority();
+                    ]);
 
                 $messaging->send($message);
 //***** Send to winner */
@@ -119,7 +119,7 @@ class sendNotification extends Command
                     ->withData([
                         'buddhist_id' => $buddhist->id,
                         'page' => 'content_detail',
-                    ])->withHighestPossiblePriority();
+                    ]);
                 $messaging->send($messageWinner);
 
                 $notificationData = NotificationFirebase::
@@ -170,7 +170,7 @@ class sendNotification extends Command
                         'buddhist_id' => $buddhist->id,
                         'page' => 'homepage',
 
-                    ])->withHighestPossiblePriority();
+                    ]);
                 $messaging->send($bidding_message);
 
             }

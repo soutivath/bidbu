@@ -345,7 +345,7 @@ class BuddhistController extends Controller
                         'buddhist_id' => $request->buddhist_id,
                         'page' => 'homepage',
 
-                    ])->withHighestPossiblePriority();
+                    ]);
                 $messaging->send($bidding_message);
 
                 /* $owner_notification = Notification::fromArray([
@@ -374,7 +374,7 @@ class BuddhistController extends Controller
                         'buddhist_id' => $request->buddhist_id,
                         'page' => 'content_detail',
 
-                    ])->withHighestPossiblePriority();
+                    ]);
                 $messaging->send($owner_message);
 
                 // get all data from notification to found all user that bid this round

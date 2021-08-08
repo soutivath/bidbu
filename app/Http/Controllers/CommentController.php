@@ -112,7 +112,7 @@ class CommentController extends Controller
                     'buddhist_id' => $request->buddhist_id,
                     'comment_id' => $comment_id,
                     'page' => 'content_detail',
-                ])->withHighestPossiblePriority();
+                ]);
             $messaging->send($owner_message);
 
             //*******/
@@ -142,7 +142,7 @@ class CommentController extends Controller
                     'buddhist_id' => $request->buddhist_id,
                     'comment_id' => $comment_id,
                     'page' => 'content_detail',
-                ])->withHighestPossiblePriority();
+                ]);
             $messaging->send($comment_message);
 
             NotificationFirebase::create([
