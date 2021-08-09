@@ -111,7 +111,7 @@ class CommentController extends Controller
                     'sender' => Auth::id(),
                     'buddhist_id' => $request->buddhist_id,
                     'comment_id' => $comment_id,
-                    'page' => 'content_detail',
+                    'type' => 'message',
                 ]);
             $messaging->send($owner_message);
 
@@ -141,7 +141,7 @@ class CommentController extends Controller
                     'sender' => Auth::id(),
                     'buddhist_id' => $request->buddhist_id,
                     'comment_id' => $comment_id,
-                    'page' => 'content_detail',
+                    'type' => 'message',
                 ]);
             $messaging->send($comment_message);
 

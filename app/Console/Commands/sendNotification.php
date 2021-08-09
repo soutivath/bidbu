@@ -67,7 +67,7 @@ class sendNotification extends Command
                     ])
                     ->withData([
                         'buddhist_id' => $buddhist->id,
-                        'page' => 'content_detail',
+                        'type' => '',
                     ]);
                 $messaging->send($message);
             } else {
@@ -93,7 +93,7 @@ class sendNotification extends Command
                     ])
                     ->withData([
                         'buddhist_id' => $buddhist->id,
-                        'page' => 'content_detail',
+                        'type' => '',
                     ]);
 
                 $messaging->send($message);
@@ -118,7 +118,7 @@ class sendNotification extends Command
                     ])
                     ->withData([
                         'buddhist_id' => $buddhist->id,
-                        'page' => 'content_detail',
+                        'type' => 'bidding_result',
                     ]);
                 $messaging->send($messageWinner);
 
@@ -168,7 +168,7 @@ class sendNotification extends Command
                     ->withData([
                         'sender' => $userData->id,
                         'buddhist_id' => $buddhist->id,
-                        'page' => 'homepage',
+                        'type' => 'bidding_result',
 
                     ]);
                 $messaging->send($bidding_message);

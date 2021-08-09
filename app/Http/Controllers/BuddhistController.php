@@ -343,7 +343,7 @@ class BuddhistController extends Controller
                     ->withData([
                         'sender' => Auth::id(),
                         'buddhist_id' => $request->buddhist_id,
-                        'page' => 'homepage',
+                        'type' => 'bidding',
 
                     ]);
                 $messaging->send($bidding_message);
@@ -372,7 +372,7 @@ class BuddhistController extends Controller
                     ->withData([
                         'sender' => Auth::id(),
                         'buddhist_id' => $request->buddhist_id,
-                        'page' => 'content_detail',
+                        'type' => '',
 
                     ]);
                 $messaging->send($owner_message);
