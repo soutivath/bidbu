@@ -123,5 +123,5 @@ Route::get("unReadBiddingResult", [App\Http\Controllers\notificationController::
 
 Route::get("checkToken", [App\Http\Controllers\apiAuthController::class, "checkToken"]);
 
-Route::get("checkBuddhistResult/", [App\Http\Controllers\BuddhistController::class, "checkBuddhistResult"]);
+Route::get("checkBuddhistResult/{id}", [App\Http\Controllers\BuddhistController::class, "checkBuddhistResult"]);
 Route::get("participantBidding/", [App\Http\Controllers\BuddhistController::class, "participantBidding"]);
