@@ -528,7 +528,7 @@ class BuddhistController extends Controller
 
     public function checkBuddhistResult($buddhist_id)
     {
-        return "nice";
+
         $buddhist = Buddhist::findOrFail($buddhist_id)->with("user")->first();
 
         return new checkBuddhistResultResource($buddhist);
