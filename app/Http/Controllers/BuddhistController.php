@@ -538,7 +538,7 @@ class BuddhistController extends Controller
     public function checkBuddhistResult($id)
     {
 
-        $buddhist = Buddhist::where("id", $id)->with("user")->first();
+        $buddhist = Buddhist::where("id", $id)->with("user")->get();
         if ($buddhist->isEmpty()) {
             return response()->json(["data" => "no data"], 204);
         }
