@@ -513,14 +513,28 @@ class BuddhistController extends Controller
          * ກວດເວລາຫມົດກັບຜູ້ຊະນະ
          */
 
-        $buddhist = Buddhist::where([
-            ["user_id", Auth::id()],
-            ["winner_user_id", "empty"],
-        ])->get();
+        NotificationFirebase::create([
+
+            'data' => $userData->id, //winner id
+            'buddhist_id' => $buddhist->id,
+            'user_id' => $notificationData[$i]["user_id"],
+
+        ]);
+
+        $data = DB::table('notification')->leftJoin("buddhists", "buddhists.id", "=", "notification.buddhist_id")
+            ->where([
+                ['buddhists.end_time', '<', Carbon::now()],
+                ['notification.notification_type', 'bidding_result'],
+                ["data", "!=", Auth::id()],
+            ])
+            ->select("buddhists.id", "buddhists.name", "buddhists.highest_price", "buddhists.image_path", "buddhists.end_time", "buddhists.highBidUser")
+            ->distinct()
+            ->get();
+
         if (empty($buddhist)) {
             return response()->json(["message" => "No data found"], 200);
         }
-        return response()->json(["data" => $buddhist], 200);
+        return participantBiddingResource::collection($data);
 
     }
     public function biddingWin()
