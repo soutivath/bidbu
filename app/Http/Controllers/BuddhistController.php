@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\buddhistCollection;
 use App\Http\Resources\BuddhistResource;
+use App\Http\Resources\checkBuddhistResultResource;
 use App\Http\Resources\OneBuddhistResource;
 use App\Http\Resources\participantBiddingResource;
 use App\Models\Buddhist;
