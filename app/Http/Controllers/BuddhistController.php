@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Http\Controllers;
-use Kreait\Firebase\Messaging\Notification;
 
 use App\Http\Resources\buddhistCollection;
 use App\Http\Resources\BuddhistResource;
@@ -19,6 +18,7 @@ use Illuminate\Support\Facades\Storage;
 use Image;
 use Kreait\Firebase\Messaging\AndroidConfig;
 use Kreait\Firebase\Messaging\CloudMessage;
+use Kreait\Firebase\Messaging\Notification;
 
 class BuddhistController extends Controller
 {
@@ -538,7 +538,7 @@ class BuddhistController extends Controller
 
     public function checkBuddhistResult($id)
     {
-        dd($id);
+
         $buddhist = Buddhist::where("id", $id)->with("user")->get();
 
         return response()->json(["data" => $buddhist], 200);

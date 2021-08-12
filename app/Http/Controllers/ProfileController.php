@@ -43,9 +43,10 @@ class ProfileController extends Controller
             $user->surname = $request->surname;
         }
         if ($request->hasFile('picture')) {
-            $oldPath = public_path() . '/profile_image/' . $user->picture;
-            if (\File::isDirectory($path)) {
-                \File::deleteDirectory($path);
+            if ($user->picture != "default_image.jpg") {
+                $oldPath = public_path() . '/profile_image/' . $user->picture;
+                \unlink($oldPath);
+
             }
 
             $image = $request->file('picture');
