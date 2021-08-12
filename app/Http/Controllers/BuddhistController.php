@@ -517,7 +517,7 @@ class BuddhistController extends Controller
             ->where([
                 ['buddhists.end_time', '<', Carbon::now()],
                 ['notification.notification_type', 'bidding_result'],
-                ["data", "!=", Auth::id()],
+              //  ["data", "!=", Auth::id()],
             ])
             ->select("buddhists.id", "buddhists.name", "buddhists.highest_price", "buddhists.image_path", "buddhists.end_time", "buddhists.highBidUser")
             ->distinct()

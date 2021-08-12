@@ -98,17 +98,17 @@ class sendNotification extends Command
                 ->withNotification($notification)
                 ->withData($notification_data);*/
                 $message = CloudMessage::withTarget('topic', $buddhist->user->topic)
-                    ->withNotification([
+                    ->withNotification(Notification::fromArray([
                         'title' => 'ຈາກ ' . $buddhist->name . ' ທີ່ທ່ານໄດ້ປ່ອຍ',
                         'body' => 'ການປະມູນຈົບລົງດ້ວຍເງິນຈຳນວນ ' . $buddhist->highest_price . " ກີບ",
                         'image' => \public_path("/notification_images/chat.png"),
-                    ])
+                    ]))
                     ->withData([
                         'buddhist_id' => $buddhist->id,
                         'type' => '',
                         'sender' => "0",
                     ]);
-
+                $message = $message->withAndroidConfig($config);
                 $messaging->send($message);
 //***** Send to winner */
                 /* $notification = Notification::fromArray([
@@ -124,16 +124,17 @@ class sendNotification extends Command
                 ->withNotification($notification)
                 ->withData($notification_data);*/
                 $messageWinner = CloudMessage::withTarget('topic', $userData->topic)
-                    ->withNotification([
+                    ->withNotification(Notification::fromArray([
                         'title' => 'ຈາກ ' . $buddhist->name . ' ທີ່ທ່ານໄດ້ປະມູນ',
                         'body' => 'ທ່ານຊະນະການປະມູນດ້ວຍເງິນຈຳນວນ ' . $buddhist->highest_price . " ກີບ",
                         'image' => \public_path("/notification_images/chat.png"),
-                    ])
+                    ]))
                     ->withData([
                         'buddhist_id' => $buddhist->id,
                         'type' => 'bidding_result',
                         'sender' => "0",
                     ]);
+                $messageWinner = $messageWinner->withAndroidConfig($config);
                 $messaging->send($messageWinner);
 
                 $notificationData = NotificationFirebase::
@@ -175,19 +176,19 @@ class sendNotification extends Command
                 $messaging->send($bidding_message);*/
 
                 $bidding_message = CloudMessage::withTarget('topic', $buddhist->topic)
-                    ->withNotification([
+                    ->withNotification(Notification::fromArray([
                         'title' => 'ຈາກ ' . $buddhist->name,
                         'body' => 'ການປະມູນຈົບລົງແລ້ວ ທ່ານປະມູນບໍ່ຊະນະ',
                         'image' => \public_path("/notification_images/chat.png"),
 
-                    ])
+                    ]))
                     ->withData([
                         'sender' => $userData->id,
                         'buddhist_id' => $buddhist->id,
                         'type' => 'bidding_result',
 
                     ]);
-
+                $bidding_message = $bidding_message->withAndroidConfig($config);
                 $messaging->send($bidding_message);
 
             }

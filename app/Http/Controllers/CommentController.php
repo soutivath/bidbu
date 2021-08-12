@@ -9,6 +9,7 @@ use Auth;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Kreait\Firebase\Messaging\CloudMessage;
+use Kreait\Firebase\Messaging\Notification;
 
 class CommentController extends Controller
 {
@@ -101,19 +102,26 @@ class CommentController extends Controller
             ->withNotification($owner_notification)
             ->withData($owner_notification_data);
             $messaging->send($owner_message);*/
+            $androidConfig = AndroidConfig::fromArray([
+                'ttl' => '3600s',
+                'priority' => 'high',
+
+            ]);
+
             if (Auth::id() != $ownerBuddhist->user->id) {
                 $owner_message = CloudMessage::withTarget('topic', $ownerBuddhist->user->topic)
-                    ->withNotification([
+                    ->withNotification(Notification::fromArray([
                         'title' => 'ຄວາມຄິດເຫັນໃໝ່ຈາກ ' . $ownerBuddhist->name . ' ທີ່ທ່ານໄດ້ປ່ອຍ',
                         'body' => $request->message,
                         'image' => \public_path("/notification_images/chat.png"),
-                    ])
+                    ]))
                     ->withData([
                         'sender' => Auth::id(),
                         'buddhist_id' => $request->buddhist_id,
                         'comment_id' => $comment_id,
                         'type' => 'message',
                     ]);
+                $owner_message = $owner_message->withAndroidConfig($androidConfig);
                 $messaging->send($owner_message);
 
             }
@@ -135,17 +143,18 @@ class CommentController extends Controller
             ->withData($comment_notification_data);
             $messaging->send($comment_message);*/
             $comment_message = CloudMessage::withTarget('topic', $ownerBuddhist->comment_topic)
-                ->withNotification([
+                ->withNotification(Notification::fromArray([
                     'title' => 'ຄວາມຄິດເຫັນໃຫມ່ຈາກ ' . $ownerBuddhist->name,
                     'body' => $request->message,
                     'image' => \public_path("/notification_images/chat.png"),
-                ])
+                ]))
                 ->withData([
                     'sender' => Auth::id(),
                     'buddhist_id' => $request->buddhist_id,
                     'comment_id' => $comment_id,
                     'type' => 'message',
                 ]);
+            $comment_message = $comment_message->withAndroidConfig($androidConfig);
             $messaging->send($comment_message);
 
             NotificationFirebase::create([
