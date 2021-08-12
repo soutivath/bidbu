@@ -530,7 +530,7 @@ class BuddhistController extends Controller
     {
 
         $buddhist = Buddhist::findOrFail($id)->with("user")->first();
-
+        return response()->json(["data" => $buddhist], 200);
         return new checkBuddhistResultResource($buddhist);
     }
 

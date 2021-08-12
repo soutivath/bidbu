@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use Kreait\Firebase\Messaging\AndroidConfig;
-use Kreait\Firebase\Messaging\CloudMessage;
+use App\Models\Buddhist;
+use App\Http\Resources\checkBuddhistResultResource;
 
 class testController extends Controller
 {
@@ -28,26 +28,11 @@ class testController extends Controller
 
     return participantBiddingResource::collection($data);
     }*/
-    public function testNotification()
+    public function testNotification($id)
     {
-        $messaging = app("firebase.messaging");
-        $config = AndroidConfig::fromArray([
-            'ttl' => '3600s',
-            'priority' => 'high',
-            'notification' => [
-                'title' => '$GOOG up 1.43% on the day',
-                'body' => '$GOOG gained 11.80 points to close at 835.67, up 1.43% on the day.',
-                'icon' => 'stock_ticker_update',
-                'color' => '#f45342',
-            ],
-        ]);
-        $message = CloudMessage::withTarget('topic', "notification_topic_pGlQ2NXZwUTOJh8CypSHsvlP4vn1")
-            ->withNotification(['title' => 'Notification title', 'body' => 'Notification body', "mutable_content" => true,
-                "content_available" => true]);
+        $buddhist = Buddhist::findOrFail($id)->with("user")->first();
 
-        $message = $message->withAndroidConfig($config);
-        $messaging->send($message);
+        return new checkBuddhistResultResource($buddhist);
 
-        return response()->json(["message" => "nice"], 200);
     }
 }

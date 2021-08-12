@@ -126,4 +126,4 @@ Route::get("checkToken", [App\Http\Controllers\apiAuthController::class, "checkT
 Route::get("checkBuddhistResult/{id}", [App\Http\Controllers\BuddhistController::class, "checkBuddhistResult"]);
 Route::get("participantBidding", [App\Http\Controllers\BuddhistController::class, "participantBidding"]);
 
-Route::get("testNotification", [App\Http\Controllers\testController::class, "testNotification"]);
+Route::get("testNotification/{id}", [App\Http\Controllers\testController::class, "testNotification"]);
