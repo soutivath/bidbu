@@ -537,7 +537,7 @@ class BuddhistController extends Controller
 
     public function checkBuddhistResult($id)
     {
-
+        dd($id);
         $buddhist = Buddhist::findOrFail($id)->with("user")->get();
         if ($buddhist->isEmpty()) {
             return response()->json(["message" => "no data"], 204);
