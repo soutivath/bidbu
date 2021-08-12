@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\buddhistCollection;
 use App\Http\Resources\BuddhistResource;
-use App\Http\Resources\checkBuddhistResultResource;
 use App\Http\Resources\OneBuddhistResource;
 use App\Http\Resources\participantBiddingResource;
 use App\Models\Buddhist;
@@ -542,8 +541,8 @@ class BuddhistController extends Controller
         if ($buddhist->isEmpty()) {
             return response()->json(["message" => "no data"], 204);
         }
-        //return response()->json(["data" => $buddhist], 200);
-        return new checkBuddhistResultResource($buddhist);
+        return response()->json(["data" => $buddhist], 200);
+        // return new checkBuddhistResultResource($buddhist);
     }
 
     public function participantBidding()
