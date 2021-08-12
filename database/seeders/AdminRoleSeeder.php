@@ -23,10 +23,7 @@ class AdminRoleSeeder extends Seeder
                 'picture' => 'default_image.jpg',
                 'created_at' => now(),
                 'updated_at' => now(),
-                'dob' => '2000-12-20',
-                'village' => 'ໜອງໜ້ຽວ',
-                'city' => 'ສີໂຄດຕະບອງ',
-                'province' => 'ນະຄອນຫຼວງວຽງຈັນ',
+
                 'active' => '1',
                 'topic' => '"notification_token_L0acBwThDpfybrHhM0PpSDNxua13"
 ',
