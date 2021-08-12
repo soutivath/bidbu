@@ -68,6 +68,7 @@ class sendNotification extends Command
                     ->withData([
                         'buddhist_id' => $buddhist->id,
                         'type' => '',
+                        'sender' => "0",
                     ]);
                 $messaging->send($message);
             } else {
@@ -94,6 +95,7 @@ class sendNotification extends Command
                     ->withData([
                         'buddhist_id' => $buddhist->id,
                         'type' => '',
+                        'sender' => "0",
                     ]);
 
                 $messaging->send($message);
@@ -119,6 +121,7 @@ class sendNotification extends Command
                     ->withData([
                         'buddhist_id' => $buddhist->id,
                         'type' => 'bidding_result',
+                        'sender' => "0",
                     ]);
                 $messaging->send($messageWinner);
 
@@ -126,6 +129,7 @@ class sendNotification extends Command
                     where([
                     ["buddhist_id", $buddhist->id],
                     ["notification_type", "bidding_participant"],
+                    ["user_id","!=",$userData->id]
                 ])->select("user_id")->distinct()->get();
 
                 for ($i = 0; $i < count($notificationData); $i++) {
