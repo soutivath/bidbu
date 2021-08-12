@@ -122,10 +122,7 @@ class apiAuthController extends Controller
             'firebase_token' => 'required|string',
             'password' => 'required|string|min:6|max:18',
             'picture' => 'sometimes|image|mimes:jpeg,png,jpg|max:8192',
-            'dob' => 'required|date_format:Y-m-d',
-            'village' => 'required|string',
-            'city' => 'required|string',
-            'province' => 'required|string',
+
             'fcm_token' => 'required|string',
         ]);
 
@@ -172,10 +169,7 @@ class apiAuthController extends Controller
         $user->firebase_uid = $uid;
         $user->password = bcrypt($request->password);
         $user->picture = $defaultImage;
-        $user->dob = $request->dob;
-        $user->village = $request->village;
-        $user->city = $request->city;
-        $user->province = $request->province;
+
         $user->topic = "notification_topic_" . $uid . time();
 
         if ($user->save()) {
