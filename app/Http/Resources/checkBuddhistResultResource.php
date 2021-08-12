@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use App\Models\User;
 use Auth;
+use File;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class checkBuddhistResultResource extends JsonResource
