@@ -129,7 +129,7 @@ class sendNotification extends Command
                     where([
                     ["buddhist_id", $buddhist->id],
                     ["notification_type", "bidding_participant"],
-                    ["user_id","!=",$userData->id]
+
                 ])->select("user_id")->distinct()->get();
 
                 for ($i = 0; $i < count($notificationData); $i++) {
@@ -162,20 +162,25 @@ class sendNotification extends Command
                 ->withNotification($bidding_notification)
                 ->withData($bidding_notification_data);
                 $messaging->send($bidding_message);*/
-                $bidding_message = CloudMessage::withTarget('topic', $buddhist->topic)
-                    ->withNotification([
-                        'title' => 'ຈາກ ' . $buddhist->name,
-                        'body' => 'ການປະມູນຈົບລົງແລ້ວ ທ່ານປະມູນບໍ່ຊະນະ',
-                        'image' => \public_path("/notification_images/chat.png"),
+                if ($userData->id != $notificationData[$i]["user_id"]) {
+                    $bidding_message = CloudMessage::withTarget('topic', $buddhist->topic)
+                        ->withNotification([
+                            'title' => 'ຈາກ ' . $buddhist->name,
+                            'body' => 'ການປະມູນຈົບລົງແລ້ວ ທ່ານປະມູນບໍ່ຊະນະ',
+                            'image' => \public_path("/notification_images/chat.png"),
 
-                    ])
-                    ->withData([
-                        'sender' => $userData->id,
-                        'buddhist_id' => $buddhist->id,
-                        'type' => 'bidding_result',
+                        ])
+                        ->withData([
+                            'sender' => $userData->id,
+                            'buddhist_id' => $buddhist->id,
+                            'type' => 'bidding_result',
 
-                    ]);
-                $messaging->send($bidding_message);
+                        ]);
+                        $messaging->send($bidding_message);
+
+                }
+
+                
 
             }
             $buddhist->active = "0";
