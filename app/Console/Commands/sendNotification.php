@@ -191,8 +191,8 @@ class sendNotification extends Command
                 $messaging->send($bidding_message);
 
             }
-            //   $buddhist->active = "0";
-            //  $buddhist->save();
+            $buddhist->active = "0";
+            $buddhist->save();
         }
 
         echo "Operation done";

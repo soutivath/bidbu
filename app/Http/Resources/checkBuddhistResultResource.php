@@ -29,7 +29,7 @@ class checkBuddhistResultResource extends JsonResource
             "winner_surname" => empty($winner_name) ? "ບໍ່ມີຜູ້ຊະນະ" : $winner_name->surname,
             "winner_price" => $this->highest_price,
             "owner_name" => $this->user->name,
-            "owner_name" => $this->user->surname,
+            "owner_surname" => $this->user->surname,
             "owner_phone" => $this->user->phone_number,
             "buddhist_image" => $allImage,
             "owner_image" => $this->user->getProfilePath(),
