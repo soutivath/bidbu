@@ -101,7 +101,7 @@ class CommentController extends Controller
             ->withNotification($owner_notification)
             ->withData($owner_notification_data);
             $messaging->send($owner_message);*/
-            if (Auth::id() != $owner_buddhist->user->id) {
+            if (Auth::id() != $ownerBuddhist->user->id) {
                 $owner_message = CloudMessage::withTarget('topic', $ownerBuddhist->user->topic)
                     ->withNotification([
                         'title' => 'ຄວາມຄິດເຫັນໃໝ່ຈາກ ' . $ownerBuddhist->name . ' ທີ່ທ່ານໄດ້ປ່ອຍ',
