@@ -47,13 +47,6 @@ class sendNotification extends Command
         $androidConfig = AndroidConfig::fromArray([
             'ttl' => '3600s',
             'priority' => 'high',
-            'notification' => [
-                'title' => '$GOOG up 1.43% on the day',
-                'body' => '$GOOG gained 11.80 points to close at 835.67, up 1.43% on the day.',
-                'icon' => 'stock_ticker_update',
-                'color' => '#f45342',
-                'sound' => 'default',
-            ],
 
         ]);
 
@@ -198,8 +191,8 @@ class sendNotification extends Command
                 $messaging->send($bidding_message);
 
             }
-         //   $buddhist->active = "0";
-          //  $buddhist->save();
+            //   $buddhist->active = "0";
+            //  $buddhist->save();
         }
 
         echo "Operation done";
