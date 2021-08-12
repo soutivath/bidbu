@@ -165,23 +165,21 @@ class sendNotification extends Command
                 ->withData($bidding_notification_data);
                 $messaging->send($bidding_message);*/
 
-                if ($winner_uid != $userData->firebase_uid) {
-                    $bidding_message = CloudMessage::withTarget('topic', $buddhist->topic)
-                        ->withNotification([
-                            'title' => 'ຈາກ ' . $buddhist->name,
-                            'body' => 'ການປະມູນຈົບລົງແລ້ວ ທ່ານປະມູນບໍ່ຊະນະ',
-                            'image' => \public_path("/notification_images/chat.png"),
+                $bidding_message = CloudMessage::withTarget('topic', $buddhist->topic)
+                    ->withNotification([
+                        'title' => 'ຈາກ ' . $buddhist->name,
+                        'body' => 'ການປະມູນຈົບລົງແລ້ວ ທ່ານປະມູນບໍ່ຊະນະ',
+                        'image' => \public_path("/notification_images/chat.png"),
 
-                        ])
-                        ->withData([
-                            'sender' => $userData->id,
-                            'buddhist_id' => $buddhist->id,
-                            'type' => 'bidding_result',
+                    ])
+                    ->withData([
+                        'sender' => $userData->id,
+                        'buddhist_id' => $buddhist->id,
+                        'type' => 'bidding_result',
 
-                        ]);
+                    ]);
 
-                    $messaging->send($bidding_message);
-                }
+                $messaging->send($bidding_message);
 
             }
             $buddhist->active = "0";
