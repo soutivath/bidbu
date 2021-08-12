@@ -526,10 +526,10 @@ class BuddhistController extends Controller
 
     }
 
-    public function checkBuddhistResult($buddhist_id)
+    public function checkBuddhistResult($id)
     {
 
-        $buddhist = Buddhist::findOrFail($buddhist_id)->with("user")->first();
+        $buddhist = Buddhist::findOrFail($id)->with("user")->first();
 
         return new checkBuddhistResultResource($buddhist);
     }
