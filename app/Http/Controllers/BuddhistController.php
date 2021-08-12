@@ -541,8 +541,8 @@ class BuddhistController extends Controller
         if ($buddhist->isEmpty()) {
             return response()->json(["message" => "no data"], 204);
         }
-        return response()->json(["data" => $buddhist], 200);
-        // return new checkBuddhistResultResource($buddhist);
+        // return response()->json(["data" => $buddhist], 200);
+        return new checkBuddhistResultResource($buddhist);
     }
 
     public function participantBidding()
