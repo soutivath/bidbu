@@ -513,14 +513,6 @@ class BuddhistController extends Controller
          * ກວດເວລາຫມົດກັບຜູ້ຊະນະ
          */
 
-        NotificationFirebase::create([
-
-            'data' => $userData->id, //winner id
-            'buddhist_id' => $buddhist->id,
-            'user_id' => $notificationData[$i]["user_id"],
-
-        ]);
-
         $data = DB::table('notification')->leftJoin("buddhists", "buddhists.id", "=", "notification.buddhist_id")
             ->where([
                 ['buddhists.end_time', '<', Carbon::now()],
