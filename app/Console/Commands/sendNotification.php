@@ -6,6 +6,7 @@ use App\Models\Buddhist;
 use App\Models\NotificationFirebase;
 use App\Models\User;
 use Illuminate\Console\Command;
+use Kreait\Firebase\Messaging\AndroidConfig;
 use Kreait\Firebase\Messaging\CloudMessage;
 
 class sendNotification extends Command
@@ -42,6 +43,12 @@ class sendNotification extends Command
     public function handle()
     {
         $messaging = app('firebase.messaging');
+        $androidConfig = AndroidConfig::fromArray([
+            'ttl' => '3600s',
+            'priority' => 'high',
+
+        ]);
+
         $buddhists = Buddhist::where([["end_time", "<=", now()], ['active', '1']])->get();
         foreach ($buddhists as $buddhist) {
 
@@ -62,16 +69,17 @@ class sendNotification extends Command
                 ->withNotification($notification)
                 ->withData($notification_data);*/
                 $message = CloudMessage::withTarget("topic", $buddhist->user->topic)
-                    ->withNotification([
+                    ->withNotification(Notification::fromArray([
                         'title' => 'ຈາກ ' . $buddhist->name . ' ທີ່ທ່ານໄດ້ປ່ອຍ',
                         'body' => 'ການປະມູນຈົບລົງແລ້ວ ບໍ່ມີຄົນເຂົ້າຮ່ວມການປະມູນຂອງທ່ານ',
                         'image' => \public_path("/notification_images/chat.png"),
                     ])
-                    ->withData([
-                        'buddhist_id' => $buddhist->id,
-                        'type' => '',
-                        'sender' => "0",
-                    ]);
+                            ->withData([
+                                'buddhist_id' => $buddhist->id,
+                                'type' => '',
+                                'sender' => "0",
+                            ]));
+                $message = $message->withAndroidConfig($androidConfig);
                 $messaging->send($message);
             } else {
                 $userData = User::where("firebase_uid", $buddhist->winner_user_id)->first();
