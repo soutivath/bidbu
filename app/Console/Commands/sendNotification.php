@@ -46,6 +46,8 @@ class sendNotification extends Command
         foreach ($buddhists as $buddhist) {
 
             $deviceToken = $buddhist->winner_fcm_token;
+            $winner_uid = $buddhist->winner_user_id;
+
             if ($deviceToken == "empty") {
                 /* $notification = Notification::fromArray([
                 'title' => 'ທ່ານມີການແຈ້ງເຕືອນໃໝ່ຈາກ ' . $buddhist->name . ' ທີ່ທ່ານໄດ້ປ່ອຍ',
@@ -163,7 +165,7 @@ class sendNotification extends Command
                 ->withData($bidding_notification_data);
                 $messaging->send($bidding_message);*/
 
-                if ($deviceToken != $userData->firebase_uid) {
+                if ($winner_uid != $userData->firebase_uid) {
                     $bidding_message = CloudMessage::withTarget('topic', $buddhist->topic)
                         ->withNotification([
                             'title' => 'ຈາກ ' . $buddhist->name,
