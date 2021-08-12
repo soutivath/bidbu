@@ -16,6 +16,12 @@ class checkBuddhistResultResource extends JsonResource
      */
     public function toArray($request)
     {
+        $allImage = array();
+        $files = File::files(public_path('/buddhist_images/' . $this->image_path . "/"));
+
+        $file_path = pathinfo($files[0]);
+        \array_push($allImage, Config("values.APP_URL") . ":" . $_SERVER["SERVER_PORT"] .
+            "/" . "buddhist_images/" . $this->image_path . "/" . $file_path['basename']);
 
         $winner_name = User::where("firebase_uid", $this->winner_user_id)->first();
 
@@ -25,6 +31,8 @@ class checkBuddhistResultResource extends JsonResource
             "winner_price" => $this->highest_price,
             "owner_name" => $this->user->name,
             "owner_phone" => $this->user->phone_number,
+            "buddhist_image" => $allImage,
+            "owner_image" => $this->user->getProfilePath(),
         ];
     }
 }
