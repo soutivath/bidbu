@@ -539,7 +539,7 @@ class BuddhistController extends Controller
     {
 
         $buddhist = Buddhist::where("id", $id)->with("user")->first();
-        return response()->json(["data" => $buddhist], 200);
+        //return response()->json(["data" => $buddhist], 200);
         return new checkBuddhistResultResource($buddhist);
     }
 
