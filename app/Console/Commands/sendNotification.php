@@ -74,12 +74,12 @@ class sendNotification extends Command
                         'title' => 'ຈາກ ' . $buddhist->name . ' ທີ່ທ່ານໄດ້ປ່ອຍ',
                         'body' => 'ການປະມູນຈົບລົງແລ້ວ ບໍ່ມີຄົນເຂົ້າຮ່ວມການປະມູນຂອງທ່ານ',
                         'image' => \public_path("/notification_images/chat.png"),
-                    ])
-                            ->withData([
-                                'buddhist_id' => $buddhist->id,
-                                'type' => '',
-                                'sender' => "0",
-                            ]));
+                    ]))
+                    ->withData([
+                        'buddhist_id' => $buddhist->id,
+                        'type' => '',
+                        'sender' => "0",
+                    ]);
                 $message = $message->withAndroidConfig($androidConfig);
                 $messaging->send($message);
             } else {
