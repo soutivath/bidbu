@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use Kreait\Firebase\Messaging\Notification;
 
 use App\Http\Resources\buddhistCollection;
 use App\Http\Resources\BuddhistResource;
@@ -538,10 +539,8 @@ class BuddhistController extends Controller
     public function checkBuddhistResult($id)
     {
         dd($id);
-        $buddhist = Buddhist::findOrFail($id)->with("user")->get();
-        if ($buddhist->isEmpty()) {
-            return response()->json(["message" => "no data"], 204);
-        }
+        $buddhist = Buddhist::where("id", $id)->with("user")->get();
+
         return response()->json(["data" => $buddhist], 200);
         return new checkBuddhistResultResource($buddhist);
     }
