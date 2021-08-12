@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Console\Command;
 use Kreait\Firebase\Messaging\AndroidConfig;
 use Kreait\Firebase\Messaging\CloudMessage;
+use Kreait\Firebase\Messaging\Notification;
 
 class sendNotification extends Command
 {
