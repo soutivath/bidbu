@@ -539,7 +539,7 @@ class BuddhistController extends Controller
     {
 
         $buddhist = Buddhist::findOrFail($id)->with("user");
-        if ($buddhist->isEmpty()) {
+        if (empty($buddhist)) {
             return response()->json(["message" => "no data"], 204);
         }
         return response()->json(["data" => $buddhist], 200);
