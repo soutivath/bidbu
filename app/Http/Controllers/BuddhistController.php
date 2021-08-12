@@ -514,11 +514,11 @@ class BuddhistController extends Controller
          */
 
         $data = DB::table('notification')->leftJoin("buddhists", "buddhists.id", "=", "notification.buddhist_id")
-            ->where([
-                ['buddhists.end_time', '<', Carbon::now()],
-                ['notification.notification_type', 'bidding_result'],
-              //  ["data", "!=", Auth::id()],
-            ])
+        // ->where([
+        //    ['buddhists.end_time', '<', Carbon::now()],
+        //    ['notification.notification_type', 'bidding_result'],
+        //  ["data", "!=", Auth::id()],
+        // ])
             ->select("buddhists.id", "buddhists.name", "buddhists.highest_price", "buddhists.image_path", "buddhists.end_time", "buddhists.highBidUser")
             ->distinct()
             ->get();
