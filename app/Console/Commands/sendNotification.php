@@ -108,7 +108,7 @@ class sendNotification extends Command
                         'type' => '',
                         'sender' => "0",
                     ]);
-                $message = $message->withAndroidConfig($config);
+                $message = $message->withAndroidConfig($androidConfig);
                 $messaging->send($message);
 //***** Send to winner */
                 /* $notification = Notification::fromArray([
@@ -134,7 +134,7 @@ class sendNotification extends Command
                         'type' => 'bidding_result',
                         'sender' => "0",
                     ]);
-                $messageWinner = $messageWinner->withAndroidConfig($config);
+                $messageWinner = $messageWinner->withAndroidConfig($androidConfig);
                 $messaging->send($messageWinner);
 
                 $notificationData = NotificationFirebase::
@@ -188,7 +188,7 @@ class sendNotification extends Command
                         'type' => 'bidding_result',
 
                     ]);
-                $bidding_message = $bidding_message->withAndroidConfig($config);
+                $bidding_message = $bidding_message->withAndroidConfig($androidConfig);
                 $messaging->send($bidding_message);
 
             }
