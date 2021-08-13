@@ -183,9 +183,10 @@ class sendNotification extends Command
 
                     ]))
                     ->withData([
-                        'sender' => $userData->id,
+
                         'buddhist_id' => $buddhist->id,
                         'type' => 'bidding_result',
+                        'sender' => $userData->id,
 
                     ]);
                 $bidding_message = $bidding_message->withAndroidConfig($androidConfig);
