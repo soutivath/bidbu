@@ -174,6 +174,7 @@ class sendNotification extends Command
                 ->withNotification($bidding_notification)
                 ->withData($bidding_notification_data);
                 $messaging->send($bidding_message);*/
+                $messaging->unsubscribeFromTopic($buddhist->topic, $userData->winner_fcm_token);
 
                 $bidding_message = CloudMessage::withTarget('topic', $buddhist->topic)
                     ->withNotification(Notification::fromArray([
@@ -183,7 +184,6 @@ class sendNotification extends Command
 
                     ]))
                     ->withData([
-
                         'buddhist_id' => $buddhist->id,
                         'type' => 'bidding_result',
                         'sender' => $userData->id,
@@ -191,7 +191,6 @@ class sendNotification extends Command
                     ]);
                 $bidding_message = $bidding_message->withAndroidConfig($androidConfig);
                 $messaging->send($bidding_message);
-
             }
             $buddhist->active = "0";
             $buddhist->save();
