@@ -519,7 +519,7 @@ class BuddhistController extends Controller
                 ['notification.notification_type', 'bidding_result'],
                 ["data", "!=", Auth::id()],
             ])
-            ->select("buddhists.id", "buddhists.name", "buddhists.highest_price", "buddhists.image_path", "buddhists.end_time", "buddhists.highBidUser")
+            ->select("buddhists.id", "buddhists.name", "buddhists.highest_price", "buddhists.image_path", "buddhists.end_time", "buddhists.highBidUser", "buddhists.place")
             ->distinct()
             ->get();
 
@@ -556,7 +556,7 @@ class BuddhistController extends Controller
                 ['notification.notification_type', 'bidding_participant'],
                 ["notification.user_id", Auth::id()],
             ])
-            ->select("buddhists.id", "buddhists.name", "buddhists.highest_price", "buddhists.image_path", "buddhists.end_time", "buddhists.highBidUser")
+            ->select("buddhists.id", "buddhists.name", "buddhists.highest_price", "buddhists.image_path", "buddhists.end_time", "buddhists.highBidUser", "buddhists.place")
             ->distinct()
             ->get();
 

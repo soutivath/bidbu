@@ -27,6 +27,7 @@ class participantBiddingResource extends JsonResource
             'highest_price' => $this->highest_price,
             'time_remain' => Carbon::now()->lessThan(Carbon::parse($this->end_time)) ? Carbon::now()->diffInSeconds(Carbon::parse($this->end_time)) : 0,
             'image' => $allImage,
+            'place' => $this->place,
         ];
     }
 }
