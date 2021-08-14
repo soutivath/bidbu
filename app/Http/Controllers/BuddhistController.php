@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Http\Controllers;
-use Kreait\Firebase\Messaging\CloudMessage;
 
 use App\Http\Resources\buddhistCollection;
 use App\Http\Resources\BuddhistResource;
@@ -17,6 +16,7 @@ use File;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Image;
+use Kreait\Firebase\Messaging\CloudMessage;
 
 class BuddhistController extends Controller
 {
@@ -357,7 +357,7 @@ class BuddhistController extends Controller
                         'type' => 'bidding',
 
                     ]);
-                $bidding_message = $bidding_message->withAndroidConfig($androidConfig);
+                //  $bidding_message = $bidding_message->withAndroidConfig($androidConfig);
                 $messaging->send($bidding_message);
                 /* $owner_notification = Notification::fromArray([
                 'title' => 'ຈາກ ' . $ownerBuddhist->name . ' ທີ່ທ່ານໄດ້ປ່ອຍ',
@@ -386,7 +386,7 @@ class BuddhistController extends Controller
                         'type' => '',
 
                     ]);
-                $owner_message = $owner_message->withAndroidConfig($androidConfig);
+                // $owner_message = $owner_message->withAndroidConfig($androidConfig);
                 $messaging->send($owner_message);
 
                 // get all data from notification to found all user that bid this round
