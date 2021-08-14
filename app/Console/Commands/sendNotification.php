@@ -176,7 +176,9 @@ class sendNotification extends Command
                 $messaging->send($bidding_message);*/
                 //  $messaging->unsubscribeFromTopic($buddhist->topic, $userData->winner_fcm_token);
 
-                $bidding_message = CloudMessage::withTarget('topic', $buddhist->topic)
+                $loseCondition = "'" . $buddhist->topic . "' in topics && !('" . $userData->topic . "' in topics)";
+
+                $bidding_message = CloudMessage::withTarget('condition', $loseCondition)
                     ->withNotification(Notification::fromArray([
                         'title' => 'ຈາກ ' . $buddhist->name,
                         'body' => 'ການປະມູນຈົບລົງແລ້ວ ທ່ານປະມູນບໍ່ຊະນະ',
