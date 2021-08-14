@@ -16,8 +16,6 @@ use File;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Image;
-use Kreait\Firebase\Messaging\CloudMessage;
-use Kreait\Firebase\Messaging\Notification;
 
 class BuddhistController extends Controller
 {
@@ -346,20 +344,20 @@ class BuddhistController extends Controller
 
                 //$bidding_condition = "('" . $ownerBuddhist->topic . "') in topics && !('" . Auth::user()->topic . "' in topics)";
 
-                $bidding_message = CloudMessage::withTarget('condition', $ownerBuddhist->topic)
-                    ->withNotification(Notification::fromArray([
-                        'title' => 'ຈາກ ' . $ownerBuddhist->name,
-                        'body' => 'ມີຄົນໃຫ້ລາຄາສູງກວ່າໃນລາຄາ ' . $request->bidding_price . ' ກີບ',
-                        'image' => \public_path("/notification_images/chat.png"),
-                    ]))
-                    ->withData([
-                        'sender' => Auth::id(),
-                        'buddhist_id' => $request->buddhist_id,
-                        'type' => 'bidding',
-
-                    ]);
-                //   $bidding_message = $bidding_message->withAndroidConfig($androidConfig);
-                $messaging->send($bidding_message);
+                #   $bidding_message = CloudMessage::withTarget('condition', $ownerBuddhist->topic)
+                #       ->withNotification(Notification::fromArray([
+                #           'title' => 'ຈາກ ' . $ownerBuddhist->name,
+                #           'body' => 'ມີຄົນໃຫ້ລາຄາສູງກວ່າໃນລາຄາ ' . $request->bidding_price . ' ກີບ',
+                #           'image' => \public_path("/notification_images/chat.png"),
+                #       ]))
+                #       ->withData([
+                #           'sender' => Auth::id(),
+                #           'buddhist_id' => $request->buddhist_id,
+                #           'type' => 'bidding',
+                #
+                #                   ]);
+                #              $bidding_message = $bidding_message->withAndroidConfig($androidConfig);
+                #             $messaging->send($bidding_message);
 
                 /* $owner_notification = Notification::fromArray([
                 'title' => 'ຈາກ ' . $ownerBuddhist->name . ' ທີ່ທ່ານໄດ້ປ່ອຍ',
@@ -376,20 +374,20 @@ class BuddhistController extends Controller
                 ->withNotification($owner_notification)
                 ->withData($owner_notification_data);
                 $messaging->send($owner_message);*/
-                $owner_message = CloudMessage::withTarget('topic', $ownerTopic)
-                    ->withNotification(Notification::fromArray([
-                        'title' => 'ຈາກ ' . $ownerBuddhist->name . ' ທີ່ທ່ານໄດ້ປ່ອຍ',
-                        'body' => 'ມີຄົນສະເໜີລາຄາ ' . $request->bidding_price . ' ກີບ',
-                        'image' => \public_path("/notification_images/chat.png"),
-                    ]))
-                    ->withData([
-                        'sender' => Auth::id(),
-                        'buddhist_id' => $request->buddhist_id,
-                        'type' => '',
+                #    $owner_message = CloudMessage::withTarget('topic', $ownerTopic)
+                #        ->withNotification(Notification::fromArray([
+                #            'title' => 'ຈາກ ' . $ownerBuddhist->name . ' ທີ່ທ່ານໄດ້ປ່ອຍ',
+                #            'body' => 'ມີຄົນສະເໜີລາຄາ ' . $request->bidding_price . ' ກີບ',
+                #            'image' => \public_path("/notification_images/chat.png"),
+                #        ]))
+                #        ->withData([
+                #            'sender' => Auth::id(),
+                #            'buddhist_id' => $request->buddhist_id,
+                #            'type' => '',
 
-                    ]);
+                #        ]);
                 // $owner_message = $owner_message->withAndroidConfig($androidConfig);
-                $messaging->send($owner_message);
+                #    $messaging->send($owner_message);
 
                 // get all data from notification to found all user that bid this round
                 NotificationFirebase::create([
