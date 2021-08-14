@@ -174,7 +174,7 @@ class sendNotification extends Command
                 ->withNotification($bidding_notification)
                 ->withData($bidding_notification_data);
                 $messaging->send($bidding_message);*/
-                $messaging->unsubscribeFromTopic($buddhist->topic, $userData->winner_fcm_token);
+                //  $messaging->unsubscribeFromTopic($buddhist->topic, $userData->winner_fcm_token);
 
                 $bidding_message = CloudMessage::withTarget('topic', $buddhist->topic)
                     ->withNotification(Notification::fromArray([

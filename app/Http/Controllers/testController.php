@@ -2,9 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Buddhist;
-use App\Http\Resources\checkBuddhistResultResource;
-
 class testController extends Controller
 {
     /* public function checkBuddhistResult($buddhist_id)
@@ -28,11 +25,26 @@ class testController extends Controller
 
     return participantBiddingResource::collection($data);
     }*/
-    public function testNotification($id)
+    public function testNotification()
     {
-        $buddhist = Buddhist::findOrFail($id)->with("user")->first();
+        /* $buddhist = Buddhist::findOrFail($id)->with("user")->first();
 
-        return new checkBuddhistResultResource($buddhist);
+        return new checkBuddhistResultResource($buddhist);*/
+
+        $messaging = app('firebase.messaging');
+        $appInstance = $messaging->getAppInstance("e1pihRThRzGrGujAoLnZRT:APA91bHsRzBo6qP-nMCD-rP1V5I3G_W63sCp-fLawithIX6qycSL773085X7SZUrxfuG9NQfLO8l5J7UYL8Uvb7klVS8w3qxsVdb2v_q7QSTAbAulLRjpKouaCfowa96PuTfPH7BpEYb");
+        $subscriptions = $appInstance->topicSubscriptions();
+
+        foreach ($subscriptions as $subscription) {
+            echo "{$subscription->registrationToken()} is subscribed to {$subscription->topic()}\n";
+        }
+$appInstance = $messaging->getAppInstance('<registration token>');
+
+foreach ($appInstance->topicSubscriptions() as $subscription) {
+    $messaging->unsubscribeFromTopic($subscription->topic(), $subscription->registrationToken());
+}
+
+        return $appInstance->rawData();
 
     }
 }
