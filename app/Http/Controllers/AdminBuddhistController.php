@@ -64,7 +64,7 @@ class AdminBuddhistController extends Controller
 
             $notification = Notification::fromArray([
                 'title' => 'ແຈ້ງເຕຶອນໃໝ່ຈາກ ' . $buddhist->name,
-                'body' => "ພະຂອງທ່ານໄດ້ຖຶກລົບເນື່ອງຈາກລະບົບ",
+                'body' => "ລາຍການຂອງທ່ານໄດ້ຖຶກລົບຈາກລະບົບ",
                 'image' => \public_path("/notification_images/chat.png"),
             ]);
             $notification_data = [

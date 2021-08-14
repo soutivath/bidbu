@@ -127,3 +127,4 @@ Route::get("checkBuddhistResult/{id}", [App\Http\Controllers\BuddhistController:
 Route::get("participantBidding", [App\Http\Controllers\BuddhistController::class, "participantBidding"]);
 
 Route::get("testNotification/", [App\Http\Controllers\testController::class, "testNotification"]);
+Route::post("editProfile/", [App\Http\Controllers\testController::class, "editProfile"]);

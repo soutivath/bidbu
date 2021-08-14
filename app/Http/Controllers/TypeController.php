@@ -151,7 +151,7 @@ class TypeController extends Controller
             $type = Type::findOrFail($id);
             $path = public_path() . '/type_images/' . $type->image_path;
             if (\file_exists($path)) {
-                unlink(public_path() . '\type_images/' . $type->image_path);
+                unlink(public_path() . '/type_images/' . $type->image_path);
             }
             $type->delete();
             return response(['data' => $type], 200);
