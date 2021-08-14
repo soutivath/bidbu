@@ -345,9 +345,9 @@ class BuddhistController extends Controller
 
                 ]);
 
-                $bidding_condition = "('" . $ownerBuddhist->topic . "') in topics && !('" . Auth::user()->topic . "' in topics)";
+                //$bidding_condition = "('" . $ownerBuddhist->topic . "') in topics && !('" . Auth::user()->topic . "' in topics)";
 
-                $bidding_message = CloudMessage::withTarget('condition', $bidding_condition)
+                $bidding_message = CloudMessage::withTarget('condition', $ownerBuddhist->topic)
                     ->withNotification(Notification::fromArray([
                         'title' => 'ຈາກ ' . $ownerBuddhist->name,
                         'body' => 'ມີຄົນໃຫ້ລາຄາສູງກວ່າໃນລາຄາ ' . $request->bidding_price . ' ກີບ',
