@@ -16,7 +16,6 @@ use File;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Image;
-use Kreait\Firebase\Messaging\AndroidConfig;
 use Kreait\Firebase\Messaging\CloudMessage;
 use Kreait\Firebase\Messaging\Notification;
 
@@ -339,11 +338,11 @@ class BuddhistController extends Controller
                 ->withNotification($bidding_notification)
                 ->withData($bidding_notification_data);
                 $messaging->send($bidding_message);*/
-                $androidConfig = AndroidConfig::fromArray([
-                    'ttl' => '3600s',
-                    'priority' => 'high',
+                /*  $androidConfig = AndroidConfig::fromArray([
+                'ttl' => '3600s',
+                'priority' => 'high',
 
-                ]);
+                ]);*/
 
                 //$bidding_condition = "('" . $ownerBuddhist->topic . "') in topics && !('" . Auth::user()->topic . "' in topics)";
 
@@ -359,7 +358,7 @@ class BuddhistController extends Controller
                         'type' => 'bidding',
 
                     ]);
-                $bidding_message = $bidding_message->withAndroidConfig($androidConfig);
+                //   $bidding_message = $bidding_message->withAndroidConfig($androidConfig);
                 $messaging->send($bidding_message);
 
                 /* $owner_notification = Notification::fromArray([
@@ -389,7 +388,7 @@ class BuddhistController extends Controller
                         'type' => '',
 
                     ]);
-                $owner_message = $owner_message->withAndroidConfig($androidConfig);
+                // $owner_message = $owner_message->withAndroidConfig($androidConfig);
                 $messaging->send($owner_message);
 
                 // get all data from notification to found all user that bid this round
