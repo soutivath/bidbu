@@ -143,7 +143,8 @@ class CommentController extends Controller
             ->withNotification($comment_notification)
             ->withData($comment_notification_data);
             $messaging->send($comment_message);*/
-            $comment_message = CloudMessage::withTarget('topic', $ownerBuddhist->comment_topic)
+            $commentCondition = "'" . $ownerBuddhist->comment_topic . "' in topics && !('" . Auth::user()->topic . "' in topics)";
+            $comment_message = CloudMessage::withTarget('condition', $commentCondition)
                 ->withNotification(Notification::fromArray([
                     'title' => 'ຄວາມຄິດເຫັນໃຫມ່ຈາກ ' . $ownerBuddhist->name,
                     'body' => $request->message,
