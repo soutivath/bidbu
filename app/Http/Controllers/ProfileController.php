@@ -39,7 +39,7 @@ class ProfileController extends Controller
         ]);
         $user = User::find(Auth::id());
 
-        if (!Hash::check($request->password, $user->getAuthPassword)) {
+        if (!Hash::check($request->password, Auth::user()->password)) {
             return response()->json(["message" => "incorrect "], 403);
         }
 
