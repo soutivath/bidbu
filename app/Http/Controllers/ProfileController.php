@@ -29,12 +29,18 @@ class ProfileController extends Controller
     public function editProfile(Request $request)
     {
         $request->validate([
-            'user_id' => "required",
+
             'name' => 'sometimes|max:30|string',
             'surname' => 'sometimes|max:30|string',
             'picture' => 'sometimes|image|mimes:jpeg,png,jpg|max:8192',
+            'password' => 'required',
         ]);
-        $user = User::find($request->user_id);
+
+        if (!Hash::check($request->password, Auth::user()->password)) {
+            return response()->json(["message" => "incorrect "], 403);
+        }
+
+        $user = User::find(Auth::user()->id);
 
         if ($request->has('name')) {
             $user->name = $request->name;
