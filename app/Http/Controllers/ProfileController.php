@@ -7,6 +7,7 @@ use App\Models\User;
 use Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Image;
 
 class ProfileController extends Controller
 {
@@ -34,7 +35,7 @@ class ProfileController extends Controller
 
             'name' => 'required|max:30|string',
             'surname' => 'required|max:30|string',
-            'picture' => 'required|image|mimes:jpeg,png,jpg|max:8192',
+            'picture' => 'sometimes|image|mimes:jpeg,png,jpg|max:8192',
             'phone_number' => 'required|string|unique:users',
             'password' => 'required',
         ]);
