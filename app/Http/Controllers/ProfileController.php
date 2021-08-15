@@ -12,8 +12,8 @@ class ProfileController extends Controller
 {
     public function __construct()
     {
-        $this->middleware("auth:api")->only("show");
-        $this->middleware('isUserActive:api')->only("show");
+        $this->middleware("auth:api")->only(["show", "editProfile"]);
+        $this->middleware('isUserActive:api')->only(["show", "editProfile"]);
 
     }
     public function show()
