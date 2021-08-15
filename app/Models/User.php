@@ -21,6 +21,10 @@ class User extends Authenticatable
     protected $fillable = [
         'name', 'surname', 'email', 'password', 'phone_number', 'picture', 'firebase_uid',
     ];
+    public function getAuthPassword()
+    {
+        return $this->password;
+    }
 
     protected $primaryKey = 'id';
 
