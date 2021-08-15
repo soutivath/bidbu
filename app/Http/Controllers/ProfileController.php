@@ -32,24 +32,22 @@ class ProfileController extends Controller
     {
         $request->validate([
 
-            'name' => 'sometimes|max:30|string',
-            'surname' => 'sometimes|max:30|string',
-            'picture' => 'sometimes|image|mimes:jpeg,png,jpg|max:8192',
+            'name' => 'required|max:30|string',
+            'surname' => 'required|max:30|string',
+            'picture' => 'required|image|mimes:jpeg,png,jpg|max:8192',
+            'phone_number' => 'required|string|unique:users',
             'password' => 'required',
         ]);
-        return response()->json(["data" => $request], 200);
+
         $user = User::find(Auth::id());
 
         if (!Hash::check($request->password, Auth::user()->password)) {
             return response()->json(["message" => "incorrect password"], 403);
         }
 
-        if ($request->has('name')) {
-            $user->name = $request->name;
-        }
-        if ($request->has('surname')) {
-            $user->surname = $request->surname;
-        }
+        $user->name = $request->name;
+        $user->surname = $request->surname;
+        $user->phone_number = $request->phone_number;
         if ($request->hasFile('picture')) {
             if ($user->picture != "default_image.jpg") {
                 $oldPath = public_path() . '/profile_image/' . $user->picture;
