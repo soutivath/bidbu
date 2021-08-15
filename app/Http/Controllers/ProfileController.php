@@ -37,7 +37,7 @@ class ProfileController extends Controller
             'picture' => 'sometimes|image|mimes:jpeg,png,jpg|max:8192',
             'password' => 'required',
         ]);
-        dd(Auth::user());
+        return response()->json(["data" => Auth::user()], 200);
         $user = User::find(Auth::id());
 
         if (!Hash::check($request->password, Auth::user()->password)) {
