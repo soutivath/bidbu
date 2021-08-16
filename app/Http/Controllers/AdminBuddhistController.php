@@ -368,8 +368,8 @@ class AdminBuddhistController extends Controller
             ]);
 
             return response()->json([
-                "role" => Auth::user()->roles[0]->name,
-                "name" => Auth::user()->name,
+                //   "role" => Auth::user()->roles[0]->name,
+                // "name" => Auth::user()->name,
                 "data" => json_decode($response->getBody()->getContents()),
 
             ], 200);
