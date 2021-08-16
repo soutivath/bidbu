@@ -229,6 +229,7 @@ class AdminBuddhistController extends Controller
             'picture' => 'sometimes|image|mimes:jpeg,png,jpg|max:30720',
 
         ]);
+        
         if (Auth::user()->hasRole("superadmin")) {
 
             #  $auth = app('firebase.auth');
@@ -250,6 +251,7 @@ class AdminBuddhistController extends Controller
 
             // Retrieve the UID (User ID) from the verified Firebase credential's token
             #   $uid = $verifiedIdToken->claims()->get('sub');
+            try{
             $user = new User();
             $defaultImage = "default_image.jpg";
             $location = "";
@@ -269,8 +271,8 @@ class AdminBuddhistController extends Controller
             $user->picture = $defaultImage;
 
             $user->topic = "notification_topic_" . "admin" . time();
-
-            if ($user->save()) {
+            $user->save();
+           /* if ($user->save()) {
                 $user->attachRole("admin");
                 $http = new \GuzzleHttp\Client([
                     'timeout' => 60,
@@ -285,7 +287,7 @@ class AdminBuddhistController extends Controller
                             'password' => $request->password,
                         ],
                     ]);
-
+*/
                     /*  $database = app('firebase.database');
                     $reference = $database->getReference('users/' . $uid . '/')
                     ->push([
@@ -300,11 +302,10 @@ class AdminBuddhistController extends Controller
 
                     ], 200);*/
                     return response()->json([
-                        "role" => Auth::user()->roles[0]->name,
-                        "name" => Auth::user()->name,
-                        "data" => json_decode($response->getBody()->getContents()),
+                     
+                        "message"=>"register admin successfully"
 
-                    ], 200);
+                    ], 201);
 
                 } catch (\GuzzleHttp\Exception\BadResponseException $e) {
                     File::delete($location);
