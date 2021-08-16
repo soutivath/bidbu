@@ -229,7 +229,7 @@ class AdminBuddhistController extends Controller
             'picture' => 'sometimes|image|mimes:jpeg,png,jpg|max:30720',
 
         ]);
-        
+
         if (Auth::user()->hasRole("superadmin")) {
 
             #  $auth = app('firebase.auth');
@@ -251,79 +251,78 @@ class AdminBuddhistController extends Controller
 
             // Retrieve the UID (User ID) from the verified Firebase credential's token
             #   $uid = $verifiedIdToken->claims()->get('sub');
-            try{
-            $user = new User();
-            $defaultImage = "default_image.jpg";
-            $location = "";
-            if ($request->hasFile('picture')) {
-                $image = $request->file('picture');
-                $fileExtension = $image->getClientOriginalExtension();
-                $fileName = 'profile_image_' . time() . '.' . $fileExtension;
-                $location = public_path("/profile_image/" . $fileName);
-                Image::make($image)->resize(460, null, function ($c) {$c->aspectRatio();})->save($location);
-                $defaultImage = $fileName;
-            }
-            $user->name = $request->name;
-            $user->surname = $request->surname;
-            $user->phone_number = $request->phone_number;
-            $user->firebase_uid = "admin" . time();
-            $user->password = bcrypt($request->password);
-            $user->picture = $defaultImage;
+            try {
+                $user = new User();
+                $defaultImage = "default_image.jpg";
+                $location = "";
+                if ($request->hasFile('picture')) {
+                    $image = $request->file('picture');
+                    $fileExtension = $image->getClientOriginalExtension();
+                    $fileName = 'profile_image_' . time() . '.' . $fileExtension;
+                    $location = public_path("/profile_image/" . $fileName);
+                    Image::make($image)->resize(460, null, function ($c) {$c->aspectRatio();})->save($location);
+                    $defaultImage = $fileName;
+                }
+                $user->name = $request->name;
+                $user->surname = $request->surname;
+                $user->phone_number = $request->phone_number;
+                $user->firebase_uid = "admin" . time();
+                $user->password = bcrypt($request->password);
+                $user->picture = $defaultImage;
 
-            $user->topic = "notification_topic_" . "admin" . time();
-            $user->save();
-           /* if ($user->save()) {
+                $user->topic = "notification_topic_" . "admin" . time();
+                $user->save();
+                /* if ($user->save()) {
                 $user->attachRole("admin");
                 $http = new \GuzzleHttp\Client([
-                    'timeout' => 60,
+                'timeout' => 60,
                 ]);
                 try {
-                    $response = $http->post(\Config::get("values.APP_URL") . ':' . $_SERVER["SERVER_PORT"] . '/oauth/token', [
-                        'form_params' => [
-                            'grant_type' => 'password',
-                            'client_id' => \Config::get("values.CLIENT_ID"),
-                            'client_secret' => \Config::get("values.CLIENT_SECRET"),
-                            'username' => $request->phone_number,
-                            'password' => $request->password,
-                        ],
-                    ]);
-*/
-                    /*  $database = app('firebase.database');
-                    $reference = $database->getReference('users/' . $uid . '/')
-                    ->push([
-                    'profile' => $defaultImage, // new highest price
-                    ]);*/
+                $response = $http->post(\Config::get("values.APP_URL") . ':' . $_SERVER["SERVER_PORT"] . '/oauth/token', [
+                'form_params' => [
+                'grant_type' => 'password',
+                'client_id' => \Config::get("values.CLIENT_ID"),
+                'client_secret' => \Config::get("values.CLIENT_SECRET"),
+                'username' => $request->phone_number,
+                'password' => $request->password,
+                ],
+                ]);
+                 */
+                /*  $database = app('firebase.database');
+                $reference = $database->getReference('users/' . $uid . '/')
+                ->push([
+                'profile' => $defaultImage, // new highest price
+                ]);*/
 
-                    // new AdminLoginResponseResource($response->getBody());
-                    //return $response->getBody();
-                    /* return response()->json([
-                    "role" => Auth::user()->roles[0]->name,
-                    "data" => $response->getBody(),
+                // new AdminLoginResponseResource($response->getBody());
+                //return $response->getBody();
+                /* return response()->json([
+                "role" => Auth::user()->roles[0]->name,
+                "data" => $response->getBody(),
 
-                    ], 200);*/
-                    return response()->json([
-                     
-                        "message"=>"register admin successfully"
+                ], 200);*/
+                return response()->json([
 
-                    ], 201);
+                    "message" => "register admin successfully",
 
-                } catch (\GuzzleHttp\Exception\BadResponseException $e) {
-                    File::delete($location);
+                ], 201);
 
-                    if ($e->getCode() === 400) {
-                        return response()->json('Invalid Request. Please enter a Phone number or a password.', $e->getCode());
-                    } else if ($e->getCode() === 401) {
-                        return response()->json('Your credentials are incorrect. Please try again', $e->getCode());
-                    }
+            } catch (\GuzzleHttp\Exception\BadResponseException $e) {
+                File::delete($location);
 
-                    return response()->json('Something went wrong on the server.', $e->getCode());
+                if ($e->getCode() === 400) {
+                    return response()->json('Invalid Request. Please enter a Phone number or a password.', $e->getCode());
+                } else if ($e->getCode() === 401) {
+                    return response()->json('Your credentials are incorrect. Please try again', $e->getCode());
                 }
-            } else {
-                return response()->json(['message' => 'Something went Wrong'], 500);
+
+                return response()->json('Something went wrong on the server.', $e->getCode());
             }
+
         } else {
             return response()->json(["message" => "only super admin can add admin"], 401);
         }
+
     }
 
     public function login(Request $request)
