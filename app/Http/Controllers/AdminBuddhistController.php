@@ -9,7 +9,6 @@ use App\Models\User;
 use Auth;
 use carbon\Carbon;
 use File;
-use Firebase\Auth\Token\Exception\InvalidToken;
 use GuzzleHttp\Client;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
@@ -225,32 +224,32 @@ class AdminBuddhistController extends Controller
             'name' => 'required|max:30|string',
             'surname' => 'required|max:30|string',
             'phone_number' => 'required|string|unique:users',
-            'firebase_token' => 'required|string',
+            //  'firebase_token' => 'required|string',
             'password' => 'required|string|min:6|max:18',
             'picture' => 'sometimes|image|mimes:jpeg,png,jpg|max:8192',
 
         ]);
         if (Auth::user()->hasRole("superadmin")) {
 
-            $auth = app('firebase.auth');
-            $idTokenString = $request->firebase_token;
-            try { // Try to verify the Firebase credential token with Google
-                $verifiedIdToken = $auth->verifyIdToken($idTokenString);
-            } catch (\InvalidArgumentException $e) { // If the token has the wrong format
-                return response()->json(
-                    [
-                        'message' => 'Unauthorized - Can\'t parse the token: ' . $e->getMessage(),
-                    ], 401
-                );
-            } catch (InvalidToken $e) { // If the token is invalid (expired ...)
+            #  $auth = app('firebase.auth');
+            #  $idTokenString = $request->firebase_token;
+            #  try { // Try to verify the Firebase credential token with Google
+            #      $verifiedIdToken = $auth->verifyIdToken($idTokenString);
+            #  } catch (\InvalidArgumentException $e) { // If the token has the wrong format
+            ##      return response()->json(
+            ##         [
+            ##            'message' => 'Unauthorized - Can\'t parse the token: ' . $e->getMessage(),
+            #        ], 401
+            #    );
+            # } catch (InvalidToken $e) { // If the token is invalid (expired ...)
 
-                return response()->json([
-                    'message' => 'Unauthorized - Token is invalid: ' . $e->getMessage(),
-                ], 401);
-            }
+            #     return response()->json([
+            ##         'message' => 'Unauthorized - Token is invalid: ' . $e->getMessage(),
+            #    ], 401);
+            # }
 
             // Retrieve the UID (User ID) from the verified Firebase credential's token
-            $uid = $verifiedIdToken->claims()->get('sub');
+            #   $uid = $verifiedIdToken->claims()->get('sub');
             $user = new User();
             $defaultImage = "default_image.jpg";
             $location = "";
@@ -265,14 +264,11 @@ class AdminBuddhistController extends Controller
             $user->name = $request->name;
             $user->surname = $request->surname;
             $user->phone_number = $request->phone_number;
-            $user->firebase_uid = $uid;
+            $user->firebase_uid = "admin";
             $user->password = bcrypt($request->password);
             $user->picture = $defaultImage;
-            $user->dob = $request->dob;
-            $user->village = $request->village;
-            $user->city = $request->city;
-            $user->province = $request->province;
-            $user->topic = "notification_topic_" . $uid . time();
+
+            $user->topic = "notification_topic_" . "admin" . time();
 
             if ($user->save()) {
                 $user->attachRole("admin");
