@@ -43,7 +43,7 @@ class ProfileController extends Controller
         $user = User::find(Auth::id());
 
         if (!Hash::check($request->password, Auth::user()->password)) {
-            return response()->json(["message" => "incorrect password"], 403);
+            return response()->json(["message" => "ລະຫັດຜ່ານບໍ່ຖຶກຕ້ອງ"], 403);
         }
 
         $user->name = $request->name;
@@ -65,7 +65,7 @@ class ProfileController extends Controller
         }
 
         $user->save();
-        return response()->json(["message" => "update data complete"], 200);
+        return response()->json(["message" => $user], 200);
 
     }
 }
