@@ -272,6 +272,8 @@ class AdminBuddhistController extends Controller
 
                 $user->topic = "notification_topic_" . "admin" . time();
                 $user->save();
+                $user->attachRole("admin");
+
                 /* if ($user->save()) {
                 $user->attachRole("admin");
                 $http = new \GuzzleHttp\Client([
