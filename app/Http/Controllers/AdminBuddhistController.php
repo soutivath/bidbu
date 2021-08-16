@@ -226,7 +226,7 @@ class AdminBuddhistController extends Controller
             'phone_number' => 'required|string|unique:users',
             //  'firebase_token' => 'required|string',
             'password' => 'required|string|min:6|max:18',
-            'picture' => 'sometimes|image|mimes:jpeg,png,jpg|max:8192',
+            'picture' => 'sometimes|image|mimes:jpeg,png,jpg|max:30720',
 
         ]);
         if (Auth::user()->hasRole("superadmin")) {

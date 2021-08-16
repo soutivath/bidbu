@@ -61,7 +61,7 @@ class BuddhistController extends Controller
             'end_datetime' => 'required|date|date_format:Y-m-d H:i:s|after:now',
             'price' => 'required|numeric|gt:0',
             'images' => 'required|array|max:5',
-            'images.*' => 'image|mimes:jpeg,png,jpg,PNG|max:8192',
+            'images.*' => 'image|mimes:jpeg,png,jpg,PNG|max:30720',
             'type_id' => 'required|string',
 
             /*  'pay_choice' => 'required|string',
