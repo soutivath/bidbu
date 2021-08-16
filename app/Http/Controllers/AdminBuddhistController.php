@@ -228,10 +228,7 @@ class AdminBuddhistController extends Controller
             'firebase_token' => 'required|string',
             'password' => 'required|string|min:6|max:18',
             'picture' => 'sometimes|image|mimes:jpeg,png,jpg|max:8192',
-            'dob' => 'required|date_format:Y-m-d',
-            'village' => 'required|string|max:50',
-            'city' => 'required|string|max:50',
-            'province' => 'required|string|max:50',
+
         ]);
         if (Auth::user()->hasRole("superadmin")) {
 
@@ -346,7 +343,7 @@ class AdminBuddhistController extends Controller
             ]
         );
         if (!Auth::attempt(['phone_number' => $request->phone_number, 'password' => $request->password])) {
-            return response()->json(['message' => 'Unauthorized'], 401);
+            return response()->json(['message' => 'ເບີໂທຫຼືລະຫັດຜ່ານບໍ່ຖືກຕ້ອງ'], 401);
         }
         if (Auth::user()->active == 0) {
             return response()->json(['message' => 'Your account has been dismiss'], 403);
