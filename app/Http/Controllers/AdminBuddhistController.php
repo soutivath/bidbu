@@ -264,7 +264,7 @@ class AdminBuddhistController extends Controller
             $user->name = $request->name;
             $user->surname = $request->surname;
             $user->phone_number = $request->phone_number;
-            $user->firebase_uid = "admin";
+            $user->firebase_uid = "admin" . time();
             $user->password = bcrypt($request->password);
             $user->picture = $defaultImage;
 
