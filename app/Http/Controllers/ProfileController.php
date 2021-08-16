@@ -36,7 +36,7 @@ class ProfileController extends Controller
             'name' => 'required|max:30|string',
             'surname' => 'required|max:30|string',
             'picture' => 'sometimes|image|mimes:jpeg,png,jpg|max:8192',
-            'phone_number' => 'required|string|unique:users',
+            'phone_number' => 'required|string',
             'password' => 'required',
         ]);
 
