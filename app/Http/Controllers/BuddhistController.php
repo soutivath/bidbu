@@ -305,7 +305,7 @@ class BuddhistController extends Controller
                 $bud->highest_price = $request->bidding_price;
                 $bud->highBidUser = Auth::id();
                 if (Carbon::now()->diffInSeconds(Carbon::parse($bud->end_time)) <= 180) {
-                    $bud->end_time = Carbon::parse($bud->end_time)->addMinutes(3);
+                    $bud->end_time = Carbon::parse($bud->end_time)->addMinutes(1);
                 }
                 $bud->winner_fcm_token = $request->fcm_token;
                 $bud->winner_user_id = Auth::user()->firebase_uid;
