@@ -601,9 +601,9 @@ class BuddhistController extends Controller
         $data = DB::table('notification')->leftJoin("buddhists", "buddhists.id", "=", "notification.buddhist_id")
             ->where([
                 ['buddhists.end_time', '>', Carbon::now()],
-                ['notification.notification_type', 'bidding_participant'],
                 ["notification.user_id", Auth::id()],
             ])
+            ->whereIn("notification_type", ["bidding_participant", "empty_bidding"])
             ->select("buddhists.id", "buddhists.name", "buddhists.highest_price", "buddhists.image_path", "buddhists.end_time", "buddhists.highBidUser", "buddhists.place")
             ->distinct()
             ->get();

@@ -86,6 +86,17 @@ class CommentController extends Controller
             if (empty($data) && Auth::id() != $ownerID) {
 
                 $result = $messaging->subscribeToTopic($ownerBuddhist->comment_topic, $request->fcm_token);
+                NotificationFirebase::create([
+                    'notification_time' => date('Y-m-d H:i:s'),
+                    'read' => 0,
+                    'data' => "",
+                    'buddhist_id' => $request->buddhist_id,
+                    'user_id' => Auth::id(),
+                    'notification_type' => "empty_message",
+                    'comment_path' => 'Comments/' . $request->buddhist_id . '/' . $comment_id,
+
+                ]);
+
             }
 
             /*  $owner_notification = Notification::fromArray([
@@ -159,37 +170,48 @@ class CommentController extends Controller
             $comment_message = $comment_message->withAndroidConfig($androidConfig);
             $messaging->send($comment_message);
 
-            NotificationFirebase::create([
-                'notification_time' => date('Y-m-d H:i:s'),
-                'read' => 1,
-                'data' => $request->message,
-                'buddhist_id' => $request->buddhist_id,
-                'user_id' => Auth::id(),
-                'notification_type' => "message_participant",
-                'comment_path' => 'Comments/' . $request->buddhist_id . '/' . $comment_id,
+            /*   NotificationFirebase::create([
+            'notification_time' => date('Y-m-d H:i:s'),
+            'read' => 1,
+            'data' => $request->message,
+            'buddhist_id' => $request->buddhist_id,
+            'user_id' => Auth::id(),
+            'notification_type' => "message_participant",
+            'comment_path' => 'Comments/' . $request->buddhist_id . '/' . $comment_id,
 
-            ]);
+            ]);*/
 
-            $notificationData = NotificationFirebase::
-                where([
-                ["buddhist_id", $request->buddhist_id],
-                ["notification_type", "message_participant"],
-                ["user_id", "!=", Auth::id()],
+            /*  $notificationData = NotificationFirebase::
+            where([
+            ["buddhist_id", $request->buddhist_id],
+            ["notification_type", "message_participant"],
+            ["user_id", "!=", Auth::id()],
             ])->select("user_id")->distinct()->get();
 
             for ($i = 0; $i < count($notificationData); $i++) {
-                NotificationFirebase::create([
+            NotificationFirebase::create([
+            'notification_time' => date('Y-m-d H:i:s'),
+            'read' => 0,
+            'data' => $request->message,
+            'buddhist_id' => $request->buddhist_id,
+            'user_id' => $notificationData[$i]["user_id"],
+            'notification_type' => "message",
+            'comment_path' => 'Comments/' . $request->buddhist_id . '/' . $comment_id,
+
+            ]);
+
+            }*/
+            NotificationFirebase::
+                where([
+                ["buddhist_id", $request->buddhist_id],
+                ["user_id", "!=", Auth::id()]])
+                ->whereIn("notification_type", ["message_participant", "empty_message"])
+                ->update([
                     'notification_time' => date('Y-m-d H:i:s'),
                     'read' => 0,
                     'data' => $request->message,
-                    'buddhist_id' => $request->buddhist_id,
-                    'user_id' => $notificationData[$i]["user_id"],
-                    'notification_type' => "message",
-                    'comment_path' => 'Comments/' . $request->buddhist_id . '/' . $comment_id,
-
+                    'notification_type' => "message_participant",
                 ]);
-
-            }
 
             return response()->json([
                 "data" => $reference->getValue(),
