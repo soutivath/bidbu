@@ -54,7 +54,7 @@ class testController extends Controller
         'comment_path' => 'empty',
         ]);
         return response()->json(["message" => "save data complete"], 200);*/
-        $data = Buddhist::select(['*', DB::raw('count(favourites.id) as total')])
+        $data = Buddhist::select(['buddhists.name', DB::raw('count(favourites.id) as total')])
             ->leftJoin('favourites', 'buddhists.id', '=', 'favourites.buddhist_id')
             ->groupBy('buddhists.id')
             ->orderBy('total', 'DESC')
