@@ -407,7 +407,7 @@ class BuddhistController extends Controller
                 $data = NotificationFirebase::where([
                     ["user_id", Auth::id()],
                     ["buddhist_id", $request->buddhist_id],
-                ])->whereIn("notification_type", ["bidding_participant", "empty_bidding"])->get()
+                ])->whereIn("notification_type", ["bidding_participant", "empty_bidding"])
                     ->update([
                         'notification_type' => "bidding_participant",
                         'notification_time' => date('Y-m-d H:i:s'),
