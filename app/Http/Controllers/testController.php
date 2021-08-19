@@ -55,7 +55,7 @@ class testController extends Controller
         return response()->json(["message" => "save data complete"], 200);*/
         $data = Buddhist::select(['*', DB::raw('count(favourites.id) as total')])
             ->leftJoin('favourites', 'buddhists.id', '=', 'favourites.buddhist_id')
-            ->groupBy('buddhists.id')
+        // ->groupBy('buddhists.id')
             ->orderBy('total', 'DESC')
             ->get();
         return response()->json(["data" => $data], 200);
