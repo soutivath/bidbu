@@ -300,7 +300,9 @@ class BuddhistController extends Controller
                         'uid' => Auth::user()->firebase_uid, //bidder id
                         'price' => $request->bidding_price, // new highest price
                         'name' => Auth::user()->name,
+                        'surname' => Auth::user()->surname,
                         'picture' => Auth::user()->getProfilePath(),
+                        'id' => Auth::id(),
                     ]);
                 $bud->highest_price = $request->bidding_price;
                 $bud->highBidUser = Auth::id();
@@ -320,6 +322,16 @@ class BuddhistController extends Controller
                 $messaging = app('firebase.messaging');
                 if (empty($data) && Auth::id() != $ownerID) {
                     $messaging->subscribeToTopic($ownerBuddhist->topic, $request->fcm_token);
+                    NotificationFirebase::create([
+                        'notification_time' => date('Y-m-d H:i:s'),
+                        'read' => 1,
+                        'data' => 0,
+                        'notification_type' => "empty_bidding",
+                        'user_id' => Auth::id(),
+                        'buddhist_id' => $request->buddhist_id,
+                        'comment_path' => 'empty',
+                    ]);
+
                 }
 
                 /* $bidding_notification = Notification::fromArray([
@@ -375,6 +387,7 @@ class BuddhistController extends Controller
                 ->withNotification($owner_notification)
                 ->withData($owner_notification_data);
                 $messaging->send($owner_message);*/
+
                 $owner_message = CloudMessage::withTarget('topic', $ownerTopic)
                     ->withNotification(Notification::fromArray([
                         'title' => 'ຈາກ ' . $ownerBuddhist->name . ' ທີ່ທ່ານໄດ້ປ່ອຍ',
@@ -391,40 +404,76 @@ class BuddhistController extends Controller
                 $messaging->send($owner_message);
 
                 // get all data from notification to found all user that bid this round
+                $data = NotificationFirebase::where([
+                    ["user_id", Auth::id()],
+                    ["buddhist_id", $request->buddhist_id],
+                ])->whereIn("notification_type", ["bidding_participant", "empty_bidding"])->get()
+                    ->update([
+                        'notification_type' => "bidding_participant",
+                        'notification_time' => date('Y-m-d H:i:s'),
+                        'data' => $request->bidding_price,
+                        'read' => 0,
+                    ]);
+
+                /*  if (empty($data)) {
                 NotificationFirebase::create([
-                    'notification_time' => date('Y-m-d H:i:s'),
-                    'read' => 1,
-                    'data' => $request->bidding_price,
-                    'notification_type' => "bidding_participant",
-                    'user_id' => Auth::id(),
-                    'buddhist_id' => $request->buddhist_id,
-                    'comment_path' => 'empty',
+                'notification_time' => date('Y-m-d H:i:s'),
+                'read' => 1,
+                'data' => $request->bidding_price,
+                'notification_type' => "bidding_participant",
+                'user_id' => Auth::id(),
+                'buddhist_id' => $request->buddhist_id,
+                'comment_path' => 'empty',
                 ]);
 
-                if (Auth::id() != $bud->user_id) {
+                } else {
+                $data->update([
+                'notification_time' => date('Y-m-d H:i:s'),
+                'data' => $request->bidding_price,
+                'read' => 1,
+                ]);
+                }*/
 
-                    $notificationData = NotificationFirebase::
-                        where([
-                        ["buddhist_id", $request->buddhist_id],
-                        ["notification_type", "bidding_participant"],
-                        ["user_id", "!=", Auth::id()],
+                //if (Auth::id() != $bud->user_id) {
 
-                    ])->select("user_id")->distinct()->get();
+                /* NotificationFirebase:where([
+                ["buddhist_id", $request->buddhist_id],
+                ["notification_type", "bidding_participant"],
+                ["user_id", "!=", Auth::id()],
+                ])->update([
+                'read' => 1,
+                ]);*/
 
-                    for ($i = 0; $i < count($notificationData); $i++) {
-                        NotificationFirebase::create([
-                            'notification_time' => date('Y-m-d H:i:s'),
-                            'read' => 0,
-                            'data' => $request->bidding_price,
-                            'buddhist_id' => $request->buddhist_id,
-                            'user_id' => $notificationData[$i]["user_id"],
-                            'notification_type' => "bidding",
-                            'comment_path' => 'empty',
-                        ]);
+                /*  NotificationFirebase::
+                where([
+                ["buddhist_id", $request->buddhist_id],
+                ["notification_type", "bidding_participant"],
+                ["user_id", "!=", Auth::id()],
 
-                    }
+                ]);*/
 
-                }
+                /* $notificationData = NotificationFirebase::
+                where([
+                ["buddhist_id", $request->buddhist_id],
+                ["notification_type", "bidding_participant"],
+                ["user_id", "!=", Auth::id()],
+
+                ])->select("user_id")->distinct()->get();
+
+                for ($i = 0; $i < count($notificationData); $i++) {
+                NotificationFirebase::create([
+                'notification_time' => date('Y-m-d H:i:s'),
+                'read' => 0,
+                'data' => $request->bidding_price,
+                'buddhist_id' => $request->buddhist_id,
+                'user_id' => $notificationData[$i]["user_id"],
+                'notification_type' => "bidding",
+                'comment_path' => 'empty',
+                ]);
+
+                }*/
+
+                //   }
 
                 return response()->json(["message" => "Successfully"], 200);
             } else {
