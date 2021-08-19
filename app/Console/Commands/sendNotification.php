@@ -69,6 +69,16 @@ class sendNotification extends Command
                 $message = CloudMessage::withTarget("topic", $buddhist->user->topic)
                 ->withNotification($notification)
                 ->withData($notification_data);*/
+                NotificationFirebase::create([
+                    'notification_time' => date('Y-m-d H:i:s'),
+                    'read' => 0,
+                    'data' => "no_participant",
+                    'buddhist_id' => $buddhist->id,
+                    'user_id' => $buddhist->user->id,
+                    'notification_type' => "owner_result",
+                    'comment_path' => 'empty',
+                ]);
+
                 $message = CloudMessage::withTarget("topic", $buddhist->user->topic)
                     ->withNotification(Notification::fromArray([
                         'title' => 'ຈາກ ' . $buddhist->name . ' ທີ່ທ່ານໄດ້ປ່ອຍ',
@@ -140,12 +150,11 @@ class sendNotification extends Command
                 $notificationData = NotificationFirebase::
                     where([
                     ["buddhist_id", $buddhist->id],
-                    ["notification_type", "bidding_participant"],
-
-                ])->select("user_id")->distinct()->get();
+                ])
+                    ->whereIn("notification_type", ["bidding_participant", "empty_bidding"])
+                    ->select("user_id")->distinct()->get();
 
                 for ($i = 0; $i < count($notificationData); $i++) {
-
                     NotificationFirebase::create([
                         'notification_time' => date('Y-m-d H:i:s'),
                         'read' => 0,
@@ -157,6 +166,15 @@ class sendNotification extends Command
                     ]);
 
                 }
+                NotificationFirebase::create([
+                    'notification_time' => date('Y-m-d H:i:s'),
+                    'read' => 0,
+                    'data' => "have_participant", //winner id
+                    'buddhist_id' => $buddhist->id,
+                    'user_id' => $buddhist->user->id,
+                    'notification_type' => "owner_result",
+                    'comment_path' => 'empty',
+                ]);
 
                 /*  $bidding_notification = Notification::fromArray([
                 'title' => 'ຈາກ ' . $buddhist->name,

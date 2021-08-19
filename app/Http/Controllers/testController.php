@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\NotificationFirebase;
+use App\Models\Buddhist;
 
 class testController extends Controller
 {
@@ -42,16 +42,22 @@ class testController extends Controller
         return response(["message" => " has data"], 200);
 
         }*/
-        NotificationFirebase::create([
-            'notification_time' => date('Y-m-d H:i:s'),
-            'read' => 1,
-            'data' => 0,
-            'notification_type' => "empty_bidding",
-            'user_id' => 15,
-            'buddhist_id' => 72,
-            'comment_path' => 'empty',
+        /*  NotificationFirebase::create([
+        'notification_time' => date('Y-m-d H:i:s'),
+        'read' => 1,
+        'data' => 0,
+        'notification_type' => "empty_bidding",
+        'user_id' => 15,
+        'buddhist_id' => 72,
+        'comment_path' => 'empty',
         ]);
-        return response()->json(["message" => "save data complete"], 200);
+        return response()->json(["message" => "save data complete"], 200);*/
+        $data = Buddhist::select(['*', DB::raw('count(favourites.id) as total')])
+            ->leftJoin('favourites', 'buddhists.id', '=', 'favourites.buddhist_id')
+            ->groupBy('buddhists.id')
+            ->orderBy('total', 'DESC')
+            ->get();
+        return response()->json(["data" => $data], 200);
 
     }
 }

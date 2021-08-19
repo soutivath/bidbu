@@ -68,8 +68,10 @@ class notificationController extends Controller
     {
         $data = NotificationFirebase::where([
             ["user_id", Auth::id()],
-            ["notification_type", "bidding_result"],
-        ])->orderBy("created_at", "desc")->get();
+            //  ["notification_type", "bidding_result"],
+        ])
+            ->whereIn("notification_type", ["bidding_result", "owner_result"])
+            ->orderBy("created_at", "desc")->get();
         if (empty($data)) {
             return response()->json([
                 "message" => "no notification",

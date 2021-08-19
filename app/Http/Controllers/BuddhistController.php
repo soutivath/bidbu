@@ -611,4 +611,15 @@ class BuddhistController extends Controller
         return participantBiddingResource::collection($data);
     }
 
+    public function countByFavorite()
+    {
+        $data = Buddhist::select(['*', DB::raw('count(favourites.id) as total')])
+            ->leftJoin('favourites', 'buddhists.id', '=', 'favourites.buddhist_id')
+            ->groupBy('buddhists.id')
+            ->orderBy('total', 'DESC')
+            ->get();
+        return response()->json(["data" => $data], 200);
+
+    }
+
 }
