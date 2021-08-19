@@ -332,15 +332,6 @@ class BuddhistController extends Controller
                         'comment_path' => 'empty',
                     ]);
                 }
-                NotificationFirebase::create([
-                    'notification_time' => date('Y-m-d H:i:s'),
-                    'read' => 1,
-                    'data' => 0,
-                    'notification_type' => "empty_bidding",
-                    'user_id' => Auth::id(),
-                    'buddhist_id' => $request->buddhist_id,
-                    'comment_path' => 'empty',
-                ]);
 
                 /* $bidding_notification = Notification::fromArray([
                 'title' => 'ຈາກ ' . $ownerBuddhist->name,
@@ -413,7 +404,7 @@ class BuddhistController extends Controller
 
                 // get all data from notification to found all user that bid this round
                 $data = NotificationFirebase::where([
-                    ["user_id", Auth::id()],
+                    ["user_id", "!=", Auth::id()],
                     ["buddhist_id", $request->buddhist_id],
                 ])->whereIn("notification_type", ["bidding_participant", "empty_bidding"])
                     ->update([
