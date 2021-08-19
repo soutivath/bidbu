@@ -331,8 +331,16 @@ class BuddhistController extends Controller
                         'buddhist_id' => $request->buddhist_id,
                         'comment_path' => 'empty',
                     ]);
-
                 }
+                NotificationFirebase::create([
+                    'notification_time' => date('Y-m-d H:i:s'),
+                    'read' => 1,
+                    'data' => 0,
+                    'notification_type' => "empty_bidding",
+                    'user_id' => Auth::id(),
+                    'buddhist_id' => $request->buddhist_id,
+                    'comment_path' => 'empty',
+                ]);
 
                 /* $bidding_notification = Notification::fromArray([
                 'title' => 'ຈາກ ' . $ownerBuddhist->name,

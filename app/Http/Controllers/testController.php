@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\NotificationFirebase;
+
 class testController extends Controller
 {
     /* public function checkBuddhistResult($buddhist_id)
@@ -27,6 +29,29 @@ class testController extends Controller
     }*/
     public function testNotification()
     {
+        /*$database = app("firebase.database");
+        $reference1 = $database->getReference('buddhist/73')
+        ->orderByChild('uid')
+        ->equalTo("AehWUUU8IwPYqkmYUESdUzHBQro1")
+        ->getSnapshot();
+        $data = $reference1->getValue();
+
+        if (empty($data)) {
+        return response(["message" => "no data"], 200);
+        } else {
+        return response(["message" => " has data"], 200);
+
+        }*/
+        NotificationFirebase::create([
+            'notification_time' => date('Y-m-d H:i:s'),
+            'read' => 1,
+            'data' => 0,
+            'notification_type' => "empty_bidding",
+            'user_id' => 15,
+            'buddhist_id' => 72,
+            'comment_path' => 'empty',
+        ]);
+        return response()->json(["message" => "save data complete"], 200);
 
     }
 }
