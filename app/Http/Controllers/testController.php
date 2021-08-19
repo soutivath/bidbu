@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Buddhist;
+use DB;
 
 class testController extends Controller
 {
