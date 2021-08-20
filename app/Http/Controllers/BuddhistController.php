@@ -28,8 +28,8 @@ class BuddhistController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:api')->except('index', 'show', 'buddhistType', 'recommendedBuddhist', 'countByFavorite');
-        $this->middleware('isUserActive:api')->except('index', 'show', 'buddhistType', 'recommendedBuddhist', 'countByFavorite');
+        $this->middleware('auth:api')->except('index', 'show', 'buddhistType', 'recommendedBuddhist', 'countByFavorite', 'almostEnd');
+        $this->middleware('isUserActive:api')->except('index', 'show', 'buddhistType', 'recommendedBuddhist', 'countByFavorite', 'almostEnd');
     }
     public function index()
     {
