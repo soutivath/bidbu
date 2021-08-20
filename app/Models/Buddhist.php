@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\App;
+use App\Models\RecommendedBuddhist;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -26,6 +27,11 @@ class Buddhist extends Model
     public function notifications()
     {
         return $this->hasMany(NotificationFirebase::class);
+    }
+
+    public function recommended()
+    {
+        return $this->hasOne(RecommendedBuddhist::class);
     }
 
 }
