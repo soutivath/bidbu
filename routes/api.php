@@ -128,4 +128,5 @@ Route::get("participantBidding", [App\Http\Controllers\BuddhistController::class
 
 Route::get("testNotification/", [App\Http\Controllers\testController::class, "testNotification"]);
 Route::get("most_like/", [App\Http\Controllers\BuddhistController::class, "countByFavorite"]);
+Route::get("nearly_end/", [App\Http\Controllers\BuddhistController::class, "almostEnd"]);
 Route::post("editProfile/", [App\Http\Controllers\ProfileController::class, "editProfile"]);
