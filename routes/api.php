@@ -127,4 +127,5 @@ Route::get("checkBuddhistResult/{id}", [App\Http\Controllers\BuddhistController:
 Route::get("participantBidding", [App\Http\Controllers\BuddhistController::class, "participantBidding"]);
 
 Route::get("testNotification/", [App\Http\Controllers\testController::class, "testNotification"]);
+Route::get("most_like/", [App\Http\Controllers\BuddhistController::class, "countByFavorite"]);
 Route::post("editProfile/", [App\Http\Controllers\ProfileController::class, "editProfile"]);

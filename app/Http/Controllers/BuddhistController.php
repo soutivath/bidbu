@@ -28,8 +28,8 @@ class BuddhistController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:api')->except('index', 'show', 'buddhistType', 'recommendedBuddhist');
-        $this->middleware('isUserActive:api')->except('index', 'show', 'buddhistType', 'recommendedBuddhist');
+        $this->middleware('auth:api')->except('index', 'show', 'buddhistType', 'recommendedBuddhist', 'countByFavorite');
+        $this->middleware('isUserActive:api')->except('index', 'show', 'buddhistType', 'recommendedBuddhist', 'countByFavorite');
     }
     public function index()
     {
@@ -613,24 +613,15 @@ class BuddhistController extends Controller
 
     public function countByFavorite()
     {
-        $data = Buddhist::select(['
-        buddhists.id,
-        buddhists.name,
-        buddhists.price,
-        buddhists.highest_price,
-        buddhists.place,
-        buddhists.end_time,
-        buddhists.image_path,
-        buddhists.type_id
-        ', DB::raw('count(favourites.id) as total')])
+        $data = Buddhist::select(['buddhists.id', 'buddhists.name', 'buddhists.price', 'buddhists.highest_price', 'buddhists.place', 'buddhists.end_time', 'buddhists.image_path', 'buddhists.type_id', DB::raw('count(favourites.id) as total')])
             ->leftJoin('favourites', 'buddhists.id', '=', 'favourites.buddhist_id')
             ->with("type")
             ->where('buddhists.end_time', '>', Carbon::now())
             ->groupBy('buddhists.id')
             ->orderBy('total', 'DESC')
             ->get();
-       
-        return response()->json(["data" => $data], 200);
+
+        return BuddhistResource::collection($data);
 
     }
 
