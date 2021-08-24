@@ -131,4 +131,4 @@ Route::get("most_like/", [App\Http\Controllers\BuddhistController::class, "count
 Route::get("nearly_end/", [App\Http\Controllers\BuddhistController::class, "almostEnd"]);
 Route::post("editProfile/", [App\Http\Controllers\ProfileController::class, "editProfile"]);
 Route::get("recommended/", [App\Http\Controllers\RecommendedBuddhistController::class, "index"]);
-Route::post("recommended/", [App\Http\Controllers\RecommendedBuddhistController::class, "store"]);
+Route::post("recommended/allBuddhist", [App\Http\Controllers\RecommendedBuddhistController::class, "allBuddhist"]);

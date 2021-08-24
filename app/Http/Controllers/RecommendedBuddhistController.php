@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Buddhist;
 use App\Models\RecommendedBuddhist;
+use carbon\Carbon;
 use Illuminate\Http\Request;
 
 class RecommendedBuddhistController extends Controller
@@ -15,8 +17,13 @@ class RecommendedBuddhistController extends Controller
     public function index(Request $request)
     {
         //
-        $recommended = RecommendedBuddhist::with('buddhist')->get()->pluck('buddhist');
+        $recommended = RecommendedBuddhist::with('buddhist')->pluck('buddhist')->paginate(20);
         return response()->json(["data", $recommended], 200);
+    }
+    public function allBuddhist(Request $request)
+    {
+        $buddhist = Buddhist::where('end_time', '>', Carbon::now())->with('recommended')->get();
+        return response()->json(["data" => $buddhist]);
     }
 
     /**
@@ -48,7 +55,6 @@ class RecommendedBuddhistController extends Controller
             ['buddhist_id', $request->buddhist_id],
         ])->get();
         if ($found->isEmpty()) {
-
             $recommended = RecommendedBuddhist::Create([
                 'buddhist_id' => $request->buddhist_id,
             ]);

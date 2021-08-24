@@ -11,6 +11,7 @@ class RecommendedBuddhist extends Model
     use HasFactory;
 
     protected $fillable = ['buddhist_id'];
+    protected $table = "recommended_buddhists";
     public function buddhist()
     {
         return $this->belongsTo(Buddhist::class);
