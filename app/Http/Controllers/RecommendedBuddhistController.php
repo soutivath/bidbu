@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\RecommendedResource;
 use App\Models\Buddhist;
 use App\Models\RecommendedBuddhist;
 use carbon\Carbon;
@@ -22,8 +23,8 @@ class RecommendedBuddhistController extends Controller
     }
     public function allBuddhist(Request $request)
     {
-        $buddhist = Buddhist::where('end_time', '>', Carbon::now())->with('recommended')->get();
-        return response()->json(["data" => $buddhist]);
+        $buddhist = Buddhist::where('end_time', '>', Carbon::now())->with('recommended')->paginate(30);
+        return RecommendedResource::collection($buddhist);
     }
 
     /**
