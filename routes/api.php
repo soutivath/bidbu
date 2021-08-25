@@ -97,7 +97,7 @@ Route::get("/admin/allNonActiveAdmin", [App\Http\Controllers\AdminBuddhistContro
 
 Route::post("/admin/register", [App\Http\Controllers\AdminBuddhistController::class, "register"]);
 Route::get("/admin/user/{id}", [App\Http\Controllers\AdminBuddhistController::class, "getUserByID"]);
-Route::get("/admin/buddhist/{id}", [App\Http\Controllers\AdminBuddhistController::class, "getBuddhistByID"]);
+Route::get("/admin/buddhist/{buddhist_id}", [App\Http\Controllers\AdminBuddhistController::class, "getBuddhistByID"]);
 Route::put("/admin/buddhist/disable/", [App\Http\Controllers\AdminBuddhistController::class, "disableBuddhist"]);
 Route::get("/admin/buddhist/disabled/", [App\Http\Controllers\AdminBuddhistController::class, "getDisableBuddhist"]);
 Route::post("/admin/login", [App\Http\Controllers\AdminBuddhistController::class, "login"]);

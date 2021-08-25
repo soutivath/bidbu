@@ -115,7 +115,7 @@ class AdminBuddhistController extends Controller
     }
     public function getBuddhistByID($buddhist_id)
     {
-        $buddhist = Buddhist::find($buddhist_id)->with(["type", "user"]);
+        $buddhist = Buddhist::findOrFail($buddhist_id)->with(["type", "user"]);
         if ($user != null) {
             return new AdminBuddhistResource($buddhist);
         } else {
