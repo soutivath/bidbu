@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use File;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class RecommendedResource extends JsonResource

@@ -113,6 +113,15 @@ class AdminBuddhistController extends Controller
             return response()->json(["message" => "User not found"], 404);
         }
     }
+    public function getBuddhistByID($buddhist_id)
+    {
+        $buddhist = Buddhist::find($buddhist_id)->with(["type", "user"]);
+        if ($user != null) {
+            return new AdminBuddhistResource($buddhist);
+        } else {
+            return response()->json(["message" => "Item not found"], 404);
+        }
+    }
 
     public function disableUser(Request $request)
     {
