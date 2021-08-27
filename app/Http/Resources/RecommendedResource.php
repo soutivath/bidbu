@@ -2,9 +2,7 @@
 
 namespace App\Http\Resources;
 
-use Illuminate\Http\Resources\Json\JsonResource;
-
-class RecommendedResource extends JsonResource
+class RecommendedResource extends ResourceCollection
 {
     /**
      * Transform the resource into an array.

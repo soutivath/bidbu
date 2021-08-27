@@ -24,7 +24,7 @@ class RecommendedBuddhistController extends Controller
     public function allBuddhist(Request $request)
     {
         $buddhist = Buddhist::where('end_time', '>', Carbon::now())->with('recommended')->paginate(2);
-        return RecommendedResource::collection($buddhist);
+        return new RecommendedResource($buddhist);
     }
 
     /**
