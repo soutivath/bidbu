@@ -28,7 +28,7 @@ class RecommendedResource extends JsonResource
             "highest_price" => $this->highest_price,
             "image" => $allImage,
             "recommended" => $this->recommended == null ? "0" : "1",*/
-            'data' => parent::toArray($request),
+            parent::toArray($request),
         ];
     }
 }
