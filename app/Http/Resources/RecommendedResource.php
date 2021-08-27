@@ -20,15 +20,16 @@ class RecommendedResource extends JsonResource
         \array_push($allImage, Config("values.APP_URL") . ":" . $_SERVER["SERVER_PORT"] .
         "/" . "buddhist_images/" . $this->image_path . "/" . $file_path['basename']);*/
 
-        return [
-            /* "id" => $this->id,
-            "name" => $this->name,
-            "detail" => $this->detail,
-            "end_time" => $this->end_time,
-            "highest_price" => $this->highest_price,
-            "image" => $allImage,
-            "recommended" => $this->recommended == null ? "0" : "1",*/
-            parent::toArray($request),
-        ];
+        //  return [
+        /* "id" => $this->id,
+        "name" => $this->name,
+        "detail" => $this->detail,
+        "end_time" => $this->end_time,
+        "highest_price" => $this->highest_price,
+        "image" => $allImage,
+        "recommended" => $this->recommended == null ? "0" : "1",*/
+
+        //  ];
+        return parent::toArray($request);
     }
 }
