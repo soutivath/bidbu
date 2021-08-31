@@ -32,7 +32,8 @@ class RecommendedResource extends ResourceCollection
             'prev_page_url' => $this->previousPageUrl(),
             'to' => $this->lastItem(),
             'total' => $this->total(),
-            "data" => ["id" => $this->id,
+            "data" => [
+                "id" => $this->id,
                 "name" => $this->name,
                 "detail" => $this->detail,
                 "end_time" => $this->end_time,

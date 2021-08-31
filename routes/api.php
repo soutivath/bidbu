@@ -134,3 +134,4 @@ Route::post("editProfile/", [App\Http\Controllers\ProfileController::class, "edi
 Route::get("recommended/", [App\Http\Controllers\RecommendedBuddhistController::class, "index"]);
 Route::post("recommended/", [App\Http\Controllers\RecommendedBuddhistController::class, "store"]);
 Route::get("recommended/allBuddhist", [App\Http\Controllers\RecommendedBuddhistController::class, "allBuddhist"]);
+Route::delete("/notification", [App\Http\Controllers\notificationController::class, "deleteNotification"]);

@@ -32,7 +32,7 @@ class NotificationResource extends JsonResource
             'read' => $this->read,
             'notification_type' => $this->notification_type,
             'comment_path' => $this->comment_path,
-
+            'type' => $this->type_id,
         ];
     }
 }

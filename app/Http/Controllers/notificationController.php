@@ -183,4 +183,29 @@ class notificationController extends Controller
     {
         //
     }
+
+    public function deleteNotification(Request $request)
+    {
+        try {
+            $request->validate([
+                "fcm_token" => "required",
+                "notification_type" => "required",
+                "buddhist_id" => "required",
+            ]);
+            $data = NotificationFirebase::where([
+                ["user_id", "=", Auth::id()],
+                ["buddhist_id", $request->buddhist_id],
+                ["notification_type", "$request->notification_type"],
+            ]);
+
+            $messaging = app("firebase.messaging");
+            $messaging->unsubscribeFromTopic($data->buddhist->topic, $request->fcm_token);
+            $data->delete();
+            return response()->json(["message" => "Delete notification complete"], 200);
+        } catch (Exception $e) {
+            return response()->json(["message" => "Server Error"], 500);
+        }
+
+    }
+
 }
