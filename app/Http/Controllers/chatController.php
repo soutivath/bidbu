@@ -7,6 +7,7 @@ use Auth;
 use Kreait\Firebase\Messaging\AndroidConfig;
 use Kreait\Firebase\Messaging\CloudMessage;
 use Kreait\Firebase\Messaging\Notification;
+use Illuminate\Http\Request;
 
 class chatController extends Controller
 {
