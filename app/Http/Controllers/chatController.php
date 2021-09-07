@@ -40,8 +40,8 @@ class chatController extends Controller
                 $query2->where("user_1", $send_to_user)
                     ->where("user_2", $current_user);
             })
-            ->get();
-        if ($checkExistData->isEmpty()) {
+            ->first();
+        if (empty($checkExistData)) {
             $data = ChatRoom::create(
                 [
                     "buddhist_id" => $request->buddhist_id,
