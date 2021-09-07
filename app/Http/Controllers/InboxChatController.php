@@ -45,7 +45,7 @@ class InboxChatController extends Controller
             $data = ChatRoom::create(
                 [
                     "buddhist_id" => $request->buddhist_id,
-                    "user_1" => Auth::id(),
+                    "user_1" => Auth::user()->id,
                     "user_2" => $request->send_to,
                 ]
             );
@@ -75,7 +75,7 @@ class InboxChatController extends Controller
         $database = app("firebase.database");
         $database->getReference("Chat_Messages/" . $request->chat_room . "/")
             ->push([
-                "send_by" => Auth::id(),
+                "send_by" => Auth::user()->id,
                 "time" => date('Y-m-d H:i:s'),
                 "message" => $request->message,
                 "read" => 0,
@@ -83,7 +83,7 @@ class InboxChatController extends Controller
 
         $user = ChatRoom::where([["id", $chat_room_id], ["user_1", Auth::id()]])->first();
         $topic_name = "";
-        if ($user->user_1 == Auth::id()) {
+        if ($user->user_1 == Auth::user()->id) {
             $topic_name = $user_id->user2->topic;
             $chat_message = CloudMessage::withTarget('topic', $topic_name)
                 ->withNotification(Notification::fromArray([
@@ -91,7 +91,7 @@ class InboxChatController extends Controller
                     'body' => $request->message,
                 ]))
                 ->withData([
-                    'sender' => Auth::id(),
+                    'sender' => Auth::user()->id,
                     'chat_room_id' => $chat_room_id,
                     'type' => 'message',
                 ]);
@@ -106,7 +106,7 @@ class InboxChatController extends Controller
                     'body' => $request->message,
                 ]))
                 ->withData([
-                    'sender' => Auth::id(),
+                    'sender' => Auth::user()->id,
                     'chat_room_id' => $chat_room_id,
                     'type' => 'message',
                 ]);
@@ -117,7 +117,7 @@ class InboxChatController extends Controller
         $database = app("firebase.database");
         $database->getReference("Chat_Messages/" . $request->chat_room . "/")
             ->push([
-                "send_by" => Auth::id(),
+                "send_by" => Auth::user()->id,
                 "time" => date('Y-m-d H:i:s'),
                 "message" => $request->message,
                 "read" => 0,
