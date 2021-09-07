@@ -10,7 +10,7 @@ class ChatRoom extends Model
 {
     use HasFactory;
     protected $table = "chat_room";
-    protected $fillable = ["user_1", "user_2", "buddhist_id"];
+    protected $fillable = ["user_1", "user_2", "buddhist_id", "id"];
     public function user1()
     {
         return $this->belongsTo(User::class, "user_1", "id");
