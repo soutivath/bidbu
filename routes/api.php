@@ -135,3 +135,6 @@ Route::get("recommended/", [App\Http\Controllers\RecommendedBuddhistController::
 Route::post("recommended/", [App\Http\Controllers\RecommendedBuddhistController::class, "store"]);
 Route::get("recommended/allBuddhist", [App\Http\Controllers\RecommendedBuddhistController::class, "allBuddhist"]);
 Route::delete("/notification", [App\Http\Controllers\notificationController::class, "deleteNotification"]);
+
+Route::post("check_chat_room", [App\Http\Controllers\chatController::class, "createChatRoom"]);
+Route::post("chat", [App\Http\Controllers\chatController::class, "sendMessage"]);
