@@ -24,8 +24,8 @@ class chatController extends Controller
     {
         //when click on the chat check if user has been pair up or not
         $request->validate([
-            "send_to" => "required",
-            "buddhist_id" => "required",
+            "send_to" => "required|integer",
+            "buddhist_id" => "required|integer",
         ]);
         // search data
         $current_chat_id = "";
@@ -36,7 +36,7 @@ class chatController extends Controller
                 $query->where("user_1", $current_user)
                     ->where("user_2", $send_to_user);
             })
-            ->orWhere(function ($query) {
+            ->orWhere(function ($query) use ($send_to_user, $current_user) {
                 $query->where("user_1", $send_to_user)
                     ->where("user_2", $current_user);
             })
