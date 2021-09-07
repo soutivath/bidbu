@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Chat_Room;
+use App\Models\ChatRoom;
 use Auth;
 use Kreait\Firebase\Messaging\AndroidConfig;
 use Kreait\Firebase\Messaging\CloudMessage;
@@ -38,7 +38,7 @@ class chatController extends Controller
             })
             ->get();
         if ($checkExistData->isEmpty()) {
-            $data = Chat_Room::create(
+            $data = ChatRoom::create(
                 [
                     "buddhist_id" => $request->buddhist_id,
                     "user_1" => Auth::id(),
@@ -75,7 +75,7 @@ class chatController extends Controller
                 "read" => 0,
             ]);
 
-        $user = Chat_Room::where([["id", $chat_room_id], ["user_1", Auth::id()]])->first();
+        $user = ChatRoom::where([["id", $chat_room_id], ["user_1", Auth::id()]])->first();
         $topic_name = "";
         if ($user->user_1 == Auth::id()) {
             $topic_name = $user_id->user2->topic;
