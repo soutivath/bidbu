@@ -33,6 +33,8 @@ class checkBuddhistResultResource extends JsonResource
             "owner_phone" => $this->user->phone_number,
             "buddhist_image" => $allImage,
             "owner_image" => $this->user->getProfilePath(),
+            "owner_id" => $this->user->id,
+            "buddhist_id" => $this->id,
         ];
     }
 }
