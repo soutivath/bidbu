@@ -33,12 +33,12 @@ class chatController extends Controller
         $current_user = Auth::id();
         $checkExistData = DB::table('chat_room')
             ->where(function ($query) use ($send_to_user, $current_user) {
-                $query->where("user_1", $current_user);
-                $query->where("user_2", $send_to_user);
+                $query->where("user_1", $current_user)
+                    ->where("user_2", $send_to_user);
             })
             ->orWhere(function ($query) {
-                $query->where("user_1", $send_to_user);
-                $query->where("user_2", $current_user);
+                $query->where("user_1", $send_to_user)
+                    ->where("user_2", $current_user);
             })
             ->get();
         if ($checkExistData->isEmpty()) {
