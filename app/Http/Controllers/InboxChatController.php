@@ -30,6 +30,11 @@ class InboxChatController extends Controller
         // search data
         $current_chat_id = "";
         $send_to_user = $request->send_to;
+        if (Auth::check()) {
+            return response()->json(["message" => " login"], 200);
+
+        }
+        return response()->json(["message" => "not login"], 200);
         $current_user = Auth::user()->id;
         $checkExistData = DB::table('chat_room')
             ->where(function ($query) use ($send_to_user, $current_user) {
