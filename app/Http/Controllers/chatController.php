@@ -36,8 +36,8 @@ class chatController extends Controller
                 $query->where("user_1", $current_user)
                     ->where("user_2", $send_to_user);
             })
-            ->orWhere(function ($query) use ($send_to_user, $current_user) {
-                $query->where("user_1", $send_to_user)
+            ->orWhere(function ($query2) use ($send_to_user, $current_user) {
+                $query2->where("user_1", $send_to_user)
                     ->where("user_2", $current_user);
             })
             ->get();
