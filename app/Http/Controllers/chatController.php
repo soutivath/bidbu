@@ -4,10 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\ChatRoom;
 use Auth;
+use DB;
+use Illuminate\Http\Request;
 use Kreait\Firebase\Messaging\AndroidConfig;
 use Kreait\Firebase\Messaging\CloudMessage;
 use Kreait\Firebase\Messaging\Notification;
-use Illuminate\Http\Request;
 
 class chatController extends Controller
 {
@@ -27,15 +28,17 @@ class chatController extends Controller
             "buddhist_id" => "required",
         ]);
         // search data
-
+        $current_chat_id = "";
+        $send_to_user = $request->send_to;
+        $current_user = Auth::id();
         $checkExistData = DB::table('chat_room')
-            ->where(function ($query) {
-                $query->where("user_1", Auth::id());
-                $query->where("user_2", $request->send_to);
+            ->where(function ($query) use ($send_to_user, $current_user) {
+                $query->where("user_1", $current_user);
+                $query->where("user_2", $send_to_user);
             })
             ->orWhere(function ($query) {
-                $query->where("user_1", $request->send_to);
-                $query->where("user_2", Auth::id());
+                $query->where("user_1", $send_to_user);
+                $query->where("user_2", $current_user);
             })
             ->get();
         if ($checkExistData->isEmpty()) {
@@ -49,6 +52,8 @@ class chatController extends Controller
             $current_chat_id = $data->id;
             $database->getReference('chat_room/' . $current_chat_id . '/')
                 ->set([]);
+        } else {
+            $current_chat_id = $checkExistData->id;
         }
         return response()->json(["data" => $current_chat_id], 200);
     }
