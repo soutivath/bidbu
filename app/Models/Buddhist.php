@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\App;
+use App\Models\ChatRoom;
 use App\Models\RecommendedBuddhist;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -32,6 +33,15 @@ class Buddhist extends Model
     public function recommended()
     {
         return $this->hasOne(RecommendedBuddhist::class);
+    }
+
+    public function chat_room_user1()
+    {
+        return $this->hasMany(ChatRoom::class, "user_1");
+    }
+    public function chat_room_user2()
+    {
+        return $this->hasMany(ChatRoom::class, "user_2");
     }
 
 }
