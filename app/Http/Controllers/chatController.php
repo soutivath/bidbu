@@ -30,8 +30,8 @@ class chatController extends Controller
         // search data
         $current_chat_id = "";
         $send_to_user = $request->send_to;
-        $current_user = Auth::id();
-        return response()->json(["data" => "nice"], 200);
+        $current_user = Auth::user()->id;
+
         $checkExistData = DB::table('chat_room')
             ->where(function ($query) use ($send_to_user, $current_user) {
                 $query->where("user_1", $current_user)
