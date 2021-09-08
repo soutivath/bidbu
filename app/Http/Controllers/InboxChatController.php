@@ -53,7 +53,7 @@ class InboxChatController extends Controller
             $current_chat_id = $data->id;
             $database->getReference('chat_room/')
                 ->set([
-                    $current_chat_id => [],
+                    $current_chat_id => '',
                 ]);
         } else {
             $current_chat_id = $checkExistData->id;
@@ -84,7 +84,7 @@ class InboxChatController extends Controller
                 "read" => 0,
             ]);
 
-        $user = ChatRoom::where([["id", $chat_room_id], ["user_1", Auth::id()]])->first();
+        $user = ChatRoom::where([["id", $chat_room_id], ["user_1", Auth::user()->id]])->first();
         $topic_name = "";
         if ($user->user_1 == Auth::user()->id) {
             $topic_name = $user_id->user2->topic;
