@@ -102,7 +102,7 @@ class InboxChatController extends Controller
             return response()->json(["message" => "no data found"], 200);
         }
         if ($user->user_1 == Auth::user()->id) {
-            $topic_name = $user_id->user2->topic;
+            $topic_name = $user->user2->topic;
             $chat_message = CloudMessage::withTarget('topic', $topic_name)
                 ->withNotification(Notification::fromArray([
                     'title' => 'ຂໍ້ຄວາມໃຫມ່ຈາກ ' . Auth::user()->name,
