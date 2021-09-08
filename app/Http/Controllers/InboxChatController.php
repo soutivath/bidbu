@@ -85,8 +85,7 @@ class InboxChatController extends Controller
 
         $current_user = Auth::user()->id;
         $send_to_user = $request->send_to;
-        $user = DB::table('chat_room')
-            ->where("buddhist_id", $request->chat_room_id)
+        $user = ChatRoom::where("buddhist_id", $request->chat_room_id)
             ->where(function ($query) use ($send_to_user, $current_user) {
                 $query->where("user_1", $current_user)
                     ->where("user_2", $send_to_user);
@@ -102,7 +101,8 @@ class InboxChatController extends Controller
         if (empty($user)) {
             return response()->json(["message" => "no data found"], 404);
         }
-        if ($user->user_1 == Auth::user()->id) {
+
+        if ($user->user_1->id == Auth::user()->id) {
             $topic_name = $user->user2->topic;
             $chat_message = CloudMessage::withTarget('topic', $topic_name)
                 ->withNotification(Notification::fromArray([
