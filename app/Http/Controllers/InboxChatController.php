@@ -95,11 +95,12 @@ class InboxChatController extends Controller
                 $query2->where("user_1", $send_to_user)
                     ->where("user_2", $current_user);
             })
+            ->with("user")
             ->first();
 
         $topic_name = "";
         if (empty($user)) {
-            return response()->json(["message" => "no data found"], 200);
+            return response()->json(["message" => "no data found"], 404);
         }
         if ($user->user_1 == Auth::user()->id) {
             $topic_name = $user->user2->topic;
