@@ -75,7 +75,7 @@ class InboxChatController extends Controller
 
         ]);
         $database = app("firebase.database");
-        $database->getReference("Chat_Messages/" . $request->chat_room . "/")
+        $database->getReference("Chat_Messages/" . $request->chat_room_id . "/")
             ->push([
                 "send_by" => Auth::user()->id,
                 "time" => date('Y-m-d H:i:s'),
@@ -86,7 +86,7 @@ class InboxChatController extends Controller
         $current_user = Auth::user()->id;
         $send_to_user = $request->send_to;
         $user = DB::table('chat_room')
-            ->where("buddhist_id", $request->buddhist_id)
+            ->where("buddhist_id", $request->chat_room_id)
             ->where(function ($query) use ($send_to_user, $current_user) {
                 $query->where("user_1", $current_user)
                     ->where("user_2", $send_to_user);
