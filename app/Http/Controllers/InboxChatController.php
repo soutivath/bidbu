@@ -98,6 +98,9 @@ class InboxChatController extends Controller
             ->first();
 
         $topic_name = "";
+        if (empty($user)) {
+            return response()->json(["message" => "no data found"], 200);
+        }
         if ($user->user_1 == Auth::user()->id) {
             $topic_name = $user_id->user2->topic;
             $chat_message = CloudMessage::withTarget('topic', $topic_name)
@@ -107,8 +110,8 @@ class InboxChatController extends Controller
                 ]))
                 ->withData([
                     'sender' => Auth::user()->id,
-                    'chat_room_id' => $chat_room_id,
-                    'type' => 'message',
+                    'chat_room_id' => $request->chat_room_id,
+                    'type' => 'chat',
                 ]);
             $chat_message = $chat_message->withAndroidConfig($androidConfig);
             $messaging->send($chat_message);
@@ -122,15 +125,15 @@ class InboxChatController extends Controller
                 ]))
                 ->withData([
                     'sender' => Auth::user()->id,
-                    'chat_room_id' => $chat_room_id,
-                    'type' => 'message',
+                    'chat_room_id' => $request->chat_room_id,
+                    'type' => 'chat',
                 ]);
             $chat_message = $chat_message->withAndroidConfig($androidConfig);
             $messaging->send($chat_message);
 
         }
         $database = app("firebase.database");
-        $database->getReference("Chat_Messages/" . $request->chat_room . "/")
+        $database->getReference("Chat_Messages/" . $request->chat_room_id . "/")
             ->push([
                 "send_by" => Auth::user()->id,
                 "time" => date('Y-m-d H:i:s'),
