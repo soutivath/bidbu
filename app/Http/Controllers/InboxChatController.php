@@ -28,11 +28,12 @@ class InboxChatController extends Controller
             "buddhist_id" => "required|integer",
         ]);
         // search data
-        $current_chat_id = "";
+
         $send_to_user = $request->send_to;
 
         $current_user = Auth::user()->id;
         $checkExistData = DB::table('chat_room')
+            ->where("buddhist_id", $request->buddhist_id)
             ->where(function ($query) use ($send_to_user, $current_user) {
                 $query->where("user_1", $current_user)
                     ->where("user_2", $send_to_user);
@@ -41,8 +42,8 @@ class InboxChatController extends Controller
                 $query2->where("user_1", $send_to_user)
                     ->where("user_2", $current_user);
             })
-            ->get();
-        if ($checkExistData->isEmpty()) {
+            ->first();
+        if (empty($checkExistData)) {
             $data = ChatRoom::create(
                 [
                     "buddhist_id" => $request->buddhist_id,
@@ -50,15 +51,13 @@ class InboxChatController extends Controller
                     "user_2" => $request->send_to,
                 ]
             );
-            $current_chat_id = $data->id;
+            $database = app("firebase.database");
             $database->getReference('chat_room/')
                 ->set([
-                    $current_chat_id => '',
+                    $request->buddhist_id => "",
                 ]);
-        } else {
-            $current_chat_id = $checkExistData->id;
         }
-        return response()->json(["data" => $current_chat_id], 200);
+        return response()->json(["data" => $request->buddhist_id], 200);
     }
 
     public function sendMessage(Request $request)
@@ -84,7 +83,20 @@ class InboxChatController extends Controller
                 "read" => 0,
             ]);
 
-        $user = ChatRoom::where([["id", $chat_room_id], ["user_1", Auth::user()->id]])->first();
+        $current_user = Auth::user()->id;
+        $send_to_user = $request->send_to;
+        $user = DB::table('chat_room')
+            ->where("buddhist_id", $request->buddhist_id)
+            ->where(function ($query) use ($send_to_user, $current_user) {
+                $query->where("user_1", $current_user)
+                    ->where("user_2", $send_to_user);
+            })
+            ->orWhere(function ($query2) use ($send_to_user, $current_user) {
+                $query2->where("user_1", $send_to_user)
+                    ->where("user_2", $current_user);
+            })
+            ->first();
+
         $topic_name = "";
         if ($user->user_1 == Auth::user()->id) {
             $topic_name = $user_id->user2->topic;
