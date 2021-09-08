@@ -51,8 +51,10 @@ class InboxChatController extends Controller
                 ]
             );
             $current_chat_id = $data->id;
-            $database->getReference('chat_room/' . $current_chat_id . '/')
-                ->set([]);
+            $database->getReference('chat_room/')
+                ->set([
+                    $current_chat_id => [],
+                ]);
         } else {
             $current_chat_id = $checkExistData->id;
         }
