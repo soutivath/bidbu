@@ -95,7 +95,7 @@ class InboxChatController extends Controller
                 $query2->where("user_1", $send_to_user)
                     ->where("user_2", $current_user);
             })
-            ->with("user")
+            ->with(["user_1", "user_2"])
             ->first();
 
         $topic_name = "";
