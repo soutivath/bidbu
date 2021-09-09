@@ -74,14 +74,16 @@ class InboxChatController extends Controller
             'priority' => 'high',
 
         ]);
-        $database = app("firebase.database");
-        $database->getReference("Chat_Messages/" . $request->chat_room_id . "/")
+         $database = app("firebase.database");
+        $database->getReference("chat_room/" . $request->chat_room_id . "/")
             ->push([
                 "send_by" => Auth::user()->id,
                 "time" => date('Y-m-d H:i:s'),
                 "message" => $request->message,
                 "read" => 0,
             ]);
+
+     
 
         $current_user = Auth::user()->id;
         $send_to_user = $request->send_to;
@@ -133,15 +135,7 @@ class InboxChatController extends Controller
             $messaging->send($chat_message);
 
         }
-        $database = app("firebase.database");
-        $database->getReference("Chat_Messages/" . $request->chat_room_id . "/")
-            ->push([
-                "send_by" => Auth::user()->id,
-                "time" => date('Y-m-d H:i:s'),
-                "message" => $request->message,
-                "read" => 0,
-            ]);
-
+       
         return response()->json(["message" => "message send"], 201);
 
     }
