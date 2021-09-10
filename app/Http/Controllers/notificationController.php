@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\NotificationResource;
+use App\Models\Buddhist;
 use App\Models\NotificationFirebase;
 use Auth;
 use Illuminate\Http\Request;
