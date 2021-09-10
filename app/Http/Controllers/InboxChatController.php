@@ -74,7 +74,7 @@ class InboxChatController extends Controller
             'priority' => 'high',
 
         ]);
-         $database = app("firebase.database");
+        $database = app("firebase.database");
         $database->getReference("chat_room/" . $request->chat_room_id . "/")
             ->push([
                 "send_by" => Auth::user()->id,
@@ -82,8 +82,6 @@ class InboxChatController extends Controller
                 "message" => $request->message,
                 "read" => 0,
             ]);
-
-     
 
         $current_user = Auth::user()->id;
         $send_to_user = $request->send_to;
@@ -104,7 +102,7 @@ class InboxChatController extends Controller
             return response()->json(["message" => "no data found"], 404);
         }
 
-        if ($user->user_1->id == Auth::user()->id) {
+        if ($user->user1->id == Auth::user()->id) {
             $topic_name = $user->user2->topic;
             $chat_message = CloudMessage::withTarget('topic', $topic_name)
                 ->withNotification(Notification::fromArray([
@@ -135,7 +133,7 @@ class InboxChatController extends Controller
             $messaging->send($chat_message);
 
         }
-       
+
         return response()->json(["message" => "message send"], 201);
 
     }
