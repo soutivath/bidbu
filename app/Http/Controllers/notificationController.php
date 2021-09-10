@@ -25,7 +25,7 @@ class notificationController extends Controller
 
     public function biddingNotification()
     {
-        $data = NotificationFirebase::select(['notification.buddhist_id', 'buddhists.name', 'buddhists.image_path', 'notification.notification_data', 'notification.notification_time', 'notification.read', 'notification.comment_path'])
+        $data = NotificationFirebase::select(['notification.buddhist_id', 'buddhists.name', 'buddhists.image_path', 'notification.data', 'notification.notification_time', 'notification.read', 'notification.comment_path'])
             ->leftJoin('buddhists', 'buddhists.id', '=', 'notification.buddhist_id')
             ->where([['buddhists.end_time', '>', Carbon::now()],
                 ["user_id", Auth::user()->id],
