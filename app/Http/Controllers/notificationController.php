@@ -6,7 +6,7 @@ use App\Http\Resources\NotificationResource;
 use App\Models\NotificationFirebase;
 use Auth;
 use Illuminate\Http\Request;
-use Carbon\carbon;
+
 class notificationController extends Controller
 {
     /**
@@ -23,30 +23,18 @@ class notificationController extends Controller
 
     public function biddingNotification()
     {
-        $data = NotificationFirebase::select(['notification.buddhist_id', 'buddhists.name', 'buddhists.image_path', 'notification_data', 'no'])
-            ->leftJoin('favourites', 'buddhists.id', '=', 'favourites.buddhist_id')
-            ->with("type")
-            ->where('buddhists.end_time', '>', Carbon::now())
-            ->groupBy('buddhists.id')
-            ->orderBy('total', 'DESC')
+        $data = Buddhost::select(['notification.buddhist_id', 'buddhists.name', 'buddhists.image_path', 'notification.notification_data', 'notification.notification_time', 'notification.read', 'notification.comment_path'])
+            ->leftJoin('notification', 'buddhists.id', '=', 'notification.buddhist_id')
+            ->where([['buddhists.end_time', '>', Carbon::now()],
+                ["user_id", Auth::id],
+                ["notification_type", "bidding_participant"]])
+            ->orderBy("created_at", "desc")
             ->get();
 
-        // 'buddhist_id' => $this->buddhist_id,
-        //  'buddhist_name' => $this->buddhist->name,
-        //  'image' => $anImage,
-
-        /*   'data' => $this->data,
-        'time' => $this->notification_time,
-        'read' => $this->read,
-        'notification_type' => $this->notification_type,
-        'comment_path' => $this->comment_path,
-        'type' => $this->type_id,*/
-
-        $data = NotificationFirebase::
-            $data = NotificationFirebase::where([
-            ["user_id", Auth::id()],
-            ["notification_type", "bidding_participant"],
-        ])->orderBy("created_at", "desc")->get();
+        /* $data = NotificationFirebase::where([
+        ["user_id", Auth::id()],
+        ["notification_type", "bidding_participant"],
+        ])->orderBy("created_at", "desc")->get();*/
         if (empty($data)) {
             return response()->json([
                 "message" => "no notification",
