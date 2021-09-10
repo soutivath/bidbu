@@ -28,8 +28,8 @@ class notificationController extends Controller
         $data = NotificationFirebase::select(['notification.buddhist_id', 'buddhists.name', 'buddhists.image_path', 'notification.data', 'notification.notification_time', 'notification.read', 'notification.comment_path'])
             ->leftJoin('buddhists', 'buddhists.id', '=', 'notification.buddhist_id')
             ->where([['buddhists.end_time', '>', Carbon::now()],
-                ["user_id", Auth::user()->id],
-                ["notification_type", "bidding_participant"]])
+                ["notification.user_id", Auth::user()->id],
+                ["notification.notification_type", "bidding_participant"]])
             ->orderBy("created_at", "desc")
             ->get();
 
