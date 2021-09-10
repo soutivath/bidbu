@@ -30,7 +30,7 @@ class notificationController extends Controller
             ->where([['buddhists.end_time', '>', Carbon::now()],
                 ["notification.user_id", Auth::user()->id],
                 ["notification.notification_type", "bidding_participant"]])
-            ->orderBy("created_at", "desc")
+            ->orderBy("notification.created_at", "desc")
             ->get();
 
         /* $data = NotificationFirebase::where([
