@@ -31,17 +31,17 @@ class notificationController extends Controller
                 ["notification.user_id", Auth::user()->id],
                 ["notification.notification_type", "bidding_participant"]])
             ->orderBy("notification.created_at", "desc")
-            ->get();
+            ->paginate(30);
 
         /* $data = NotificationFirebase::where([
         ["user_id", Auth::id()],
         ["notification_type", "bidding_participant"],
         ])->orderBy("created_at", "desc")->get();*/
-        if (empty($data)) {
+      /*  if (empty($data)) {
             return response()->json([
                 "message" => "no notification",
             ]);
-        }
+        }*/
         NotificationFirebase::where([
             ["user_id", Auth::id()],
             ["read", "0"],
