@@ -24,9 +24,14 @@ class FavouriteController extends Controller
 
     public function index()
     {
-        $favorite = favourite::where(
-            'user_id', Auth::id()
-        )->with('buddhist')->orderBy("created_at", "desc")->get();
+        /* $favorite = favourite::where(
+        'user_id', Auth::id()
+        )->with('buddhist')->orderBy("created_at", "desc")->get();*/
+        $favorite = favourite::leftJoin("buddhists", 'favourites.buddhist_id', "=", "buddhists.id")
+            ->where('buddhists.end_time', '>', Carbon::now())
+            ->with("buddhist")
+            ->orderBy("favourites.created_at", "desc")
+            ->get();
         if (empty($favorite)) {
             return response()->json([
                 "message" => "no favorite yet",
