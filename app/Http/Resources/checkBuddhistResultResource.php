@@ -35,6 +35,9 @@ class checkBuddhistResultResource extends JsonResource
             "owner_image" => $this->user->getProfilePath(),
             "owner_id" => $this->user->id,
             "buddhist_id" => $this->id,
+            "winnerPhone" => empty($winner_name) ? "" : $winner_name->phone_number,
+            "winnerImage" => empty($winner_name) ? "" : $winner_name->getProfilePath(),
+            "winnerId" => empty($winner_name) ? "" : $winner_name->id,
         ];
     }
 }
