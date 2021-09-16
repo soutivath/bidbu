@@ -34,7 +34,7 @@ class BuddhistController extends Controller
     public function index(Request $request)
     {
 
-        if ($request->input("search")) {
+        if ($request->has("search")) {
             $bud = Buddhist::where([
                 ['end_time', '>', Carbon::now()], ["active", "1"], ["name", "LIKE", "%" . $request->input("search") . "$"],
             ])->with('type')->orderBy("created_at", "desc")->paginate(30);
