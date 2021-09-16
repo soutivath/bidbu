@@ -6,8 +6,7 @@ use App\Http\Resources\FavoriteResource;
 use App\Models\favourite;
 use Auth;
 use Carbon\Carbon;
-use Illuminate\Htt
-p\Request;
+use Illuminate\Http\Request;
 
 class FavouriteController extends Controller
 {
