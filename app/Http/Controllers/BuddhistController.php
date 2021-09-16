@@ -33,15 +33,16 @@ class BuddhistController extends Controller
     }
     public function index(Request $request)
     {
-        $query_word = $request->input("search", '');
-        if ($query_word == '') {
-            $bud = Buddhist::where([['end_time', '>', Carbon::now()], ["active", "1"]])->with('type')->orderBy("created_at", "desc")->paginate(30);
+
+        if ($request->input("search")) {
+            $bud = Buddhist::where([
+                ['end_time', '>', Carbon::now()], ["active", "1"], ["name", "LIKE", "%" . $request->input("search") . "$"],
+            ])->with('type')->orderBy("created_at", "desc")->paginate(30);
             return BuddhistResource::collection($bud);
 
         } else {
-            $bud = Buddhist::where([
-                ['end_time', '>', Carbon::now()], ["active", "1"], ["name", "LIKE", "%" . $query_word . "$"],
-            ])->with('type')->orderBy("created_at", "desc")->paginate(30);
+
+            $bud = Buddhist::where([['end_time', '>', Carbon::now()], ["active", "1"]])->with('type')->orderBy("created_at", "desc")->paginate(30);
             return BuddhistResource::collection($bud);
 
         }
