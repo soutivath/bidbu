@@ -31,11 +31,21 @@ class BuddhistController extends Controller
         $this->middleware('auth:api')->except('index', 'show', 'buddhistType', 'recommendedBuddhist', 'countByFavorite', 'almostEnd');
         $this->middleware('isUserActive:api')->except('index', 'show', 'buddhistType', 'recommendedBuddhist', 'countByFavorite', 'almostEnd');
     }
-    public function index()
+    public function index(Request $request)
     {
+        $query_word = $request->input("search", '');
+        if ($query_word == '') {
+            $bud = Buddhist::where([['end_time', '>', Carbon::now()], ["active", "1"]])->with('type')->orderBy("created_at", "desc")->paginate(30);
+            return BuddhistResource::collection($bud);
 
-        $bud = Buddhist::where([['end_time', '>', Carbon::now()], ["active", "1"]])->with('type')->orderBy("created_at", "desc")->get();
-        return BuddhistResource::collection($bud);
+        } else {
+            $bud = Buddhist::where([
+                ['end_time', '>', Carbon::now()], ["active", "1"], ["name", "LIKE", "%" . $query_word . "$"],
+            ])->with('type')->orderBy("created_at", "desc")->paginate(30);
+            return BuddhistResource::collection($bud);
+
+        }
+
     }
     /**
      * Show the form for creating a new resource.
@@ -55,7 +65,7 @@ class BuddhistController extends Controller
      */
     public function store(Request $request)
     {
-        
+
         $request->validate([
             'name' => 'required|min:3|max:30|string',
             'detail' => 'required|string|max:255',

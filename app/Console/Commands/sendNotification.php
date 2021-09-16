@@ -89,6 +89,7 @@ class sendNotification extends Command
                         'buddhist_id' => $buddhist->id,
                         'type' => '',
                         'sender' => "0",
+                        'result' => "no_participant",
                     ]);
                 $message = $message->withAndroidConfig($androidConfig);
                 $messaging->send($message);
@@ -117,6 +118,7 @@ class sendNotification extends Command
                         'buddhist_id' => $buddhist->id,
                         'type' => '',
                         'sender' => "0",
+                        'result' => "have_participant",
                     ]);
                 $message = $message->withAndroidConfig($androidConfig);
                 $messaging->send($message);
