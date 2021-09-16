@@ -143,6 +143,7 @@ class sendNotification extends Command
                         'buddhist_id' => $buddhist->id,
                         'type' => 'bidding_result',
                         'sender' => "0",
+                        'result' => "win",
                     ]);
                 $messageWinner = $messageWinner->withAndroidConfig($androidConfig);
                 $messaging->send($messageWinner);
@@ -207,7 +208,7 @@ class sendNotification extends Command
                         'buddhist_id' => $buddhist->id,
                         'type' => 'bidding_result',
                         'sender' => $userData->id,
-
+                        'result' => "lose",
                     ]);
                 $bidding_message = $bidding_message->withAndroidConfig($androidConfig);
                 $messaging->send($bidding_message);
