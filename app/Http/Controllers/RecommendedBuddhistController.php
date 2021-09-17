@@ -18,12 +18,12 @@ class RecommendedBuddhistController extends Controller
     public function index(Request $request)
     {
         //
-        $recommended = RecommendedBuddhist::with('buddhist')->pluck('buddhist')->paginate(20);
+        $recommended = RecommendedBuddhist::with('buddhist')->pluck('buddhist')->paginate(30);
         return response()->json(["data", $recommended], 200);
     }
     public function allBuddhist(Request $request)
     {
-        $buddhist = Buddhist::where('end_time', '>', Carbon::now())->with('recommended')->paginate(2);
+        $buddhist = Buddhist::where('end_time', '>', Carbon::now())->with('recommended')->paginate(30);
         return new RecommendedResource($buddhist);
     }
 

@@ -510,14 +510,14 @@ class BuddhistController extends Controller
             ['type_id', '=', $type_id],
             ['id', '!=', $buddhist_id],
             ["active", "1"],
-        ])->with('type')->orderBy("created_at", "desc")->get()->shuffle();
+        ])->with('type')->orderBy("created_at", "desc")->paginate(30)->shuffle();
         return BuddhistResource::collection($buddhist);
 
     }
 
     public function almostEnd()
     {
-        $bud = Buddhist::where([['end_time', '>', Carbon::now()], ["active", "1"]])->with('type')->orderBy("end_time")->get();
+        $bud = Buddhist::where([['end_time', '>', Carbon::now()], ["active", "1"]])->with('type')->orderBy("end_time")->paginate(30);
         return BuddhistResource::collection($bud);
     }
     public function myActiveBuddhist()
@@ -527,7 +527,7 @@ class BuddhistController extends Controller
             ["user_id", Auth::id()],
             ["end_time", '>', Carbon::now()],
 
-        ])->orderBy("end_time")->get();
+        ])->orderBy("end_time")->paginate(30);
         if (empty($buddhist)) {
             return response()->json(["message" => "No data found"], 200);
         }
@@ -540,7 +540,7 @@ class BuddhistController extends Controller
             ["winner_user_id", "!=", "empty"],
             ["end_time", '<', Carbon::now()],
             ["user_id", Auth::id()],
-        ])->orderBy("end_time")->get();
+        ])->orderBy("end_time")->paginate(30);
         if (empty($buddhist)) {
             return response()->json(["message" => "No data found"], 200);
         }
@@ -553,7 +553,7 @@ class BuddhistController extends Controller
             ["user_id", Auth::id()],
             ["end_time", '<', Carbon::now()],
             ["winner_user_id", "empty"],
-        ])->orderBy("end_time")->get();
+        ])->orderBy("end_time")->paginate(30);
         if (empty($buddhist)) {
             return response()->json(["message" => "No data found"], 200);
         }
@@ -581,7 +581,7 @@ class BuddhistController extends Controller
             ])
             ->select("buddhists.id", "buddhists.name", "buddhists.highest_price", "buddhists.image_path", "buddhists.end_time", "buddhists.highBidUser", "buddhists.place")
             ->distinct()
-            ->get();
+            ->paginate(30);
 
         return participantBiddingResource::collection($data);
 
@@ -591,7 +591,7 @@ class BuddhistController extends Controller
         $buddhist = Buddhist::where([
             ["end_time", '<', Carbon::now()],
             ["winner_user_id", Auth::user()->firebase_uid],
-        ])->get();
+        ])->paginate(30);
         if (empty($buddhist)) {
             return response()->json(["message" => "No data found"], 200);
         }
@@ -618,7 +618,7 @@ class BuddhistController extends Controller
             ->whereIn("notification_type", ["bidding_participant", "empty_bidding"])
             ->select("buddhists.id", "buddhists.name", "buddhists.highest_price", "buddhists.image_path", "buddhists.end_time", "buddhists.highBidUser", "buddhists.place")
             ->distinct()
-            ->get();
+            ->paginate(30);
 
         return participantBiddingResource::collection($data);
     }
@@ -631,7 +631,7 @@ class BuddhistController extends Controller
             ->where('buddhists.end_time', '>', Carbon::now())
             ->groupBy('buddhists.id')
             ->orderBy('total', 'DESC')
-            ->get();
+            ->paginate(30);
 
         return BuddhistResource::collection($data);
 

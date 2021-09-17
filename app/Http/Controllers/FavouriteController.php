@@ -32,7 +32,7 @@ class FavouriteController extends Controller
             ->where('buddhists.end_time', '>', Carbon::now())
             ->with("buddhist")
             ->orderBy("favourites.created_at", "desc")
-            ->get();
+            ->paginate(30);
         if (empty($favorite)) {
             return response()->json([
                 "message" => "no favorite yet",
