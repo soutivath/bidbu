@@ -498,7 +498,7 @@ class BuddhistController extends Controller
     public function buddhistType($type_id)
     {
 
-        $buddhists = Buddhist::where([['type_id', $type_id], ['end_time', '>', Carbon::now()], ["active", "1"]])->get();
+        $buddhists = Buddhist::where([['type_id', $type_id], ['end_time', '>', Carbon::now()], ["active", "1"]])->paginate(30);
 
         return buddhistCollection::collection($buddhists);
     }
