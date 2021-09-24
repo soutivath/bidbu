@@ -80,7 +80,7 @@ class notificationController extends Controller
             //  ["notification_type", "bidding_result"],
         ])
             ->whereIn("notification_type", ["bidding_result", "owner_result"])
-            ->orderBy("created_at", "desc")->get();
+            ->orderBy("created_at", "desc")->paginate(30);
         if (empty($data)) {
             return response()->json([
                 "message" => "no notification",
