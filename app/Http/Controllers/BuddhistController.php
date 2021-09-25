@@ -578,6 +578,7 @@ class BuddhistController extends Controller
                 ['buddhists.end_time', '<', Carbon::now()],
                 ['notification.notification_type', 'bidding_result'],
                 ["data", "!=", Auth::id()],
+                ["notification.user_id",Auth::id()]
             ])
             ->select("buddhists.id", "buddhists.name", "buddhists.highest_price", "buddhists.image_path", "buddhists.end_time", "buddhists.highBidUser", "buddhists.place")
             ->distinct()
