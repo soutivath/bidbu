@@ -29,7 +29,9 @@ class FavouriteController extends Controller
         'user_id', Auth::id()
         )->with('buddhist')->orderBy("created_at", "desc")->get();*/
         $favorite = favourite::leftJoin("buddhists", 'favourites.buddhist_id', "=", "buddhists.id")
-            ->where('buddhists.end_time', '>', Carbon::now())
+            ->where([
+                ['buddhists.end_time', '>', Carbon::now()],
+                ['favourites.user_id',Auth::id()]])
             ->with("buddhist")
             ->orderBy("favourites.created_at", "desc")
             ->paginate(30);
