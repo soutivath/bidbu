@@ -154,7 +154,7 @@ class sendNotification extends Command
                     where([
                     ["buddhist_id", $buddhist->id],
                 ])
-                    ->whereIn("notification_type", ["bidding_participant", "empty_bidding"])
+                    ->where("notification_type", "bidding_participant")
                     ->select("user_id")->distinct()->get();
 
                 for ($i = 0; $i < count($notificationData); $i++) {

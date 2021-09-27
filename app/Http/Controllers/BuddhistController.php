@@ -336,9 +336,9 @@ class BuddhistController extends Controller
                     $messaging->subscribeToTopic($ownerBuddhist->topic, $request->fcm_token);
                     NotificationFirebase::create([
                         'notification_time' => date('Y-m-d H:i:s'),
-                        'read' => 1,
-                        'data' => 0,
-                        'notification_type' => "empty_bidding",
+                        'read' => 0,
+                        'data' => $request->bidding_price,
+                        'notification_type' => "bidding_participant",
                         'user_id' => Auth::id(),
                         'buddhist_id' => $request->buddhist_id,
                         'comment_path' => 'empty',
@@ -418,7 +418,7 @@ class BuddhistController extends Controller
                 $data = NotificationFirebase::where([
                     ["user_id", "!=", Auth::id()],
                     ["buddhist_id", $request->buddhist_id],
-                ])->whereIn("notification_type", ["bidding_participant", "empty_bidding"])
+                ])->where("notification_type", "bidding_participant")
                     ->update([
                         'notification_type' => "bidding_participant",
                         'notification_time' => date('Y-m-d H:i:s'),
@@ -616,7 +616,7 @@ class BuddhistController extends Controller
                 ['buddhists.end_time', '>', Carbon::now()],
                 ["notification.user_id", Auth::id()],
             ])
-            ->whereIn("notification_type", ["bidding_participant", "empty_bidding"])
+            ->whereIn("notification_type", ["bidding_participant"])
             ->select("buddhists.id", "buddhists.name", "buddhists.highest_price", "buddhists.image_path", "buddhists.end_time", "buddhists.highBidUser", "buddhists.place")
             ->distinct()
             ->paginate(30);
