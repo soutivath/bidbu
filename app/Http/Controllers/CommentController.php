@@ -74,6 +74,7 @@ class CommentController extends Controller
 
             $reference = $database->getReference('Comments/' . $request->buddhist_id . '/')
                 ->push([
+                    'user_id'=>Auth::user()->id,
                     'picture' => Auth::user()->getProfilePath(),
                     'uid' => Auth::user()->firebase_uid,
                     'message' => $request->message,

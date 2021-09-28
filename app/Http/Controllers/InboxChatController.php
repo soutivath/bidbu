@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 use Kreait\Firebase\Messaging\AndroidConfig;
 use Kreait\Firebase\Messaging\CloudMessage;
 use Kreait\Firebase\Messaging\Notification;
-
+use App\Models\NotificationFirebase;
 class InboxChatController extends Controller
 {
     //
@@ -74,14 +74,7 @@ class InboxChatController extends Controller
             'priority' => 'high',
 
         ]);
-        $database = app("firebase.database");
-        $database->getReference("chat_room/" . $request->chat_room_id . "/")
-            ->push([
-                "send_by" => Auth::user()->id,
-                "time" => date('Y-m-d H:i:s'),
-                "message" => $request->message,
-                "read" => 0,
-            ]);
+
 
         $current_user = Auth::user()->id;
         $send_to_user = $request->send_to;
@@ -98,9 +91,47 @@ class InboxChatController extends Controller
             ->first();
 
         $topic_name = "";
+
+
         if (empty($user)) {
             return response()->json(["message" => "no data found"], 404);
         }
+
+        $database = app('firebase.database');
+        $reference = $database->getReference("chat_room/" . $request->chat_room_id . "/")
+        ->orderByChild("send_by")
+        ->equalTo(Auth::user()->id)
+        ->limitToFirst(1)
+        ->getSnapshot();
+    $data = $reference->getValue();
+    if (empty($data)) {
+
+        NotificationFirebase::create([
+            'notification_time' => date('Y-m-d H:i:s'),
+            'read' => 0,
+            'data' => $send_to_user,
+            'buddhist_id' => $request->chat_room_id,
+            'user_id' => Auth::id(),
+            'notification_type' => "result_message",
+            'comment_path' => 'chat_room/' . $request->chat_room_id . '/',
+
+        ]);
+
+    }
+
+
+
+        $database = app("firebase.database");
+        $database->getReference("chat_room/" . $request->chat_room_id . "/")
+            ->push([
+                "send_by" => Auth::user()->id,
+                "time" => date('Y-m-d H:i:s'),
+                "message" => $request->message,
+                "read" => 0,
+            ]);
+
+
+
 
         if ($user->user1->id == Auth::user()->id) {
             $topic_name = $user->user2->topic;
