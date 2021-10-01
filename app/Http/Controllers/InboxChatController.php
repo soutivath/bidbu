@@ -44,7 +44,7 @@ class InboxChatController extends Controller
             })
             ->first();
         if (empty($checkExistData)) {
-            $data = ChatRoom::create(
+            ChatRoom::create(
                 [
                     "buddhist_id" => $request->buddhist_id,
                     "user_1" => Auth::user()->id,
@@ -97,27 +97,23 @@ class InboxChatController extends Controller
             return response()->json(["message" => "no data found"], 404);
         }
 
-        $database = app('firebase.database');
-        $reference = $database->getReference("chat_room/" . $request->chat_room_id . "/")
-        ->orderByChild("send_by")
-        ->equalTo(Auth::user()->id)
-        ->limitToFirst(1)
-        ->getSnapshot();
-    $data = $reference->getValue();
-    if (empty($data)) {
+        //update or create notification for admin chat user
 
-        NotificationFirebase::create([
-            'notification_time' => date('Y-m-d H:i:s'),
-            'read' => 0,
-            'data' => $send_to_user,
-            'buddhist_id' => $request->chat_room_id,
-            'user_id' => Auth::id(),
-            'notification_type' => "result_message",
-            'comment_path' => 'chat_room/' . $request->chat_room_id . '/',
 
-        ]);
 
-    }
+        NotificationFirebase::firstOrCreate(
+            [
+                "buddhist_id"=>$request->chat_room_id,
+                "user_id"=>$send_to_user,
+                "notification_type"=>"result_message"
+            ],
+            [
+                'notification_time' => date('Y-m-d H:i:s'),
+                'read' => 0,
+                'data' => $request->message,
+                'comment_path' => 'chat_room/' . $request->chat_room_id . '/',
+            ]
+            );
 
 
 

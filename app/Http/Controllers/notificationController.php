@@ -44,6 +44,7 @@ class notificationController extends Controller
         }*/
         NotificationFirebase::where([
             ["user_id", Auth::id()],
+            ["notification_type","bidding_participant"],
             ["read", "0"],
         ])->update([
             'read' => 1,
@@ -65,7 +66,9 @@ class notificationController extends Controller
         NotificationFirebase::where([
             ["user_id", Auth::id()],
             ["read", "0"],
-        ])->update([
+        ])
+        ->whereIn("notification_type", ["message_participant", "reply","result_message"])
+        ->update([
             'read' => 1,
         ]);
 
@@ -89,7 +92,9 @@ class notificationController extends Controller
         NotificationFirebase::where([
             ["user_id", Auth::id()],
             ["read", "0"],
-        ])->update([
+        ])
+        ->whereIn("notification_type", ["bidding_result", "owner_result"])
+        ->update([
             'read' => 1,
         ]);
 
@@ -111,7 +116,7 @@ class notificationController extends Controller
     public function unreadMessageCount()
     {
         $data = NotificationFirebase::where([["user_id", Auth::id()], ["read", "0"]],
-        )->whereIn("notification_type", ["message_participant"], )->orderBy("created_at", "desc")->get();
+        )->whereIn("notification_type", ["message_participant","result_message"], )->orderBy("created_at", "desc")->get();
         return response()->json([
             "notification_count" => $data->count(),
         ]);

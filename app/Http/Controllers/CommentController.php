@@ -98,6 +98,20 @@ class CommentController extends Controller
 
                 ]);
 
+
+                NotificationFirebase::firstOrCreate(
+                    [
+                    "buddhist_id"=>$request->buddhist_id,
+                    "user_id"=>$ownerID,
+                    "notification_type" => "message_participant",
+                    ],
+                    [
+                    "notification_time"=>date('Y-m-d H:i:s'),
+                    "read"=>0,
+                    "data"=>$request->message,
+                    "comment_path' => 'Comments/" . $request->buddhist_id . '/' . $comment_id,
+                    ]
+                    );
             }
 
             /*  $owner_notification = Notification::fromArray([
