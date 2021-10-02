@@ -51,11 +51,7 @@ class InboxChatController extends Controller
                     "user_2" => $request->send_to,
                 ]
             );
-            $database = app("firebase.database");
-            $database->getReference('chat_room/')
-                ->set([
-                    $request->buddhist_id => "",
-                ]);
+
         }
         return response()->json(["data" => $request->buddhist_id], 200);
     }
