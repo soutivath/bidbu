@@ -20,6 +20,7 @@ class NotificationResource extends JsonResource
     {
         $anImage = array();
         $sender_name="";
+        $sender_id="";
         if($this->notification_type=="result_message")
         {
             $chat_data = ChatRoom::where("buddhist_id",$this->buddhist_id)->first();
@@ -27,11 +28,13 @@ class NotificationResource extends JsonResource
                 if(Auth::id()==$chat_data->user_1)
                 {
                     $sender_name = $chat_data->user2->name;
+                    $sender_id = $chat_data->user2->id;
                     \array_push($anImage,$chat_data->user2->getProfilePath());
 
                 }
                 else{
                     $sender_name = $chat_data->user1->name;
+                    $sender_id = $chat_data->user1->id;
                     \array_push($anImage,$chat_data->user1->getProfilePath());
 
                 }
@@ -56,7 +59,8 @@ class NotificationResource extends JsonResource
             'notification_type' => $this->notification_type,
             'comment_path' => $this->comment_path,
             'type' => $this->type_id,
-            "sender_name"=>$sender_name
+            "sender_name"=>$sender_name,
+            "sender_id"=>$sender_id
         ];
     }
 }
