@@ -68,7 +68,7 @@ class BuddhistController extends Controller
     {
 
         $request->validate([
-            'name' => 'required|min:3|max:30|string',
+            'name' => 'required|min:3|max:100|string',
             'detail' => 'required|string|max:255',
             'end_datetime' => 'required|date|date_format:Y-m-d H:i:s|after:now',
             'price' => 'required|numeric|gt:0',
