@@ -111,7 +111,7 @@ class sendNotification extends Command
                 $message = CloudMessage::withTarget('topic', $buddhist->user->topic)
                     ->withNotification(Notification::fromArray([
                         'title' => 'ຈາກ ' . $buddhist->name . ' ທີ່ທ່ານໄດ້ປ່ອຍ',
-                        'body' => 'ການປະມູນຈົບລົງດ້ວຍເງິນຈຳນວນ ' . $buddhist->highest_price . " ກີບ",
+                        'body' => 'ການປະມູນຈົບລົງດ້ວຍເງິນຈຳນວນ ' .  number_format($buddhist->highest_price,2,".",",") . " ກີບ",
                         'image' => \public_path("/notification_images/chat.png"),
                     ]))
                     ->withData([
@@ -138,7 +138,7 @@ class sendNotification extends Command
                 $messageWinner = CloudMessage::withTarget('topic', $userData->topic)
                     ->withNotification(Notification::fromArray([
                         'title' => 'ຈາກ ' . $buddhist->name . ' ທີ່ທ່ານໄດ້ປະມູນ',
-                        'body' => 'ທ່ານຊະນະການປະມູນດ້ວຍເງິນຈຳນວນ ' . $buddhist->highest_price . " ກີບ",
+                        'body' => 'ທ່ານຊະນະການປະມູນດ້ວຍເງິນຈຳນວນ ' .number_format($buddhist->highest_price,2,".",",") . " ກີບ",
                         'image' => \public_path("/notification_images/chat.png"),
                     ]))
                     ->withData([

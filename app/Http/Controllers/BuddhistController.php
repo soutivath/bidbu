@@ -240,7 +240,7 @@ class BuddhistController extends Controller
         $request->validate([
             "id" => "required",
         ]);
-        $bud = Buddhist::findOrFail($id);
+        $bud = Buddhist::findOrFail($request->id);
         if (empty($bud)) {
             return response()->json(["message" => "No data found"], 404);
         }
@@ -301,8 +301,8 @@ class BuddhistController extends Controller
                 ->getSnapshot();
             $data = $reference1->getValue();
 
-            if ((int) $request->bidding_price > (int) $highest_price) {
-                if ((int) $request->bidding_price - (int) $highest_price < (int) $bud->priceSmallest) {
+            if ((float) $request->bidding_price > (float) $highest_price) {
+                if ((float) $request->bidding_price - (float) $highest_price < (float) $bud->priceSmallest) {
                     return response()->json([
                         "message" => "ຂັ້ນຕ່ຳໃນການປະມູນແມ່ນ " . $bud->priceSmallest . " ກີບ",
                     ]);
@@ -372,7 +372,7 @@ class BuddhistController extends Controller
                 $bidding_message = CloudMessage::withTarget('condition', "'" . $ownerBuddhist->topic . "' in topics && !('" . Auth::user()->topic . "' in topics)")
                     ->withNotification(Notification::fromArray([
                         'title' => 'ຈາກ ' . $ownerBuddhist->name,
-                        'body' => 'ມີຄົນໃຫ້ລາຄາສູງກວ່າໃນລາຄາ ' . $request->bidding_price . ' ກີບ',
+                        'body' => 'ມີຄົນໃຫ້ລາຄາສູງກວ່າໃນລາຄາ ' . number_format($request->bidding_price,2,".",",") . ' ກີບ',
                         'image' => \public_path("/notification_images/chat.png"),
                     ]))
                     ->withData([
@@ -402,7 +402,7 @@ class BuddhistController extends Controller
                 $owner_message = CloudMessage::withTarget('topic', $ownerTopic)
                     ->withNotification(Notification::fromArray([
                         'title' => 'ຈາກ ' . $ownerBuddhist->name . ' ທີ່ທ່ານໄດ້ປ່ອຍ',
-                        'body' => 'ມີຄົນສະເໜີລາຄາ ' . $request->bidding_price . ' ກີບ',
+                        'body' => 'ມີຄົນສະເໜີລາຄາ ' .  number_format($request->bidding_price,2,".",",") . ' ກີບ',
                         'image' => \public_path("/notification_images/chat.png"),
                     ]))
                     ->withData([

@@ -14,7 +14,7 @@ class AddPriceSmallest extends Migration
     public function up()
     {
         Schema::table('buddhists', function (Blueprint $table) {
-            $table->integer('priceSmallest');
+            $table->float('priceSmallest');
         });
     }
 

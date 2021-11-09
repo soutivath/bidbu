@@ -17,8 +17,8 @@ class CreateBuddhistsTable extends Migration
             $table->bigIncrements('id');
             $table->string('name');
             $table->string('detail');
-            $table->integer('price');
-            $table->integer('highest_price');
+            $table->float('price');
+            $table->float('highest_price');
             $table->dateTime('start_time');
             $table->dateTime('end_time');
             $table->string("active")->default("1");
