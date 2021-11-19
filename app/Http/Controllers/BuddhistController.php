@@ -28,8 +28,8 @@ class BuddhistController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:api')->except('index', 'show', 'buddhistType', 'recommendedBuddhist', 'countByFavorite', 'almostEnd');
-        $this->middleware('isUserActive:api')->except('index', 'show', 'buddhistType', 'recommendedBuddhist', 'countByFavorite', 'almostEnd');
+      //  $this->middleware('auth:api')->except('index', 'show', 'buddhistType', 'recommendedBuddhist', 'countByFavorite', 'almostEnd');
+       // $this->middleware('isUserActive:api')->except('index', 'show', 'buddhistType', 'recommendedBuddhist', 'countByFavorite', 'almostEnd');
     }
     public function index(Request $request)
     {
@@ -267,9 +267,11 @@ class BuddhistController extends Controller
 
         $request->validate([
             'bidding_price' => 'required|numeric|gt:0',
-            'fcm_token' => 'required|string',
+          //  'fcm_token' => 'required|string',
             'buddhist_id' => 'required|string',
         ]);
+
+
         if (Auth::user()->hasRole("admin") || Auth::user()->hasRole("superadmin")) {
             return response()->json(["message" => "only user can't use this function"], 403);
         }

@@ -25,10 +25,12 @@ class CreateTableNotification extends Migration
         });
 
         Schema::table('notification', function (Blueprint $table) {
-            $table->bigInteger("buddhist_id")->unsigned();
-            $table->bigInteger("user_id")->unsigned();
-            $table->foreign("buddhist_id")->references("id")->on("buddhists")->onDelete("cascade");
-            $table->foreign("user_id")->references("id")->on("users")->onDelete("cascade");
+            $table->bigInteger('buddhist_id')->unsigned();
+            $table->foreign('buddhist_id')->references('id')->on('buddhists')->onDelete('cascade');
+            $table->bigInteger('user_id')->unsigned();
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+
+
 
         });
     }
@@ -41,8 +43,9 @@ class CreateTableNotification extends Migration
     public function down()
     {
         Schema::table('notification', function (Blueprint $table) {
-            $table->dropForeign(['buddhist_id']);
+         //   $table->dropForeign(['buddhist_id']);
             $table->dropForeign(['user_id']);
+
         });
         Schema::dropIfExists('notification');
     }
