@@ -267,7 +267,7 @@ class BuddhistController extends Controller
 
         $request->validate([
             'bidding_price' => 'required|numeric|gt:0',
-          //  'fcm_token' => 'required|string',
+            'fcm_token' => 'required|string',
             'buddhist_id' => 'required|string',
         ]);
 
