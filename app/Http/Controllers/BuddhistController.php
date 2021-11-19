@@ -303,8 +303,8 @@ class BuddhistController extends Controller
                 ->getSnapshot();
             $data = $reference1->getValue();
 
-            if ((float) $request->bidding_price > (float) $highest_price) {
-                if ((float) $request->bidding_price - (float) $highest_price < (float) $bud->priceSmallest) {
+            if ((int) $request->bidding_price > (int) $highest_price) {
+                if ((int) $request->bidding_price - (int) $highest_price < (int) $bud->priceSmallest) {
                     return response()->json([
                         "message" => "ຂັ້ນຕ່ຳໃນການປະມູນແມ່ນ " . $bud->priceSmallest . " ກີບ",
                     ]);
