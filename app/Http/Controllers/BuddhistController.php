@@ -92,6 +92,7 @@ class BuddhistController extends Controller
             'price_smallest' => 'required|integer',
 
             'fcm_token' => 'required|string',
+            'minumum_price'=>'required|integer'
         ]);
         $messaging = app('firebase.messaging');
         $result = $messaging->validateRegistrationTokens($request->fcm_token);
@@ -111,6 +112,8 @@ class BuddhistController extends Controller
         $bud->place = $request->place;
         $bud->status = $request->status;
         $bud->priceSmallest = $request->price_smallest;
+
+        $bud->minumum_price=$request->minumum_price;
         /* if ($request->has('bank_name')) {
         $bud->bank_name = $request->bank_name;
         }
