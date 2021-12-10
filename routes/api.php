@@ -158,7 +158,7 @@ Route::prefix("/review")->group(function()
 
 Route::prefix('/banner')->group(function () {
     Route::post("/",[App\Http\Controllers\BannerController::class,""]);
-    Route::update("/{banner_id}",[App\Http\Controllers\BannerController::class,""]);
+    Route::put("/{banner_id}",[App\Http\Controllers\BannerController::class,""]);
     Route::delete("/{banner_id}",[App\Http\Controllers\BannerController::class,""]);
     Route::get("/getAll",[App\Http\Controllers\BannerController::class,""]);
     Route::get("/show",[App\Http\Controllers\BannerController::class,""]);
