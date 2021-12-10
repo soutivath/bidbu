@@ -18,7 +18,8 @@ class DatabaseSeeder extends Seeder
       $this->call(LaratrustSeeder::class);
       $this->call(AdminRoleSeeder::class);
       $this->call(AddRoleToAdmin::class);
-     
+      $this->call(LanguageSeeder::class);
+
 
     }
 }

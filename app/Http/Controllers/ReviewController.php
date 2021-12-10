@@ -2,9 +2,141 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Review\PostUpdateRequest;
+use App\Models\Review;
+use App\Models\ReviewDetail;
+use Illuminate\Database\RecordsNotFoundException;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Auth;
 class ReviewController extends Controller
 {
-    //
+
+    public function __construct()
+    {
+        $this->middleware('auth:api');
+        $this->middleware('isUserActive:api');
+    }
+    public function store(PostUpdateRequest $request)
+    {
+        if(Auth::id()==$request->user_id)
+        {
+            return response()->json([
+                "message"=>"You cannot review yourself"
+            ],400);
+        }
+
+        $review= Review::firstOrCreate(['user_id'=> $request->user_id,],[]);
+        $checkExistingComment = ReviewDetail::where([
+            ["user_id",Auth::id()],
+            ["review_id",$review->id]
+        ])->first();
+        if($checkExistingComment)
+        {
+            return response()->json([
+                "message"=>"You already post the comment try updating the existing one"
+            ]);
+        }
+       // id	score	comment review_id	user_id
+        $reviewDetail = new ReviewDetail();
+        $reviewDetail->score = $request->score;
+        $reviewDetail->comment = $request->comment;
+        $reviewDetail->review_id = $review->id;
+        $reviewDetail->user_id = Auth::id();
+        $reviewDetail->save();
+
+        return response()->json(["message"=>"Review successfully"],201);
+
+    }
+
+    public function update(PostUpdateRequest $request)
+    {
+         // id	score	comment review_id	user_id
+         if($request->user_id==Auth::id())
+         {
+             return response()->json([
+                 "message"=>"don't try review yourself"
+             ]);
+         }
+         $theReview = Review::where("user_id",$request->user_id)->first();
+         if(!$theReview)
+         {
+             return response()->json([
+                 "message"=>"no record found"
+             ],404);
+         }
+         $review = ReviewDetail::where([
+             [
+                 'user_id',Auth::id()
+             ],
+             [
+                 'review_id',$theReview->id
+             ]
+         ])->first();
+         if($review)
+         {
+            $review->score = $request->score;
+            $review->comment = $request->comment;
+            $review->save();
+            return response()->json(["message"=>"Update comment successfully"],200);
+         }
+         else{
+             return response()->json(["message"=>"Comment not found"],404);
+         }
+
+    }
+
+    /**
+     * @return JOSN
+     */
+    public function destroy($user_id)
+    {
+        $ownerReview = Review::where("user_id",$user_id)->first();
+        if(!$ownerReview)
+        {
+            return response()->json([
+                "message"=>"no record found"
+            ]);
+        }
+
+        $review = ReviewDetail::where([
+            ["user_id",Auth::id()],
+            ["review_id",$ownerReview->id]
+        ])->first();
+        if(!$review)
+        {
+            return response()->json([
+                "message"=>"Data not found"
+            ],404);
+        }
+        $review->delete();
+        return response()->json(["data"=>$review]);
+    }
+
+
+    /**
+     * @param $user_id
+     * @return JSON
+     */
+    public function getReview($user_id)
+    {
+        $reviews = Review::where("user_id",$user_id)->with(["review_details"=>function($query){
+            $query->with(["user"=>function($query){
+                $query->select("id","name","surname");
+            }])->select("score","comment","review_id","user_id");
+        }])->select("id","user_id")->get();
+        $reviewRating = ReviewDetail::avg("score");
+        $ownerReview = ReviewDetail::where("user_id",Auth::id())->select("id","score","comment")->get();
+        return response()->json([
+            "success"=>true,
+            "reviews"=>$reviews,
+            "ownerReview"=>$ownerReview,
+            "rating"=>$reviewRating
+        ]);
+    }
+
+
+
+
+
+
 }

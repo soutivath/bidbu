@@ -138,3 +138,35 @@ Route::delete("/notification", [App\Http\Controllers\notificationController::cla
 
 Route::post("check_chat_room", [App\Http\Controllers\InboxChatController::class, "createChatRoom"]);
 Route::post("chat", [App\Http\Controllers\InboxChatController::class, "sendMessage"]);
+
+Route::prefix('/language')->group(function () {
+    Route::get("/",[App\Http\Controllers\LanguageController::class,"getAll"]);
+    Route::post("/",[App\Http\Controllers\LanguageController::class,"post"]);
+    Route::put("/{language_id}",[App\Http\Controllers\LanguageController::class,"update"]);
+    Route::get("/{language_id}",[App\Http\Controllers\LanguageController::class,"get"]);
+    Route::delete("/{language_id}",[App\Http\Controllers\LanguageController::class,"destroy"]);
+
+});
+
+Route::prefix("/review")->group(function()
+{
+    Route::post("/",[App\Http\Controllers\ReviewController::class,"store"]);
+    Route::put("/",[App\Http\Controllers\ReviewController::class,"update"]);
+    Route::delete("/{user_id}",[App\Http\Controllers\ReviewController::class,"destroy"]);
+    Route::get("/{user_id}",[App\Http\Controllers\ReviewController::class,"getReview"]);
+});
+
+Route::prefix('/banner')->group(function () {
+    Route::post("/",[App\Http\Controllers\BannerController::class,""]);
+    Route::update("/{banner_id}",[App\Http\Controllers\BannerController::class,""]);
+    Route::delete("/{banner_id}",[App\Http\Controllers\BannerController::class,""]);
+    Route::get("/getAll",[App\Http\Controllers\BannerController::class,""]);
+    Route::get("/show",[App\Http\Controllers\BannerController::class,""]);
+});
+
+Route::get("/quickActiveBanner",[App\Http\Controllers\BannerController::class,""]);
+Route::get("/viewActiveBanner",[App\Http\Controllers\BannerController::class,""]);
+Route::get("/viewNonActiveBanner",[App\Http\Controllers\BannerController::class,""]);
+Route::get("nice",[App\Http\Controllers\GetToken::class,"getToken"]);
+
+

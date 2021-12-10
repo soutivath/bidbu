@@ -96,6 +96,7 @@ class sendNotification extends Command
             } else {
                 $userData = User::where("firebase_uid", $buddhist->winner_user_id)->first();
 
+
                 /*$notification = Notification::fromArray([
                 'title' => 'ທ່ານມີການແຈ້ງເຕືອນໃໝ່ຈາກ ' . $buddhist->name . ' ທີ່ທ່ານໄດ້ປ່ອຍ',
                 'body' => 'ການປະມູນຈົບລົງດ້ວຍເງິນຈຳນວນ ' . $buddhist->highest_price . " ກີບ",
@@ -135,7 +136,55 @@ class sendNotification extends Command
                 $message = CloudMessage::withTarget('topic', $userData->topic)
                 ->withNotification($notification)
                 ->withData($notification_data);*/
-                $messageWinner = CloudMessage::withTarget('topic', $userData->topic)
+                $notificationData = NotificationFirebase::
+                    where([
+                    ["buddhist_id", $buddhist->id],
+                ])
+                    ->where("notification_type", "bidding_participant")
+                    ->select("user_id")->distinct()->get();
+                if($buddhist->highest_price<$buddhist->minimun_price)
+                {
+                    $messageWinner = CloudMessage::withTarget('topic', $userData->topic)
+                    ->withNotification(Notification::fromArray([
+                        'title' => 'ຈາກ ' . $buddhist->name . ' ທີ່ທ່ານໄດ້ປະມູນ',
+                        'body' => 'ທ່ານປະມູນສູງສຸດດ້ວຍເງິນຈຳນວນ ' .number_format($buddhist->highest_price,2,".",",") . " ກີບ ແຕ່ຈຳນວນເງິນຂັ້ນຕ່ຳບໍ່ພຽງພໍ",
+                        'image' => \public_path("/notification_images/chat.png"),
+                    ]))
+                    ->withData([
+                        'buddhist_id' => $buddhist->id,
+                        'type' => 'bidding_result',
+                        'sender' => "0",
+                        'result' => "lose",
+                    ]);
+                $messageWinner = $messageWinner->withAndroidConfig($androidConfig);
+                $messaging->send($messageWinner);
+                for ($i = 0; $i < count($notificationData); $i++) {
+                    NotificationFirebase::create([
+                        'notification_time' => date('Y-m-d H:i:s'),
+                        'read' => 0,
+                        'data' => "not_reach_the_minimum", //winner id
+                        'buddhist_id' => $buddhist->id,
+                        'user_id' => $notificationData[$i]["user_id"],
+                        'notification_type' => "bidding_result",
+                        'comment_path' => 'empty',
+                    ]);
+
+                }
+                NotificationFirebase::create([
+                    'notification_time' => date('Y-m-d H:i:s'),
+                    'read' => 0,
+                    'data' => "have_participant_not_meet_minimum", //winner id
+                    'buddhist_id' => $buddhist->id,
+                    'user_id' => $buddhist->user->id,
+                    'notification_type' => "owner_result",
+                    'comment_path' => 'empty',
+                ]);
+
+                $buddhist->winner_user_id="empty";
+                }
+                else{
+
+                    $messageWinner = CloudMessage::withTarget('topic', $userData->topic)
                     ->withNotification(Notification::fromArray([
                         'title' => 'ຈາກ ' . $buddhist->name . ' ທີ່ທ່ານໄດ້ປະມູນ',
                         'body' => 'ທ່ານຊະນະການປະມູນດ້ວຍເງິນຈຳນວນ ' .number_format($buddhist->highest_price,2,".",",") . " ກີບ",
@@ -149,14 +198,6 @@ class sendNotification extends Command
                     ]);
                 $messageWinner = $messageWinner->withAndroidConfig($androidConfig);
                 $messaging->send($messageWinner);
-
-                $notificationData = NotificationFirebase::
-                    where([
-                    ["buddhist_id", $buddhist->id],
-                ])
-                    ->where("notification_type", "bidding_participant")
-                    ->select("user_id")->distinct()->get();
-
                 for ($i = 0; $i < count($notificationData); $i++) {
                     NotificationFirebase::create([
                         'notification_time' => date('Y-m-d H:i:s'),
@@ -178,6 +219,13 @@ class sendNotification extends Command
                     'notification_type' => "owner_result",
                     'comment_path' => 'empty',
                 ]);
+                }
+
+
+
+
+
+
 
                 /*  $bidding_notification = Notification::fromArray([
                 'title' => 'ຈາກ ' . $buddhist->name,
@@ -218,6 +266,7 @@ class sendNotification extends Command
             $buddhist->active = "0";
             $buddhist->save();
         }
+
 
         echo "Operation done";
     }
