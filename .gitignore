@@ -10,6 +10,7 @@
 /public/profile_image/
 /public/type_image/
 /public/type_images
+/public/banner_images
 
 .env
 .env.backup
