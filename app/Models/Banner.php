@@ -8,4 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class Banner extends Model
 {
     use HasFactory;
+    protected $fillable = ["active"];
+    public function banner_trans()
+    {
+        return $this->hasMany(BannerTran::class);
+    }
 }

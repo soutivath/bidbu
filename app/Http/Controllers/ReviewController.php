@@ -123,7 +123,7 @@ class ReviewController extends Controller
             $query->with(["user"=>function($query){
                 $query->select("id","name","surname");
             }])->select("score","comment","review_id","user_id");
-        }])->select("id","user_id")->get();
+        }])->select("id","user_id")->paginate(30);
         $reviewRating = ReviewDetail::avg("score");
         $ownerReview = ReviewDetail::where("user_id",Auth::id())->select("id","score","comment")->get();
         return response()->json([

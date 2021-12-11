@@ -157,16 +157,16 @@ Route::prefix("/review")->group(function()
 });
 
 Route::prefix('/banner')->group(function () {
-    Route::post("/",[App\Http\Controllers\BannerController::class,""]);
-    Route::put("/{banner_id}",[App\Http\Controllers\BannerController::class,""]);
-    Route::delete("/{banner_id}",[App\Http\Controllers\BannerController::class,""]);
-    Route::get("/getAll",[App\Http\Controllers\BannerController::class,""]);
-    Route::get("/show",[App\Http\Controllers\BannerController::class,""]);
+    Route::post("/",[App\Http\Controllers\ShowBannerController::class,"post"]);
+    Route::put("/{banner_id}",[App\Http\Controllers\ShowBannerController::class,"update"]);
+    Route::delete("/{banner_id}",[App\Http\Controllers\ShowBannerController::class,"destroy"]);
+    Route::get("/getAll",[App\Http\Controllers\ShowBannerController::class,"getAll"]);
+    Route::get("/{banner_id}",[App\Http\Controllers\ShowBannerController::class,"show"]);
 });
+Route::post("/quickActiveBanner",[App\Http\Controllers\ShowBannerController::class,"quickActiveBanner"]);
+Route::get("/viewActiveBanner",[App\Http\Controllers\ShowBannerController::class,"viewActiveBanner"]);
+Route::get("/viewNonActiveBanner",[App\Http\Controllers\ShowBannerController::class,"viewNonActiveBanner"]);
 
-Route::get("/quickActiveBanner",[App\Http\Controllers\BannerController::class,""]);
-Route::get("/viewActiveBanner",[App\Http\Controllers\BannerController::class,""]);
-Route::get("/viewNonActiveBanner",[App\Http\Controllers\BannerController::class,""]);
 Route::get("nice",[App\Http\Controllers\GetToken::class,"getToken"]);
 
 
