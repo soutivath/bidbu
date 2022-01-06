@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\apiAuthController;
+use App\Http\Controllers\Payment;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -167,6 +168,7 @@ Route::post("/quickActiveBanner",[App\Http\Controllers\ShowBannerController::cla
 Route::get("/viewActiveBanner",[App\Http\Controllers\ShowBannerController::class,"viewActiveBanner"]);
 Route::get("/viewNonActiveBanner",[App\Http\Controllers\ShowBannerController::class,"viewNonActiveBanner"]);
 
+Route::get("/paymentDetail",[App\Http\Controllers\Payment::class,"buyCoins"]);
 Route::get("nice",[App\Http\Controllers\GetToken::class,"getToken"]);
 
 

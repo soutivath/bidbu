@@ -20,6 +20,11 @@ class ShowBannerController extends Controller
      * @param {[]Image,language_id}
      * @return JSON
      */
+    public function __construct()
+    {
+        $this->middleware('auth:api')->except(["index", "show"]);
+        $this->middleware('isUserActive:api')->except(["index", "show"]);
+    }
     public function post(Request $request)
     {
 
