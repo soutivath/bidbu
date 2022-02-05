@@ -25,10 +25,10 @@ class ProfileController extends Controller
     }
 
     public function getReviewByUserId($id){
-        $review = Review::where(["user_id" => $id])->with("review_details.user")->get();
+        $review = Review::where(["user_id" => $id])->with("review_details.user")->first();
        // return response()->json(["data"=>$review]);
        
-        return UserProfileWithReview::collection($review);
+        return new UserProfileWithReview($review);
         
     }
 
