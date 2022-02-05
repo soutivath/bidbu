@@ -37,12 +37,12 @@ class BuddhistController extends Controller
         if ($request->input("search")) {
             $bud = Buddhist::where([
                 ['end_time', '>', Carbon::now()], ["active", "1"], ["name", "LIKE", "%" . $request->input("search") . "%"],
-            ])->with('type')->orderBy("created_at", "desc")->paginate(30);
+            ])->with('type')->orderBy("created_at", "desc")->paginate(5);
             return BuddhistResource::collection($bud);
 
         } else {
 
-            $bud = Buddhist::where([['end_time', '>', Carbon::now()], ["active", "1"]])->with('type')->orderBy("created_at", "desc")->paginate(30);
+            $bud = Buddhist::where([['end_time', '>', Carbon::now()], ["active", "1"]])->with('type')->orderBy("created_at", "desc")->paginate(5);
             return BuddhistResource::collection($bud);
 
         }
@@ -92,7 +92,7 @@ class BuddhistController extends Controller
             'price_smallest' => 'required|integer',
 
             'fcm_token' => 'required|string',
-            'minumum_price'=>'required|integer'
+            'minimum_price'=>'required|integer'
         ]);
         $messaging = app('firebase.messaging');
         $result = $messaging->validateRegistrationTokens($request->fcm_token);
@@ -113,7 +113,7 @@ class BuddhistController extends Controller
         $bud->status = $request->status;
         $bud->priceSmallest = $request->price_smallest;
 
-        $bud->minumum_price=$request->minumum_price;
+        $bud->minimum_price=$request->minimum_price;
         /* if ($request->has('bank_name')) {
         $bud->bank_name = $request->bank_name;
         }
@@ -503,7 +503,7 @@ class BuddhistController extends Controller
     public function buddhistType($type_id)
     {
 
-        $buddhists = Buddhist::where([['type_id', $type_id], ['end_time', '>', Carbon::now()], ["active", "1"]])->paginate(30);
+        $buddhists = Buddhist::where([['type_id', $type_id], ['end_time', '>', Carbon::now()], ["active", "1"]])->paginate(5);
 
         return buddhistCollection::collection($buddhists);
     }
@@ -515,14 +515,14 @@ class BuddhistController extends Controller
             ['type_id', '=', $type_id],
             ['id', '!=', $buddhist_id],
             ["active", "1"],
-        ])->with('type')->orderBy("created_at", "desc")->paginate(30)->shuffle();
+        ])->with('type')->orderBy("created_at", "desc")->paginate(5)->shuffle();
         return BuddhistResource::collection($buddhist);
 
     }
 
     public function almostEnd()
     {
-        $bud = Buddhist::where([['end_time', '>', Carbon::now()], ["active", "1"]])->with('type')->orderBy("end_time")->paginate(30);
+        $bud = Buddhist::where([['end_time', '>', Carbon::now()], ["active", "1"]])->with('type')->orderBy("end_time")->paginate(5);
         return BuddhistResource::collection($bud);
     }
     public function myActiveBuddhist()

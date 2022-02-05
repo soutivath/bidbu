@@ -23,4 +23,6 @@ class BannerTran extends Model
         return Config("values.APP_URL") . ":" . $_SERVER["SERVER_PORT"] .
         "/" . "banner_images/" . $this->image_path;
     }
+
+   
 }

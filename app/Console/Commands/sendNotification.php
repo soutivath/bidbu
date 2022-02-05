@@ -142,7 +142,9 @@ class sendNotification extends Command
                 ])
                     ->where("notification_type", "bidding_participant")
                     ->select("user_id")->distinct()->get();
-                if($buddhist->highest_price<$buddhist->minimun_price)
+                  
+                
+                if($buddhist->highest_price<$buddhist->minimum_price)
                 {
                     $messageWinner = CloudMessage::withTarget('topic', $userData->topic)
                     ->withNotification(Notification::fromArray([

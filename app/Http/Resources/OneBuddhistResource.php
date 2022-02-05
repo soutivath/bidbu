@@ -76,6 +76,7 @@ class OneBuddhistResource extends JsonResource
                 'highBidUser' => $this->highBidUser,
                 'favoriteCount' => favourite::where("buddhist_id", $this->id)->count(),
                 'priceSmallest' => $this->priceSmallest,
+                'minimum_price'=>$this->minimum_price,
             ],
         ];
     }

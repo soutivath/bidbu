@@ -44,4 +44,10 @@ class Buddhist extends Model
         return $this->hasMany(ChatRoom::class, "user_2");
     }
 
+    public function reviews()
+    {
+        return $this->hasMany(ReviewDetail::class, "buddhist_id");
+    }
+
+
 }

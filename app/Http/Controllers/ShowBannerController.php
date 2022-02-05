@@ -13,7 +13,7 @@ use Illuminate\Database\RecordsNotFoundException;
 use Image;
 use Illuminate\Support\Facades\DB;
 use Lcobucci\JWT\Encoding\JoseEncoder;
-
+use Auth;
 class ShowBannerController extends Controller
 {
     /**
@@ -22,12 +22,12 @@ class ShowBannerController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:api')->except(["index", "show"]);
-        $this->middleware('isUserActive:api')->except(["index", "show"]);
+        $this->middleware('auth:api')->except(["getAll", "show","viewActiveBanner","viewNonActiveBanner"]);
+        $this->middleware('isUserActive:api')->except(["getAll", "show","viewActiveBanner","viewNonActiveBanner"]);
     }
     public function post(Request $request)
     {
-
+        if (Auth::user()->hasRole("admin") || Auth::user()->hasRole("superadmin")) {
         $request->validate([
             'active' => 'required|boolean',
             'bannerArrays' => "array",
@@ -72,10 +72,12 @@ class ShowBannerController extends Controller
             ], 500);
         }
     }
+    }
 
 
     public function update(Request $request, $banner_id)
     {
+        if (Auth::user()->hasRole("admin") || Auth::user()->hasRole("superadmin")) {
         $request->validate([
             'active' => 'required|boolean',
             'bannerArrays' => "array",
@@ -146,9 +148,11 @@ class ShowBannerController extends Controller
             return $e->getMessage();
         }
     }
+}
 
     public function destroy($banner_id)
     {
+        if (Auth::user()->hasRole("admin") || Auth::user()->hasRole("superadmin")) {
         $banner = Banner::findOrFail($banner_id);
 
         $bannerTrans = BannerTran::where("banner_id", $banner->id)->get();
@@ -168,6 +172,7 @@ class ShowBannerController extends Controller
             "data" => $banner
         ], 200);
     }
+}
 
     public function getAll(Request $request)
     {
@@ -212,6 +217,7 @@ class ShowBannerController extends Controller
 
     public function quickActiveBanner(Request $request)
     {
+        if (Auth::user()->hasRole("admin") || Auth::user()->hasRole("superadmin")) {
         $request->validate([
             "banner_id" => "required|integer|exists:banners,id"
         ]);
@@ -229,9 +235,11 @@ class ShowBannerController extends Controller
             "data" => $banner
         ]);
     }
+}
 
     public function viewActiveBanner(Request $request)
     {
+
         $banners = null;
 
         if ($request->input("language")) {

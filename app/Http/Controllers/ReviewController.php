@@ -7,6 +7,8 @@ use App\Models\Review;
 use App\Models\ReviewDetail;
 use Illuminate\Database\RecordsNotFoundException;
 use Illuminate\Http\Request;
+use App\Models\Buddhist;
+use Carbon\carbon;
 use Illuminate\Support\Facades\Auth;
 class ReviewController extends Controller
 {
@@ -24,10 +26,22 @@ class ReviewController extends Controller
                 "message"=>"You cannot review yourself"
             ],400);
         }
+        
+        $buddhist = Buddhist::find($request->buddhist_id);
+        if(Carbon::now()->lessThan(Carbon::now()->parse($buddhist->end_time)))
+        {
+            return response()->json(["message"=>"This item not expired yet."],400);
+        }
+        if(Auth::user()->firebase_uid!=$buddhist->winner_user_id)
+        {
+            return response()->json(["message"=>"You are not a winner."],400);
+        }
 
-        $review= Review::firstOrCreate(['user_id'=> $request->user_id,],[]);
+
+        $review= Review::firstOrCreate(['user_id'=> $request->user_id],[]);
         $checkExistingComment = ReviewDetail::where([
             ["user_id",Auth::id()],
+            ["buddhist_id",$request->buddhist_id],
             ["review_id",$review->id]
         ])->first();
         if($checkExistingComment)
@@ -36,12 +50,15 @@ class ReviewController extends Controller
                 "message"=>"You already post the comment try updating the existing one"
             ]);
         }
-       // id	score	comment review_id	user_id
+      
+        
+       // id	score	comment review_id	user_id buddhist_id
         $reviewDetail = new ReviewDetail();
         $reviewDetail->score = $request->score;
         $reviewDetail->comment = $request->comment;
         $reviewDetail->review_id = $review->id;
         $reviewDetail->user_id = Auth::id();
+        $reviewDetail->buddhist_id = $request->buddhist_id;
         $reviewDetail->save();
 
         return response()->json(["message"=>"Review successfully"],201);
@@ -66,7 +83,8 @@ class ReviewController extends Controller
          }
          $review = ReviewDetail::where([
              [
-                 'user_id',Auth::id()
+                 'user_id',Auth::id(),
+                 'buddhist_id' =>$request->buddhist_id
              ],
              [
                  'review_id',$theReview->id

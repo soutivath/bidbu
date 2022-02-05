@@ -31,6 +31,7 @@ class apiAuthController extends Controller
         ]);
         $auth = app('firebase.auth');
         $idTokenString = $request->input('firebase_token');
+       
         try { // Try to verify the Firebase credential token with Google
             $verifiedIdToken = $auth->verifyIdToken($idTokenString);
         } catch (\InvalidArgumentException $e) { // If the token has the wrong format
@@ -42,8 +43,10 @@ class apiAuthController extends Controller
                 'message' => 'Unauthorized - Token is invalide: ' . $e->getMessage(),
             ], 401);
         }
-
+        
         $uid = $verifiedIdToken->claims()->get('sub');
+       
+        
         if (User::where('firebase_uid', $uid)->first()) {
             if (User::where('firebase_uid', $uid)->first()->active == 0) {
                 return response()->json(["message" => "Your account has been shutdown"], 403);

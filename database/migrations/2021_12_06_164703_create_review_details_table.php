@@ -17,14 +17,15 @@ class CreateReviewDetailsTable extends Migration
             $table->id();
             $table->unsignedTinyInteger("score");
             $table->string("comment");
-            $table->timestamps();
-        });
-        Schema::table("review_details",function (Blueprint $table){
             $table->bigInteger("review_id")->unsigned();
             $table->bigInteger("user_id")->unsigned();
+           
+            $table->timestamps();
+        });
+         Schema::table("review_details",function (Blueprint $table){
             $table->foreign("review_id")->references("id")->on("reviews")->onDelete("cascade");
             $table->foreign("user_id")->references("id")->on("users")->onDelete("cascade");
-        });
+         });
     }
 
     /**
@@ -34,11 +35,18 @@ class CreateReviewDetailsTable extends Migration
      */
     public function down()
     {
-        Schema::table("review_details",function (Blueprint $table){
+        Schema::table('review_details', function (Blueprint $table) {
+            $table->dropForeign(["review_id"]);
+            $table->dropColumn("review_id");
+            $table->dropForeign(["user_id"]);
+            $table->dropColumn("user_id");
+        });
+        Schema::dropIfExists('review_details');
+      /* Schema::table("review_details",function (Blueprint $table){
             $table->dropForeign(["review_id"]);
             $table->dropForeign(["user_id"]);
 
         });
-        Schema::dropIfExists('review_details');
+        Schema::dropIfExists('review_details');*/
     }
 }

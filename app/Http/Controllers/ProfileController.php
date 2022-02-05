@@ -8,7 +8,7 @@ use Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Image;
-
+use App\Models\Review;
 class ProfileController extends Controller
 {
     public function __construct()
@@ -21,6 +21,12 @@ class ProfileController extends Controller
     {
         $user = User::findOrFail(Auth::id());
         return new UserProfile($user);
+    }
+
+    public function getReviewByUserId($id){
+        $review = Review::where(["user_id" => $id])->with("review_details.user")->get()->pluck("review_details");
+        return response()->json(["data"=>$review]);
+        
     }
 
     public function getUserByID($id)

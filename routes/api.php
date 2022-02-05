@@ -65,6 +65,8 @@ Route::post('favorite/buddhist/', [App\Http\Controllers\FavouriteController::cla
 //user
 Route::get('user', [App\Http\Controllers\ProfileController::class, 'show']);
 
+Route::get("profileReview/{id}",[App\Http\Controllers\ProfileController::class,"getReviewByUserId"]);
+
 //Route::get('nice',[App\Http\Controllers\BuddhistController::class,'testTokenGetData']);
 Route::get("user/{id}", [App\Http\Controllers\ProfileController::class, 'getUserByID']);
 
@@ -170,5 +172,6 @@ Route::get("/viewNonActiveBanner",[App\Http\Controllers\ShowBannerController::cl
 
 Route::get("/paymentDetail",[App\Http\Controllers\Payment::class,"buyCoins"]);
 Route::get("nice",[App\Http\Controllers\GetToken::class,"getToken"]);
+
 
 
