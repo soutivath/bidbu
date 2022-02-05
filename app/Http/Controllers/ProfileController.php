@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\UserProfile;
+use App\Http\Resources\UserProfileWithReview;
 use App\Models\User;
 use Auth;
 use Illuminate\Http\Request;
@@ -24,8 +25,10 @@ class ProfileController extends Controller
     }
 
     public function getReviewByUserId($id){
-        $review = Review::where(["user_id" => $id])->with("review_details.user")->get()->pluck("review_details");
-        return response()->json(["data"=>$review]);
+        $review = Review::where(["user_id" => $id])->with("review_details.user")->get();
+       // return response()->json(["data"=>$review]);
+       
+        return UserProfileWithReview::collection($review);
         
     }
 
