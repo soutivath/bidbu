@@ -17,7 +17,7 @@ class UserProfileWithReview extends JsonResource
         return [
             "id"=>$this->id,
            "all_star"=>$this->review_details->sum("score"),
-            "review"=>$this->review_details
+            "reviews"=>$this->review_details
         
             // "review_details"=>[
             // "id"=>$this->review_details->id,
