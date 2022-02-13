@@ -109,20 +109,37 @@ class sendNotification extends Command
                 $message = CloudMessage::withTarget('topic', $buddhist->user->topic)
                 ->withNotification($notification)
                 ->withData($notification_data);*/
-                $message = CloudMessage::withTarget('topic', $buddhist->user->topic)
-                    ->withNotification(Notification::fromArray([
-                        'title' => 'ຈາກ ' . $buddhist->name . ' ທີ່ທ່ານໄດ້ປ່ອຍ',
-                        'body' => 'ການປະມູນຈົບລົງດ້ວຍເງິນຈຳນວນ ' .  number_format($buddhist->highest_price,2,".",",") . " ກີບ",
-                        'image' => \public_path("/notification_images/chat.png"),
-                    ]))
-                    ->withData([
-                        'buddhist_id' => $buddhist->id,
-                        'type' => '',
-                        'sender' => "0",
-                        'result' => "have_participant",
-                    ]);
-                $message = $message->withAndroidConfig($androidConfig);
-                $messaging->send($message);
+                /*  
+
+
+
+
+
+
+                */
+                // $message = CloudMessage::withTarget('topic', $buddhist->user->topic)
+                //     ->withNotification(Notification::fromArray([
+                //         'title' => 'ຈາກ ' . $buddhist->name . ' ທີ່ທ່ານໄດ້ປ່ອຍ',
+                //         'body' => 'ການປະມູນຈົບລົງດ້ວຍເງິນຈຳນວນ ' .  number_format($buddhist->highest_price,2,".",",") . " ກີບ",
+                //         'image' => \public_path("/notification_images/chat.png"),
+                //     ]))
+                //     ->withData([
+                //         'buddhist_id' => $buddhist->id,
+                //         'type' => '',
+                //         'sender' => "0",
+                //         'result' => "have_participant",
+                //     ]);
+                // $message = $message->withAndroidConfig($androidConfig);
+                // $messaging->send($message);
+
+/**
+ * 
+ * 
+ * 
+ * 
+ */
+
+
 //***** Send to winner */
                 /* $notification = Notification::fromArray([
                 'title' => 'ທ່ານມີການແຈ້ງເຕືອນໃໝ່ຈາກ ' . $buddhist->name . ' ທີ່ທ່ານໄດ້ປະມູນ',
@@ -181,6 +198,41 @@ class sendNotification extends Command
                     'notification_type' => "owner_result",
                     'comment_path' => 'empty',
                 ]);
+                 $message = CloudMessage::withTarget('topic', $buddhist->user->topic)
+                    ->withNotification(Notification::fromArray([
+                        'title' => 'ຈາກ ' . $buddhist->name . ' ທີ່ທ່ານໄດ້ປ່ອຍ',
+                        'body' => 'ການປະມູນຈົບລົງດ້ວຍເງິນຈຳນວນ ' .  number_format($buddhist->highest_price,2,".",",") . " ກີບ",
+                        'image' => \public_path("/notification_images/chat.png"),
+                    ]))
+                    ->withData([
+                        'buddhist_id' => $buddhist->id,
+                        'type' => '',
+                        'sender' => "0",
+                        'result' => "have_participant",
+                    ]);
+                $message = $message->withAndroidConfig($androidConfig);
+                $messaging->send($message);
+
+
+                /********* */
+                $message = CloudMessage::withTarget('topic', $buddhist->user->topic)
+                ->withNotification(Notification::fromArray([
+                    'title' => 'ຈາກ ' . $buddhist->name . ' ທີ່ທ່ານໄດ້ປ່ອຍ',
+                    'body' => 'ການປະມູນຈົບລົງແຕ່ບໍ່ຮອດຂັ້ນຕ່ຳດ້ວຍເງິນຈຳນວນ ' .  number_format($buddhist->highest_price,2,".",",") . " ກີບ",
+                    'image' => \public_path("/notification_images/chat.png"),
+                ]))
+                ->withData([
+                    'buddhist_id' => $buddhist->id,
+                    'type' => '',
+                    'sender' => "0",
+                    'result' => "have_participant_not_meet_minimum",
+                ]);
+            $message = $message->withAndroidConfig($androidConfig);
+            $messaging->send($message);
+
+
+
+                /******** */
 
                 $buddhist->winner_user_id="empty";
                 }
@@ -221,6 +273,23 @@ class sendNotification extends Command
                     'notification_type' => "owner_result",
                     'comment_path' => 'empty',
                 ]);
+
+                $message = CloudMessage::withTarget('topic', $buddhist->user->topic)
+                    ->withNotification(Notification::fromArray([
+                        'title' => 'ຈາກ ' . $buddhist->name . ' ທີ່ທ່ານໄດ້ປ່ອຍ',
+                        'body' => 'ການປະມູນຈົບລົງດ້ວຍເງິນຈຳນວນ ' .  number_format($buddhist->highest_price,2,".",",") . " ກີບ",
+                        'image' => \public_path("/notification_images/chat.png"),
+                    ]))
+                    ->withData([
+                        'buddhist_id' => $buddhist->id,
+                        'type' => '',
+                        'sender' => "0",
+                        'result' => "have_participant",
+                    ]);
+                $message = $message->withAndroidConfig($androidConfig);
+                $messaging->send($message);
+
+                
                 }
 
 
