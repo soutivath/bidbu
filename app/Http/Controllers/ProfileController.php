@@ -30,8 +30,9 @@ class ProfileController extends Controller
        if(!$review){
            return response()->json([
                "data"=>[
+                "id"=>0,
                 "all_star"=>0,
-                "reviews"=>0
+                "reviews"=>[]
                ],
            ]);
        }
