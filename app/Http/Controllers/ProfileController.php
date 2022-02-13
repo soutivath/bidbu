@@ -27,7 +27,13 @@ class ProfileController extends Controller
     public function getReviewByUserId($id){
         $review = Review::where(["user_id" => $id])->with("review_details.user")->first();
        // return response()->json(["data"=>$review]);
-       
+       if(!$review){
+           return response()->json([
+               "message" =>"no review yet",
+               "all_star"=>0,
+               "review"=>0
+           ]);
+       }
         return new UserProfileWithReview($review);
         
     }
