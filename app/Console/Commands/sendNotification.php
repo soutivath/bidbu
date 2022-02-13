@@ -156,7 +156,7 @@ class sendNotification extends Command
                         'buddhist_id' => $buddhist->id,
                         'type' => 'bidding_result',
                         'sender' => "0",
-                        'result' => "lose",
+                        'result' => "not_reach_the_minimum",
                     ]);
                 $messageWinner = $messageWinner->withAndroidConfig($androidConfig);
                 $messaging->send($messageWinner);
