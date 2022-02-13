@@ -215,7 +215,7 @@ class sendNotification extends Command
 
 
                 /********* */
-                $message = CloudMessage::withTarget('topic', $buddhist->user->topic)
+                $message1 = CloudMessage::withTarget('topic', $buddhist->user->topic)
                 ->withNotification(Notification::fromArray([
                     'title' => 'ຈາກ ' . $buddhist->name . ' ທີ່ທ່ານໄດ້ປ່ອຍ',
                     'body' => 'ການປະມູນຈົບລົງແຕ່ບໍ່ຮອດຂັ້ນຕ່ຳດ້ວຍເງິນຈຳນວນ ' .  number_format($buddhist->highest_price,2,".",",") . " ກີບ",
@@ -227,8 +227,8 @@ class sendNotification extends Command
                     'sender' => "0",
                     'result' => "have_participant_not_meet_minimum",
                 ]);
-            $message = $message->withAndroidConfig($androidConfig);
-            $messaging->send($message);
+            $message1 = $message1->withAndroidConfig($androidConfig);
+            $messaging->send($message1);
 
 
 
@@ -274,7 +274,7 @@ class sendNotification extends Command
                     'comment_path' => 'empty',
                 ]);
 
-                $message = CloudMessage::withTarget('topic', $buddhist->user->topic)
+                $message1 = CloudMessage::withTarget('topic', $buddhist->user->topic)
                     ->withNotification(Notification::fromArray([
                         'title' => 'ຈາກ ' . $buddhist->name . ' ທີ່ທ່ານໄດ້ປ່ອຍ',
                         'body' => 'ການປະມູນຈົບລົງດ້ວຍເງິນຈຳນວນ ' .  number_format($buddhist->highest_price,2,".",",") . " ກີບ",
@@ -286,8 +286,8 @@ class sendNotification extends Command
                         'sender' => "0",
                         'result' => "have_participant",
                     ]);
-                $message = $message->withAndroidConfig($androidConfig);
-                $messaging->send($message);
+                $message1 = $message1->withAndroidConfig($androidConfig);
+                $messaging->send($message1);
 
                 
                 }
