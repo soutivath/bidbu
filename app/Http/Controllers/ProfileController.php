@@ -30,8 +30,7 @@ class ProfileController extends Controller
        if(!$review){
            return response()->json([
                "message" =>"no review yet",
-               "all_star"=>0,
-               "review"=>0
+               "data"=>[]
            ]);
        }
         return new UserProfileWithReview($review);
