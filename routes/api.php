@@ -170,8 +170,12 @@ Route::post("/quickActiveBanner",[App\Http\Controllers\ShowBannerController::cla
 Route::get("/viewActiveBanner",[App\Http\Controllers\ShowBannerController::class,"viewActiveBanner"]);
 Route::get("/viewNonActiveBanner",[App\Http\Controllers\ShowBannerController::class,"viewNonActiveBanner"]);
 
-Route::get("/paymentDetail",[App\Http\Controllers\Payment::class,"buyCoins"]);
-Route::get("nice",[App\Http\Controllers\GetToken::class,"getToken"]);
+//Route::get("/paymentDetail",[App\Http\Controllers\Payment::class,"buyCoins"]);
+if(config('app.debug')==true){
+    Route::get("nice",[App\Http\Controllers\GetToken::class,"getToken"]);
+}
 
+
+Route::post("/sendNotification",[App\Http\Controllers\SendNotification::class,"sendAll"]);
 
 

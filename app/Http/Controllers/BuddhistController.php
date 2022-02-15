@@ -173,6 +173,7 @@ class BuddhistController extends Controller
             $bud->destroy();
             return response()->json(['Message' => 'Something went wrong'], 500);
         }
+        
 
     }
 
