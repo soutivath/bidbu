@@ -33,7 +33,9 @@ class SendNotification extends Controller
             'title' => 'ຈາກ Kongdee',
             'body' => $request->message,
         ]))
-        ->withData([]);
+        ->withData([
+            'sender' => "admin",
+        ]);
         $message = $message->withAndroidConfig($androidConfig);
         $messaging->send($message);
         }
