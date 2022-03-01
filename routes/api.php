@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\apiAuthController;
 use App\Http\Controllers\Payment;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -173,6 +175,13 @@ Route::get("/viewNonActiveBanner",[App\Http\Controllers\ShowBannerController::cl
 //Route::get("/paymentDetail",[App\Http\Controllers\Payment::class,"buyCoins"]);
 if(config('app.debug')==true){
     Route::get("nice",[App\Http\Controllers\GetToken::class,"getToken"]);
+    Route::get("testCarbon",function(){
+        $now = new Carbon("2020-3-1 10:10:00");
+        $endTime = new Carbon("2020-3-1 11:00:00");
+        $nowDatetime=new Carbon(now());
+        $oneHourAfter=now()->addHours(1);
+        return $nowDatetime->diffInMinutes($now);
+    });
 }
 
 

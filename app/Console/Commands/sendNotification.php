@@ -9,7 +9,7 @@ use Illuminate\Console\Command;
 use Kreait\Firebase\Messaging\AndroidConfig;
 use Kreait\Firebase\Messaging\CloudMessage;
 use Kreait\Firebase\Messaging\Notification;
-
+use Carbon\Carbon;
 class sendNotification extends Command
 {
     /**
@@ -337,7 +337,35 @@ class sendNotification extends Command
             $buddhist->active = "0";
             $buddhist->save();
         }
+        $nowDatetime=new Carbon(now());
+        $oneHourAfter=now()->addHours(1);
+        $buddhistsWithOneHourTimeLeft = Buddhist::where([
+            ["end_time", ">=", $nowDatetime], 
+            ["end_time","<=",$oneHourAfter],
+            ['active', '1'],
+            ])->get();
 
+            foreach ($buddhistsWithOneHourTimeLeft as $buddhistWithOneHourTimeLeft) {
+            if($nowDatetime->diffInMinutes(Carbon::parse($buddhistWithOneHourTimeLeft->end_time))>=56&&$nowDatetime->diffInMinutes(Carbon::parse($buddhistWithOneHourTimeLeft->end_time))<=60)
+            {
+               
+                $time_message = CloudMessage::withTarget('condition', $buddhistWithOneHourTimeLeft->topic)
+                    ->withNotification(Notification::fromArray([
+                        'title' => 'ຈາກ ' . $buddhist->name,
+                        'body' => 'ຍັງເຫຼືອເວລາພຽງແຕ່ 1 ຊົ່ວໂມງກ່ອນການປະມູນຈະຈົບລົງ',
+                        'image' => \public_path("/notification_images/chat.png"),
+
+                    ]))
+                    ->withData([
+                        'buddhist_id' => $buddhistWithOneHourTimeLeft->id,
+                        'type' => 'time_notification',
+                        'sender' => $buddhistWithOneHourTimeLeft->user_id,
+                        'result' => "time_notification",
+                    ]);
+                $time_message = $bidding_message->withAndroidConfig($androidConfig);
+                $messaging->send($time_message);
+            }
+            }
 
         echo "Operation done";
     }
