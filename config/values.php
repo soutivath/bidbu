@@ -4,6 +4,7 @@ return [
     'CLIENT_SECRET' => env("CLIENT_SECRET", null),
     'CLIENT_ID' => env("CLIENT_ID", null),
     'ANOTHER_PORT' => env("ANOTHER_PORT", 80),
+    'GLOBAL_BUDDHIST_TOPIC'=>env("GLOBAL_BUDDHIST_TOPIC",null),
     //'ANOTHER_PORT' => env("ANOTHER_PORT", 8001),
 
 

@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Storage;
 use Image;
 use Kreait\Firebase\Messaging\CloudMessage;
 use Kreait\Firebase\Messaging\Notification;
+use Kreait\Firebase\Messaging\AndroidConfig;
 
 class BuddhistController extends Controller
 {
@@ -95,6 +96,10 @@ class BuddhistController extends Controller
             'minimum_price'=>'required|integer'
         ]);
         $messaging = app('firebase.messaging');
+        $androidConfig = AndroidConfig::fromArray([
+            'ttl' => '3600s',
+            'priority' => 'high',
+        ]);
         $result = $messaging->validateRegistrationTokens($request->fcm_token);
         if ($result['invalid'] != null) {
             return response()->json(['data' => 'your json token is invalid'], 404);
@@ -167,6 +172,24 @@ class BuddhistController extends Controller
                     'name' => Auth::user()->name,
                     'picture' => Auth::user()->getProfilePath(),
                 ]);
+
+                $newItemCondition = "'" . \Config::get("values.GLOBAL_BUDDHIST_TOPIC") . "' in topics && !('" . Auth::user()->topic . "' in topics)";
+                $new_item_message = CloudMessage::withTarget('condition',$newItemCondition)
+                ->withNotification(Notification::fromArray([
+                    'title' => 'ຈາກຂອງດີ',
+                    'body' => 'ມີສິນຄ້າໃໝ່ '.$bud->name,
+                    'image' => \public_path("/notification_images/chat.png"),
+
+                ]))
+                ->withData([
+                    'buddhist_id' =>$bud->id,
+                    'type' => 'new_item_notification',
+                    'sender' => Auth::id(),
+                    'result' => "new_item_notification",
+                ]);
+            $new_item_message = $new_item_message->withAndroidConfig($androidConfig);
+            $messaging->send($new_item_message);
+
             return response()->json(['data' => $bud], 201);
 
         } catch (Exception $e) {

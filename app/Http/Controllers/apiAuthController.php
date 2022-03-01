@@ -77,7 +77,7 @@ class apiAuthController extends Controller
                 }
 
                 $messaging->subscribeToTopic(Auth::user()->topic, $request->fcm_token);
-
+                $messaging->subscribeToTopic(\Config::get("values.GLOBAL_TOPIC"),$request->fcm_token);
                 return $response->getBody();
 
                 // return $response->json_decode($response);
@@ -108,7 +108,9 @@ class apiAuthController extends Controller
         }
 
         $messaging->unsubscribeFromTopic(Auth::user()->topic, $request->fcm_token);
-
+        $messaging->unsubscribeFromTopic(\Config::get("values.GLOBAL_TOPIC"), $request->fcm_token);
+        
+     
         auth()->user()->tokens->each(function ($token, $key) {
             $token->delete();
         });
@@ -192,6 +194,7 @@ class apiAuthController extends Controller
                 ]);
 
                 $messaging->subscribeToTopic($user->topic, $request->fcm_token);
+                $messaging->subscribeToTopic(\Config::get("values.GLOBAL_TOPIC"),$request->fcm_token);
 
                 return $response->getBody();
 

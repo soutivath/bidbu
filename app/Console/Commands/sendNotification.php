@@ -351,7 +351,7 @@ class sendNotification extends Command
                
                 $time_message = CloudMessage::withTarget('condition', $buddhistWithOneHourTimeLeft->topic)
                     ->withNotification(Notification::fromArray([
-                        'title' => 'ຈາກ ' . $buddhist->name,
+                        'title' => 'ຈາກ ' . $buddhistWithOneHourTimeLeft->name,
                         'body' => 'ຍັງເຫຼືອເວລາພຽງແຕ່ 1 ຊົ່ວໂມງກ່ອນການປະມູນຈະຈົບລົງ',
                         'image' => \public_path("/notification_images/chat.png"),
 
