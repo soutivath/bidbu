@@ -174,7 +174,7 @@ class BuddhistController extends Controller
                 ]);
 
                 $newItemCondition = "'" . \Config::get("values.GLOBAL_BUDDHIST_TOPIC") . "' in topics && !('" . Auth::user()->topic . "' in topics)";
-                $new_item_message = CloudMessage::withTarget('condition',$newItemCondition)
+                $new_item_message = CloudMessage::withTarget('topic',$newItemCondition)
                 ->withNotification(Notification::fromArray([
                     'title' => 'ຈາກຂອງດີ',
                     'body' => 'ມີສິນຄ້າໃໝ່ '.$bud->name,
