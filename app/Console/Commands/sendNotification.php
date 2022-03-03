@@ -362,7 +362,7 @@ class sendNotification extends Command
                         'sender' => $buddhistWithOneHourTimeLeft->user_id,
                         'result' => "time_notification",
                     ]);
-                $time_message = $bidding_message->withAndroidConfig($androidConfig);
+                $time_message = $time_message->withAndroidConfig($androidConfig);
                 $messaging->send($time_message);
             }
             }
