@@ -19,7 +19,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'surname', 'email', 'password', 'phone_number', 'picture', 'firebase_uid',
+        'name', 'surname', 'email', 'password', 'phone_number', 'picture', 'firebase_uid','gender','date_of_birth',"emergency_phone_number"
     ];
     public function getAuthPassword()
     {
@@ -63,6 +63,10 @@ class User extends Authenticatable
     public function notifications()
     {
         return $this->hasMany(NotificationFirebase::class);
+    }
+    public function verifies()
+    {
+        return $this->hasMany(Verify::class);
     }
 
     public function getProfilePath()

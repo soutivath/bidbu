@@ -192,7 +192,7 @@ class BuddhistController extends Controller
 
             return response()->json(['data' => $bud], 201);
 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $bud->destroy();
             return response()->json(['Message' => 'Something went wrong'], 500);
         }

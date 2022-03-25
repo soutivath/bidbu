@@ -10,6 +10,8 @@ use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Image;
 use Response;
+use App\Enums\GenderEnum;
+use Illuminate\Validation\Rule;
 
 class apiAuthController extends Controller
 {
@@ -258,6 +260,104 @@ class apiAuthController extends Controller
 
         return response()->json(["message" => "loggedIn"], 200);
 
+    }
+
+
+    public function facebook_one_click_login_register(Request $request){
+        $request->validate([
+           "name"=>"required|string",
+           "surname"=>"required|string",
+           "fcm_token"=>"required",
+           "firebase_token"=>"required",
+           "picture"=>"required|string",
+           "gender"=>["required",
+            Rule::in([GenderEnum::MALE,GenderEnum::FEMALE]),],
+            "date_of_birth"=>"required|date",
+            "email_address"=>"required|unique:users,email_address"
+        ]);
+
+        $auth = app('firebase.auth');
+        $idTokenString = $request->firebase_token;
+        try { // Try to verify the Firebase credential token with Google
+            $verifiedIdToken = $auth->verifyIdToken($idTokenString);
+        } catch (\InvalidArgumentException $e) { // If the token has the wrong format
+            return response()->json(
+                [
+                    'message' => 'Unauthorized - Can\'t parse the token: ' . $e->getMessage(),
+                ], 401
+            );
+        } catch (InvalidToken $e) { // If the token is invalid (expired ...)
+
+            return response()->json([
+                'message' => 'Unauthorized - Token is invalid: ' . $e->getMessage(),
+            ], 401);
+        }
+
+        $messaging = app('firebase.messaging');
+        $result = $messaging->validateRegistrationTokens($request->fcm_token);
+        if ($result['invalid'] != null) {
+            return response()->json(['data' => 'your json token is invalid'], 404);
+
+        }
+
+        // Retrieve the UID (User ID) from the verified Firebase credential's token
+        $uid = $verifiedIdToken->claims()->get('sub');
+        $password = bcrypt($uid);
+        $user = new User();
+        
+       
+        $user->name = $request->name;
+        $user->surname = $request->surname;
+        $user->firebase_uid = $uid;
+        $user->password = $password;
+        $user->picture = $request->picture;
+        $user->topic = "notification_topic_" . $uid . time();
+        $user->gender = $request->gender;
+        $user->date_of_birth = $request->date_of_birth;
+        if(filter_var($request->email_address, FILTER_VALIDATE_EMAIL)) {
+            $user->email_address = $request->email_address;
+        }
+        else {
+            $user->phone_number = $user->email_address;
+        }
+        $user->picture = $request->picture;
+        if ($user->save()) {
+            $user->attachRole("bond");
+            $http = new \GuzzleHttp\Client([
+                'timeout' => 60,
+            ]);
+            try {
+                $response = $http->post(\Config::get("values.APP_URL") . ':' . \Config::get("values.ANOTHER_PORT") . '/oauth/token', [
+                    'form_params' => [
+                        'grant_type' => 'password',
+                        'client_id' => \Config::get("values.CLIENT_ID"),
+                        'client_secret' => \Config::get("values.CLIENT_SECRET"),
+                        'username' => $request->phone_number,
+                        'password' => $password,
+                    ],
+                ]);
+
+                $messaging->subscribeToTopic($user->topic, $request->fcm_token);
+                $messaging->subscribeToTopic(\Config::get("values.GLOBAL_BUDDHIST_TOPIC"),$request->fcm_token);
+
+                return $response->getBody();
+
+            } catch (\GuzzleHttp\Exception\BadResponseException $e) {
+                File::delete($location);
+
+                if ($e->getCode() === 400) {
+                    return response()->json('Invalid Request. Please enter a Phone number or a password.', $e->getCode());
+                } else if ($e->getCode() === 401) {
+                    return response()->json('Your credentials are incorrect. Please try again', $e->getCode());
+                }
+
+                return response()->json('Something went wrong on the server.', $e->getCode());
+            }
+        } else {
+            return response()->json(['message' => 'Something went Wrong'], 500);
+        }
+
+    
     }
 
 }

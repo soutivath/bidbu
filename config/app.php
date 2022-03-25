@@ -183,6 +183,7 @@ return [
         
         
         Laratrust\LaratrustServiceProvider::class,
+        App\Providers\RepositoryServiceProvidor::class,
     ],
 
     /*

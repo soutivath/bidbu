@@ -1,14 +1,11 @@
 <?php
 
-use App\Http\Controllers\apiAuthController;
-use App\Http\Controllers\Payment;
-use App\Models\Buddhist;
-use Carbon\Carbon;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use Kreait\Firebase\Messaging\AndroidConfig;
-use Kreait\Firebase\Messaging\CloudMessage;
-use Kreait\Firebase\Messaging\Notification;
+
+
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -19,6 +16,7 @@ use Kreait\Firebase\Messaging\Notification;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
  */
+
 
 Route::post('/register', [App\Http\Controllers\apiAuthController::class, 'register']);
 Route::post('/bidding', [App\Http\Controllers\BuddhistController::class, 'bidding']);
@@ -70,7 +68,7 @@ Route::post('favorite/buddhist/', [App\Http\Controllers\FavouriteController::cla
 //user
 Route::get('user', [App\Http\Controllers\ProfileController::class, 'show']);
 
-Route::get("profileReview/{id}",[App\Http\Controllers\ProfileController::class,"getReviewByUserId"]);
+Route::get("profileReview/{id}", [App\Http\Controllers\ProfileController::class, "getReviewByUserId"]);
 
 //Route::get('nice',[App\Http\Controllers\BuddhistController::class,'testTokenGetData']);
 Route::get("user/{id}", [App\Http\Controllers\ProfileController::class, 'getUserByID']);
@@ -148,39 +146,72 @@ Route::post("check_chat_room", [App\Http\Controllers\InboxChatController::class,
 Route::post("chat", [App\Http\Controllers\InboxChatController::class, "sendMessage"]);
 
 Route::prefix('/language')->group(function () {
-    Route::get("/",[App\Http\Controllers\LanguageController::class,"getAll"]);
-    Route::post("/",[App\Http\Controllers\LanguageController::class,"post"]);
-    Route::put("/{language_id}",[App\Http\Controllers\LanguageController::class,"update"]);
-    Route::get("/{language_id}",[App\Http\Controllers\LanguageController::class,"get"]);
-    Route::delete("/{language_id}",[App\Http\Controllers\LanguageController::class,"destroy"]);
-
+    Route::get("/", [App\Http\Controllers\LanguageController::class, "getAll"]);
+    Route::post("/", [App\Http\Controllers\LanguageController::class, "post"]);
+    Route::put("/{language_id}", [App\Http\Controllers\LanguageController::class, "update"]);
+    Route::get("/{language_id}", [App\Http\Controllers\LanguageController::class, "get"]);
+    Route::delete("/{language_id}", [App\Http\Controllers\LanguageController::class, "destroy"]);
 });
 
-Route::prefix("/review")->group(function()
-{
-    Route::post("/",[App\Http\Controllers\ReviewController::class,"store"]);
-    Route::put("/",[App\Http\Controllers\ReviewController::class,"update"]);
-    Route::delete("/{user_id}",[App\Http\Controllers\ReviewController::class,"destroy"]);
-    Route::get("/{user_id}",[App\Http\Controllers\ReviewController::class,"getReview"]);
+Route::prefix("/review")->group(function () {
+    Route::post("/", [App\Http\Controllers\ReviewController::class, "store"]);
+    Route::put("/", [App\Http\Controllers\ReviewController::class, "update"]);
+    Route::delete("/{user_id}", [App\Http\Controllers\ReviewController::class, "destroy"]);
+    Route::get("/{user_id}", [App\Http\Controllers\ReviewController::class, "getReview"]);
 });
 
 Route::prefix('/banner')->group(function () {
-    Route::post("/",[App\Http\Controllers\ShowBannerController::class,"post"]);
-    Route::put("/{banner_id}",[App\Http\Controllers\ShowBannerController::class,"update"]);
-    Route::delete("/{banner_id}",[App\Http\Controllers\ShowBannerController::class,"destroy"]);
-    Route::get("/getAll",[App\Http\Controllers\ShowBannerController::class,"getAll"]);
-    Route::get("/{banner_id}",[App\Http\Controllers\ShowBannerController::class,"show"]);
+    Route::post("/", [App\Http\Controllers\ShowBannerController::class, "post"]);
+    Route::put("/{banner_id}", [App\Http\Controllers\ShowBannerController::class, "update"]);
+    Route::delete("/{banner_id}", [App\Http\Controllers\ShowBannerController::class, "destroy"]);
+    Route::get("/getAll", [App\Http\Controllers\ShowBannerController::class, "getAll"]);
+    Route::get("/{banner_id}", [App\Http\Controllers\ShowBannerController::class, "show"]);
 });
-Route::post("/quickActiveBanner",[App\Http\Controllers\ShowBannerController::class,"quickActiveBanner"]);
-Route::get("/viewActiveBanner",[App\Http\Controllers\ShowBannerController::class,"viewActiveBanner"]);
-Route::get("/viewNonActiveBanner",[App\Http\Controllers\ShowBannerController::class,"viewNonActiveBanner"]);
+Route::post("/quickActiveBanner", [App\Http\Controllers\ShowBannerController::class, "quickActiveBanner"]);
+Route::get("/viewActiveBanner", [App\Http\Controllers\ShowBannerController::class, "viewActiveBanner"]);
+Route::get("/viewNonActiveBanner", [App\Http\Controllers\ShowBannerController::class, "viewNonActiveBanner"]);
 
 //Route::get("/paymentDetail",[App\Http\Controllers\Payment::class,"buyCoins"]);
-if(config('app.debug')==true){
-    Route::get("nice",[App\Http\Controllers\GetToken::class,"getToken"]);
+if (config('app.debug') == true) {
+    Route::get("nice", [App\Http\Controllers\GetToken::class, "getToken"]);
 }
 
 
-Route::post("/sendNotification",[App\Http\Controllers\SendNotification::class,"sendAll"]);
+Route::post("/sendNotification", [App\Http\Controllers\SendNotification::class, "sendAll"]);
 
 
+Route::prefix("/verify")->group(function () {
+    Route::post("/", [App\Http\Controllers\VerifyController::class, "requestVerify"]);
+    Route::get("/", [App\Http\Controllers\VerifyController::class, "getAllVerify"]);
+    Route::get("/{id}", [App\Http\Controllers\VerifyController::class, "viewVerify"]);
+    Route::post("/{id}", [App\Http\Controllers\VerifyController::class, "operateVerification"]);
+});
+
+
+use Kreait\Firebase\Exception\Auth\FailedToVerifyToken;
+use Kreait\Firebase\Auth\SignInResult\SignInResult;
+Route::post("/test", function () {
+    
+    $auth = app('firebase.auth');
+    $uid = 'qImzIZ94JDNvJFPdogIRTV9jq1k2';
+   
+
+$customToken = $auth->createCustomToken($uid);
+$signInResult = $auth->signInWithCustomToken($customToken);
+
+$idTokenString = $customToken->claims()->get('sub');
+
+    
+    try {
+        $verifiedIdToken = $auth->verifyIdToken($customToken);
+        dd($verifiedIdToken);
+        dd("nice");
+    } catch (FailedToVerifyToken $e) {
+        echo 'The token is invalid: ' . $e->getMessage();
+    }
+
+    $uid = $verifiedIdToken->claims()->get('sub');
+
+    $user = $auth->getUser($uid);
+    return response()->json(["data"=>$user]);
+});
