@@ -17,11 +17,14 @@ use Illuminate\Support\Facades\Auth;
 use App\Enums\GenderEnum;
 use App\Enums\VerifyFileType;
 use Illuminate\Support\Facades\File;
+use Illuminate\Validation\Rule;
+
 class VerifyRepository implements VerifyInterface
 {
     use ResponseAPI;
     public function getAllVerification(Request $request)
     {
+        
         $optionStatus = "";
 
         if ($request->has("status") == VerifyStatus::APPROVED) {
@@ -49,7 +52,7 @@ class VerifyRepository implements VerifyInterface
             }
 
             $oldFilePath = "";
-        
+
             $checkIfVerifyIsExisting = Verify::where("user_id", Auth::id())->get();
             if ($checkIfVerifyIsExisting) {
                 $oldFilePath = $checkIfVerifyIsExisting->getImagePath();
@@ -59,8 +62,8 @@ class VerifyRepository implements VerifyInterface
                 $checkIfVerifyIsExisting->save();
 
                 //delete old image
-              
-            }else{
+
+            } else {
                 $newVerify = new Verify();
                 $newVerify->file_type = $request->verify_file_type;
                 $newVerify->file_folder_path = $folderName;
@@ -69,12 +72,12 @@ class VerifyRepository implements VerifyInterface
                 $newVerify->save();
             }
 
-           
-            
 
 
 
-          
+
+
+
             foreach ($request->images as $image) {
                 $fileExtension = $image->getClientOriginalExtension();
                 $fileName = $request->verify_type . "-" . uniqid() . "_" . time() . "." . $fileExtension;
@@ -83,7 +86,7 @@ class VerifyRepository implements VerifyInterface
                     $constraint->aspectRatio();
                 })->save($file_location_with_name);
             }
-            if($oldFilePath!=""){
+            if ($oldFilePath != "") {
                 if (File::isDirectory($oldFilePath)) {
                     File::deleteDirectory($oldFilePath);
                 }
@@ -97,11 +100,20 @@ class VerifyRepository implements VerifyInterface
     }
 
 
-    public function updateVerify(Request $request,$id)
+    public function updateVerify(Request $request, $id)
     {
+        $request->validate([
+            "address_verify_status"=>[ "required",
+            Rule::in([VerifyStatus::APPROVED,VerifyStatus::REJECTED,VerifyStatus::PENDING])],
+            "file_verify_status"=>[ "required",
+            Rule::in([VerifyStatus::APPROVED,VerifyStatus::REJECTED,VerifyStatus::PENDING])],
+            "phone_number_verify_status"=>[ "required",
+            Rule::in([VerifyStatus::APPROVED,VerifyStatus::REJECTED,VerifyStatus::PENDING])]
+        ]);
         //receive all request status address and file status
         $verify = Verify::findOrFail($id);
         $verify->address_verify_status = $request->address_verify_status;
+        $verify->file_verify_status = $request->file_verify_status;
         $verify->phone_number_verify_status = $request->phone_number_verify_status;
         $verify->save();
         return $this->success("Update verify successfully", 200);
@@ -118,13 +130,14 @@ class VerifyRepository implements VerifyInterface
         }
     }
 
-    public function adminViewVerify($id){
-        $verify = Verify::with("user")->where("id",$id)->get();
-        return $this->success("get data from",$verify,200);
+    public function adminViewVerify($id)
+    {
+        $verify = Verify::with("user")->where("id", $id)->get();
+        return $this->success("get data from", $verify, 200);
     }
 
 
-    public function operateVerification(Request $request, $id)
+    /*public function operateVerification(Request $request, $id)
     {
         //approve the request 
         DB::beginTransaction();
@@ -154,10 +167,14 @@ class VerifyRepository implements VerifyInterface
             DB::rollback();
             return $e->getMessage();
         }
-    }
+    }*/
 
     public function verifyNumber(Request $request)
     {
+        $request->validate([
+            "firebase_token"=>"required|string",
+            "phone_number"=>"required|regex:/^([0-9\s\-\+\(\)]*)$/|min:10",
+        ]);
         DB::startTransaction();
         try {
 
@@ -190,26 +207,26 @@ class VerifyRepository implements VerifyInterface
             // Retrieve the UID (User ID) from the verified Firebase credential's token
             $uid = $verifiedIdToken->claims()->get('sub');
             $toDeleteUID = "";
-            if (Auth::user()->firebase_uid == $uid) {
-                $phone_number = Auth::user()->phone_number;
-            } else {
-
+            if (Auth::user()->firebase_uid != $uid) {
                 $toDeleteUID = Auth::user()->firebase_uid;
-
-
-
-                $existingPhoneNumber = User::where("phone_number", Auth::user()->phone_number)->first();
-                if ($existingPhoneNumber) {
-                    $this->error("Phone number is exist", 400);
-                }
-
-
-                $user = User::findOrFail(Auth::id());
-                $user->phone_number = $request->phone_number;
-                $user->firebase_uid = $uid;
-                $user->save();
-                $phone_number = $request->phone_number;
             }
+
+
+
+
+
+            $existingPhoneNumber = User::where("phone_number", Auth::user()->phone_number)->first();
+            if ($existingPhoneNumber) {
+                $this->error("Phone number is exist", 400);
+            }
+
+
+            $user = User::findOrFail(Auth::id());
+            $user->phone_number = $request->phone_number;
+            $user->firebase_uid = $uid;
+            $user->save();
+            $phone_number = $request->phone_number;
+
 
             $checkVerify = Verify::where("user_id", Auth::id())->first();
             if ($checkVerify) {
@@ -225,8 +242,9 @@ class VerifyRepository implements VerifyInterface
             }
 
             $forceDeleteEnabledUser = true;
-            $auth->deleteUsers([$uid], $forceDeleteEnabledUser);
-
+            if($toDeleteUID!=""){
+                $auth->deleteUsers([$toDeleteUID], $forceDeleteEnabledUser);
+            }
             $this->success("Phone verify successfully", 200);
             DB::commit();
         } catch (\Exception $e) {
@@ -241,6 +259,14 @@ class VerifyRepository implements VerifyInterface
         /**
          * name surname gender date of birth address 
          * */
+        $request->validate([
+            "name" =>"required|string",
+            "surname"=>"required|string",
+            "gender"=>["required",Rule::in([GenderEnum::FEMALE,GenderEnum::MALE])],
+            "date_of_birth"=>"required|date",
+            "phone_number"=>"required|regex:/^([0-9\s\-\+\(\)]*)$/|min:10",
+            "address"=>"required|string",
+        ]);
         DB::startTransaction();
         $user = User::findOrFail(Auth::id());
         try {

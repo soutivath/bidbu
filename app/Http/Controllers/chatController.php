@@ -27,6 +27,7 @@ class chatController extends Controller
             "send_to" => "required|integer",
             "buddhist_id" => "required|integer",
         ]);
+        
         // search data
         $current_chat_id = "";
         $send_to_user = $request->send_to;
@@ -43,6 +44,7 @@ class chatController extends Controller
             })
             ->first();
         if (empty($checkExistData)) {
+            $database = app("firebase.database");
             $data = ChatRoom::create(
                 [
                     "buddhist_id" => $request->buddhist_id,
@@ -65,6 +67,8 @@ class chatController extends Controller
             "chat_room_id" => "required",
             "message" => "required",
             "send_to" => "required",
+            'images' => 'required|array|max:5',
+            'images.*' => 'image|mimes:jpeg,png,jpg,PNG|max:30720',
         ]);
         $messaging = app('firebase.messaging');
 

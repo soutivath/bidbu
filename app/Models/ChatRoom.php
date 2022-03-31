@@ -19,4 +19,7 @@ class ChatRoom extends Model
     {
         return $this->belongsTo(User::class, "user_2", "id");
     }
+
+ 
+
 }

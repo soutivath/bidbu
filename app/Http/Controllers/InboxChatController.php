@@ -10,6 +10,7 @@ use Kreait\Firebase\Messaging\AndroidConfig;
 use Kreait\Firebase\Messaging\CloudMessage;
 use Kreait\Firebase\Messaging\Notification;
 use App\Models\NotificationFirebase;
+use Intervention\Image\Facades\Image;
 class InboxChatController extends Controller
 {
     //
@@ -62,13 +63,14 @@ class InboxChatController extends Controller
             "chat_room_id" => "required",
             "message" => "required",
             "send_to" => "required",
+            'images' => 'sometimes|array|max:5',
+            'images.*' => 'image|mimes:jpeg,png,jpg,PNG|max:30720',
         ]);
         $messaging = app('firebase.messaging');
 
         $androidConfig = AndroidConfig::fromArray([
             'ttl' => '3600s',
             'priority' => 'high',
-
         ]);
 
 
@@ -110,17 +112,50 @@ class InboxChatController extends Controller
                 'comment_path' => 'chat_room/' . $request->chat_room_id . '/',
             ]
             );
+            $database = app("firebase.database");
+            if($request->has("images")){
+               
+                if (!\File::isDirectory(public_path("/chat_images"))) {
+                    \File::makeDirectory(public_path('/chat_images'), 493, true);
+                }
+                if (!\File::isDirectory(public_path("/chat_images/" . $request->chat_room_id))) {
+                    \File::makeDirectory(public_path('/chat_images/' . $request->chat_room_id), 493, true);
+                    
+                }
+              foreach ($request->images as $image) {
+                    $fileExtension = $image->getClientOriginalExtension();
+                    $fileName = 'chat_images' . \uniqid() . "_" . time() . '.' . $fileExtension;
+                    $location = public_path("/chat_images/" . $request->chat_room_id . "/" . $fileName);
+                    Image::make($image)->resize(800, null, function ($constraint) {$constraint->aspectRatio();})->save($location);
+                   
+                     
+                    $database->getReference("chat_room/" . $request->chat_room_id . "/")
+                    ->push([
+                        "send_by" => Auth::user()->id,
+                        "time" => date('Y-m-d H:i:s'),
+                        "message" => Config("values.APP_URL") . ":" . $_SERVER["SERVER_PORT"] .
+                        "/" . "chat_images/" .$request->chat_room_id."/". $fileName,
+                        "read" => 0,
+                        "is_image"=>true
+                    ]);
+                }
+        
+            }
+            else{
+               
+                $database->getReference("chat_room/" . $request->chat_room_id . "/")
+                    ->push([
+                        "send_by" => Auth::user()->id,
+                        "time" => date('Y-m-d H:i:s'),
+                        "message" => $request->message,
+                        "read" => 0,
+                        "is_image"=>false
+                    ]);
+            }
 
 
 
-        $database = app("firebase.database");
-        $database->getReference("chat_room/" . $request->chat_room_id . "/")
-            ->push([
-                "send_by" => Auth::user()->id,
-                "time" => date('Y-m-d H:i:s'),
-                "message" => $request->message,
-                "read" => 0,
-            ]);
+     
 
 
 

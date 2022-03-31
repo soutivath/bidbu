@@ -314,11 +314,14 @@ class apiAuthController extends Controller
         $user->topic = "notification_topic_" . $uid . time();
         $user->gender = $request->gender;
         $user->date_of_birth = $request->date_of_birth;
+
         if(filter_var($request->email_address, FILTER_VALIDATE_EMAIL)) {
             $user->email_address = $request->email_address;
+           
         }
         else {
-            $user->phone_number = $user->email_address;
+            $user->phone_number = $request->email_address;
+           
         }
         $user->picture = $request->picture;
         if ($user->save()) {
@@ -332,7 +335,7 @@ class apiAuthController extends Controller
                         'grant_type' => 'password',
                         'client_id' => \Config::get("values.CLIENT_ID"),
                         'client_secret' => \Config::get("values.CLIENT_SECRET"),
-                        'username' => $request->phone_number,
+                        'username' => $request->email_address,
                         'password' => $password,
                     ],
                 ]);
@@ -343,7 +346,7 @@ class apiAuthController extends Controller
                 return $response->getBody();
 
             } catch (\GuzzleHttp\Exception\BadResponseException $e) {
-                File::delete($location);
+               
 
                 if ($e->getCode() === 400) {
                     return response()->json('Invalid Request. Please enter a Phone number or a password.', $e->getCode());

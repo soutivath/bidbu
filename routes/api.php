@@ -3,8 +3,11 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-
-
+use Illuminate\Support\Facades\View;
+use Kreait\Firebase\DynamicLink\AnalyticsInfo;
+use Kreait\Firebase\DynamicLink\AnalyticsInfo\GooglePlayAnalytics;
+use Kreait\Firebase\DynamicLink\AnalyticsInfo\ITunesConnectAnalytics;
+use Kreait\Firebase\DynamicLink\AndroidInfo;
 
 /*
 |--------------------------------------------------------------------------
@@ -181,37 +184,22 @@ Route::post("/sendNotification", [App\Http\Controllers\SendNotification::class, 
 
 
 Route::prefix("/verify")->group(function () {
-    Route::post("/", [App\Http\Controllers\VerifyController::class, "requestVerify"]);
-    Route::get("/", [App\Http\Controllers\VerifyController::class, "getAllVerify"]);
-    Route::get("/{id}", [App\Http\Controllers\VerifyController::class, "viewVerify"]);
-    Route::post("/{id}", [App\Http\Controllers\VerifyController::class, "operateVerification"]);
+    // Route::post("/", [App\Http\Controllers\VerifyController::class, "requestVerify"]);
+    // Route::get("/", [App\Http\Controllers\VerifyController::class, "getAllVerify"]);
+    // Route::get("/{id}", [App\Http\Controllers\VerifyController::class, "viewVerify"]);
+    // Route::post("/{id}", [App\Http\Controllers\VerifyController::class, "operateVerification"]);
+
+    Route::get("/",[App\Http\Controllers\VerifyController::class, "getAllVerification"]);
+    Route::post("/",[App\Http\Controllers\VerifyController::class, "fileVerifyRequest"]);
+    Route::put("/",[App\Http\Controllers\VerifyController::class, "updateVerify"]);
+    Route::get("/",[App\Http\Controllers\VerifyController::class, "viewVerify"]);
+    Route::get("/admin",[App\Http\Controllers\VerifyController::class, "adminViewVerify"]);
+    Route::post("/",[App\Http\Controllers\VerifyController::class, "verifyNumber"]);
+    Route::post("/",[App\Http\Controllers\VerifyController::class, "verifyPersonalData"]);
 });
 
 
-use Kreait\Firebase\Exception\Auth\FailedToVerifyToken;
-use Kreait\Firebase\Auth\SignInResult\SignInResult;
-Route::post("/test", function () {
-    
-    $auth = app('firebase.auth');
-    $uid = 'qImzIZ94JDNvJFPdogIRTV9jq1k2';
-   
 
-$customToken = $auth->createCustomToken($uid);
-$signInResult = $auth->signInWithCustomToken($customToken);
 
-$idTokenString = $customToken->claims()->get('sub');
 
-    
-    try {
-        $verifiedIdToken = $auth->verifyIdToken($customToken);
-        dd($verifiedIdToken);
-        dd("nice");
-    } catch (FailedToVerifyToken $e) {
-        echo 'The token is invalid: ' . $e->getMessage();
-    }
 
-    $uid = $verifiedIdToken->claims()->get('sub');
-
-    $user = $auth->getUser($uid);
-    return response()->json(["data"=>$user]);
-});
