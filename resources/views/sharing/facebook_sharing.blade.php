@@ -14,16 +14,17 @@
 </head>
 
 <body onload="redirect()">
+<p>redirect...</p>
 </body>
 <script>
     function redirect() {
         var now = new Date().valueOf();
         setTimeout(function() {
             if (new Date().valueOf() - now > 100) return;
-            window.location = "https://itunes.apple.com/appdir";
+            window.location = "https://kongdee.page.link/DQbR";
         }, 50);
-        window.location = "appname://";
-        if (navigator.userAgent.toLowerCase().indexOf("iphone") > -1) {
+        //window.location = "appname://";
+      /*  if (navigator.userAgent.toLowerCase().indexOf("iphone") > -1) {
             setTimeout(function(){
                 if(new Date().valueOf()>now>100) return;
                 window.location.href = 'https://apps.apple.com/us/app/subway-surfers/id512939461';
@@ -45,7 +46,7 @@
 
         if (!navigator.userAgent.match(/(iPhone|iPod|iPad|Android|BlackBerry|IEMobile)/)) {
             window.location.href = 'https://play.google.com/store/apps/details?id=com.kiloo.subwaysurf';
-        }
+        }*/
     }
 </script>
 
