@@ -72,7 +72,7 @@ class User extends Authenticatable
     {
         return $this->hasMany(NotificationFirebase::class);
     }
-    public function verifies()
+    public function verify()
     {
         return $this->hasMany(Verify::class);
     }

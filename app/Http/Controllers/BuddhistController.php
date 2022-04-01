@@ -70,7 +70,7 @@ class BuddhistController extends Controller
 
         $request->validate([
             'name' => 'required|min:3|max:100|string',
-            'detail' => 'required|string|max:255',
+            'detail' => 'required|string',
             'end_datetime' => 'required|date|date_format:Y-m-d H:i:s|after:now',
             'price' => 'required|numeric|gt:0',
             'images' => 'required|array|max:5',

@@ -7,7 +7,7 @@ use App\Http\Requests\Verification\VerificationRequest;
 use App\Traits\ResponseAPI;
 use App\Models\Verify;
 use Illuminate\Support\Facades\DB;
-use Intervention\Image\Image;
+use Image;
 use App\Enums\VerifyStatus;
 use Illuminate\Http\Request;
 use App\Http\Resources\VerifyResource;
@@ -25,38 +25,60 @@ class VerifyRepository implements VerifyInterface
     public function getAllVerification(Request $request)
     {
         
-        $optionStatus = "";
-
-        if ($request->has("status") == VerifyStatus::APPROVED) {
-            $optionStatus = VerifyStatus::APPROVED;
-        } else if ($request->has("status") == VerifyStatus::PENDING) {
-            $optionStatus = VerifyStatus::PENDING;
-        } else if ($request->has("status") == VerifyStatus::REJECTED) {
-            $optionStatus = VerifyStatus::REJECTED;
+        
+        $address_verify_status=VerifyStatus::PENDING;
+        $phone_verify_status=VerifyStatus::PENDING;
+        $file_verify_status=VerifyStatus::PENDING;
+        if ($request->has("address_verify_status") == VerifyStatus::APPROVED) {
+            $address_verify_status = VerifyStatus::APPROVED;
+        } else if ($request->has("address_verify_status") == VerifyStatus::PENDING) {
+            $address_verify_status = VerifyStatus::PENDING;
+        } else if ($request->has("address_verify_status") == VerifyStatus::REJECTED) {
+            $address_verify_status = VerifyStatus::REJECTED;
         }
-        $verifiesData = Verify::with("user")->where("status", $optionStatus)->get();
+
+        if ($request->has("phone_verify_status") == VerifyStatus::APPROVED) {
+            $phone_verify_status = VerifyStatus::APPROVED;
+        } else if ($request->has("phone_verify_status") == VerifyStatus::PENDING) {
+            $phone_verify_status = VerifyStatus::PENDING;
+        } else if ($request->has("phone_verify_status") == VerifyStatus::REJECTED) {
+            $phone_verify_status = VerifyStatus::REJECTED;
+        }
+        if ($request->has("file_verify_status") == VerifyStatus::APPROVED) {
+            $file_verify_status = VerifyStatus::APPROVED;
+        } else if ($request->has("file_verify_status") == VerifyStatus::PENDING) {
+            $file_verify_status = VerifyStatus::PENDING;
+        } else if ($request->has("file_verify_status") == VerifyStatus::REJECTED) {
+            $file_verify_status = VerifyStatus::REJECTED;
+        }
+        $verifiesData = Verify::with("user")->where("address_verify_status", $address_verify_status)
+        ->orWhere("phone_verify_status",$phone_verify_status)
+        ->orWhere("file_verify_status",$file_verify_status)->get();
         return $this->success("get data successfully", $verifiesData);
     }
     public function fileVerifyRequest(VerificationRequest $request)
     {
+        
         DB::beginTransaction();
         try {
             $folderName = uniqid() . "_" . time();
             $base_verify_location = public_path("/verification_images");
             $base_verify_file_location = public_path("/verification_images/" . $folderName);
-            if (File::isDirectory($base_verify_location)) {
+            if (!File::isDirectory($base_verify_location)) {
                 File::makeDirectory($base_verify_location, 493, true);
             }
-            if (File::isDirectory($base_verify_file_location)) {
+            if (!File::isDirectory($base_verify_file_location)) {
                 File::makeDirectory($base_verify_file_location);
             }
 
             $oldFilePath = "";
-
-            $checkIfVerifyIsExisting = Verify::where("user_id", Auth::id())->get();
+            
+           
+            $checkIfVerifyIsExisting = Verify::where("user_id", Auth::id())->first();
             if ($checkIfVerifyIsExisting) {
-                $oldFilePath = $checkIfVerifyIsExisting->getImagePath();
-                $checkIfVerifyIsExisting->file_type = $request->file_type;
+                $oldFilePath = $checkIfVerifyIsExisting->file_folder_path;
+               
+                $checkIfVerifyIsExisting->file_type = $request->verify_type;
                 $checkIfVerifyIsExisting->file_folder_path = $folderName;
                 $checkIfVerifyIsExisting->file_verify_status = VerifyStatus::PENDING;
                 $checkIfVerifyIsExisting->save();
@@ -65,14 +87,14 @@ class VerifyRepository implements VerifyInterface
 
             } else {
                 $newVerify = new Verify();
-                $newVerify->file_type = $request->verify_file_type;
+                $newVerify->file_type = $request->verify_type;
                 $newVerify->file_folder_path = $folderName;
                 $newVerify->file_verify_status = VerifyStatus::PENDING;
                 $newVerify->user_id = Auth::id();
                 $newVerify->save();
             }
 
-
+            
 
 
 
@@ -82,13 +104,13 @@ class VerifyRepository implements VerifyInterface
                 $fileExtension = $image->getClientOriginalExtension();
                 $fileName = $request->verify_type . "-" . uniqid() . "_" . time() . "." . $fileExtension;
                 $file_location_with_name = public_path("/verification_images/" . $folderName . "/" . $fileName);
-                Image::make($image)->resize(800, null, function ($constraint) {
+                Image::make($image)->resize(1920, null, function ($constraint) {
                     $constraint->aspectRatio();
                 })->save($file_location_with_name);
             }
             if ($oldFilePath != "") {
-                if (File::isDirectory($oldFilePath)) {
-                    File::deleteDirectory($oldFilePath);
+                if (File::isDirectory(public_path("/verification_images/".$oldFilePath))) {
+                    File::deleteDirectory(public_path("/verification_images/".$oldFilePath));
                 }
             }
             DB::commit();
@@ -123,8 +145,13 @@ class VerifyRepository implements VerifyInterface
     {
 
         try {
-            $userWithVerify = User::where("id", Auth::id())->with("verify")->get();
-            return new VerifyResource($userWithVerify);
+           // $userWithVerify = User::where("id", Auth::id())->with("verify")->first();
+           $verifyWithUser = Verify::where("user_id",Auth::id())->with("user")->first();
+            // return response()->json(["data"=>$verifyWithUser]);
+            if(!$verifyWithUser){
+                $this->error("No data found",404);
+            }
+            return new VerifyResource($verifyWithUser);
         } catch (\Exception $e) {
             return $e->getMessage();
         }
@@ -175,7 +202,7 @@ class VerifyRepository implements VerifyInterface
             "firebase_token"=>"required|string",
             "phone_number"=>"required|regex:/^([0-9\s\-\+\(\)]*)$/|min:10",
         ]);
-        DB::startTransaction();
+        DB::beginTransaction();
         try {
 
             $phone_number = "";
@@ -245,8 +272,9 @@ class VerifyRepository implements VerifyInterface
             if($toDeleteUID!=""){
                 $auth->deleteUsers([$toDeleteUID], $forceDeleteEnabledUser);
             }
-            $this->success("Phone verify successfully", 200);
             DB::commit();
+            $this->success("Phone verify successfully", 200);
+           
         } catch (\Exception $e) {
             DB::rollback();
             return $e->getMessage();
@@ -267,7 +295,7 @@ class VerifyRepository implements VerifyInterface
             "phone_number"=>"required|regex:/^([0-9\s\-\+\(\)]*)$/|min:10",
             "address"=>"required|string",
         ]);
-        DB::startTransaction();
+        DB::beginTransaction();
         $user = User::findOrFail(Auth::id());
         try {
             if (!$user) {
@@ -292,8 +320,9 @@ class VerifyRepository implements VerifyInterface
                 $verify->user_id = Auth::id();
                 $verify->save();
             }
-            return $this->success("Save address successfully", 200);
             DB::commit();
+            return $this->success("Save address successfully", 200);
+          
         } catch (\Exception $e) {
             DB::rollback();
             return $e->getMessage();

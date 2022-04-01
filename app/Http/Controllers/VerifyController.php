@@ -6,7 +6,7 @@ use App\Http\Requests\Verification\VerificationRequest;
 use App\Models\Verify;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-
+use Illuminate\Support\Facades\Auth;
 use App\Interfaces\VerifyInterface;
 
 class VerifyController extends Controller
@@ -16,8 +16,8 @@ class VerifyController extends Controller
   public function __construct(VerifyInterface $verifyInterface)
   {
 
-    $this->middleware("auth:api")->except("login");
-    $this->middleware("isUserActive:api")->except("login");
+    $this->middleware("auth:api");
+    $this->middleware("isUserActive:api");
 
     $this->verificationInterface = $verifyInterface;
   }
