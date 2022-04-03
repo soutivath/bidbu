@@ -27,9 +27,7 @@ class VerificationRequest extends FormRequest
     {
        
         return [
-            "fullname"=>"required|string",
-            "works_place"=>"required|string",
-            "phone_number"=>"required|regex:/^([0-9\s\-\+\(\)]*)$/|min:10",
+           
            
             "verify_type"=>[
                 "required",

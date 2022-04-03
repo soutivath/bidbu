@@ -12,14 +12,13 @@ use Image;
 use Response;
 use App\Enums\GenderEnum;
 use Illuminate\Validation\Rule;
-
+Use Carbon\Carbon;
 class apiAuthController extends Controller
 {
 
     public function __construct()
     {
         $this->middleware('auth:api')->only(['logOut', "checkToken"]);
-
     }
 
     public function login(Request $request)
@@ -33,7 +32,7 @@ class apiAuthController extends Controller
         ]);
         $auth = app('firebase.auth');
         $idTokenString = $request->input('firebase_token');
-       
+
         try { // Try to verify the Firebase credential token with Google
             $verifiedIdToken = $auth->verifyIdToken($idTokenString);
         } catch (\InvalidArgumentException $e) { // If the token has the wrong format
@@ -45,10 +44,10 @@ class apiAuthController extends Controller
                 'message' => 'Unauthorized - Token is invalide: ' . $e->getMessage(),
             ], 401);
         }
-        
+
         $uid = $verifiedIdToken->claims()->get('sub');
-       
-        
+
+
         if (User::where('firebase_uid', $uid)->first()) {
             if (User::where('firebase_uid', $uid)->first()->active == 0) {
                 return response()->json(["message" => "Your account has been shutdown"], 403);
@@ -75,11 +74,10 @@ class apiAuthController extends Controller
                 $result = $messaging->validateRegistrationTokens($request->fcm_token);
                 if ($result['invalid'] != null) {
                     return response()->json(['data' => 'your json token is invalid'], 404);
-
                 }
 
                 $messaging->subscribeToTopic(Auth::user()->topic, $request->fcm_token);
-                $messaging->subscribeToTopic(\Config::get("values.GLOBAL_BUDDHIST_TOPIC"),$request->fcm_token);
+                $messaging->subscribeToTopic(\Config::get("values.GLOBAL_BUDDHIST_TOPIC"), $request->fcm_token);
                 return $response->getBody();
 
                 // return $response->json_decode($response);
@@ -94,7 +92,6 @@ class apiAuthController extends Controller
         } else {
             return response()->json(['message' => 'User not found'], 404);
         }
-
     }
 
     public function logOut(Request $request)
@@ -106,13 +103,12 @@ class apiAuthController extends Controller
         $result = $messaging->validateRegistrationTokens($request->fcm_token);
         if ($result['invalid'] != null) {
             return response()->json(['data' => 'your json token is invalid'], 404);
-
         }
 
         $messaging->unsubscribeFromTopic(Auth::user()->topic, $request->fcm_token);
         $messaging->unsubscribeFromTopic(\Config::get("values.GLOBAL_BUDDHIST_TOPIC"), $request->fcm_token);
-        
-     
+
+
         auth()->user()->tokens->each(function ($token, $key) {
             $token->delete();
         });
@@ -141,7 +137,8 @@ class apiAuthController extends Controller
             return response()->json(
                 [
                     'message' => 'Unauthorized - Can\'t parse the token: ' . $e->getMessage(),
-                ], 401
+                ],
+                401
             );
         } catch (InvalidToken $e) { // If the token is invalid (expired ...)
 
@@ -154,7 +151,6 @@ class apiAuthController extends Controller
         $result = $messaging->validateRegistrationTokens($request->fcm_token);
         if ($result['invalid'] != null) {
             return response()->json(['data' => 'your json token is invalid'], 404);
-
         }
 
         // Retrieve the UID (User ID) from the verified Firebase credential's token
@@ -167,7 +163,9 @@ class apiAuthController extends Controller
             $fileExtension = $image->getClientOriginalExtension();
             $fileName = 'profile_image_' . time() . '.' . $fileExtension;
             $location = public_path("/profile_image/" . $fileName);
-            Image::make($image)->resize(460, null, function ($c) {$c->aspectRatio();})->save($location);
+            Image::make($image)->resize(460, null, function ($c) {
+                $c->aspectRatio();
+            })->save($location);
             $defaultImage = $fileName;
         }
         $user->name = $request->name;
@@ -196,10 +194,9 @@ class apiAuthController extends Controller
                 ]);
 
                 $messaging->subscribeToTopic($user->topic, $request->fcm_token);
-                $messaging->subscribeToTopic(\Config::get("values.GLOBAL_BUDDHIST_TOPIC"),$request->fcm_token);
+                $messaging->subscribeToTopic(\Config::get("values.GLOBAL_BUDDHIST_TOPIC"), $request->fcm_token);
 
                 return $response->getBody();
-
             } catch (\GuzzleHttp\Exception\BadResponseException $e) {
                 File::delete($location);
 
@@ -214,7 +211,6 @@ class apiAuthController extends Controller
         } else {
             return response()->json(['message' => 'Something went Wrong'], 500);
         }
-
     }
 
     public function forgetPassword(Request $request)
@@ -232,7 +228,8 @@ class apiAuthController extends Controller
             return response()->json(
                 [
                     'message' => 'Unauthorized - Can\'t parse the token: ' . $e->getMessage(),
-                ], 401
+                ],
+                401
             );
         } catch (InvalidToken $e) { // If the token is invalid (expired ...)
 
@@ -252,29 +249,41 @@ class apiAuthController extends Controller
         return response()->json([
             "message" => "Your password change successfully",
         ], 200);
-
     }
 
     public function checkToken()
     {
 
         return response()->json(["message" => "loggedIn"], 200);
-
     }
 
 
-    public function facebook_one_click_login_register(Request $request){
+    public function facebook_one_click_login_register(Request $request)
+    {
         $request->validate([
-           "name"=>"required|string",
-           "surname"=>"required|string",
-           "fcm_token"=>"required",
-           "firebase_token"=>"required",
-           "picture"=>"required|string",
-           "gender"=>["required",
-            Rule::in([GenderEnum::MALE,GenderEnum::FEMALE]),],
-            "date_of_birth"=>"required|date",
-            "email_address"=>"required|unique:users,email_address"
+            "name" => "required|string",
+            "surname" => "required|string",
+            "fcm_token" => "required",
+            "firebase_token" => "required",
+            "picture" => "required|string",
+            "gender" => [
+                "required",
+                Rule::in([GenderEnum::MALE, GenderEnum::FEMALE]),
+            ],
+            "date_of_birth" => "required|date",
+            "email_address" => "required|email:rfc,dns,filter"
         ]);
+
+        $checkInEmailField = User::where("email_address", $request->email_address)->first();
+        if ($checkInEmailField) {
+            return $this->error('Email is already in use', 400);
+        }
+
+        $checkInPhoneNumberField = User::where("phone_number",$request->phone_number)->first();
+        if($checkInPhoneNumberField) {
+            return $this->error("Phonenumber is already in use", 400);
+        }
+
 
         $auth = app('firebase.auth');
         $idTokenString = $request->firebase_token;
@@ -284,7 +293,8 @@ class apiAuthController extends Controller
             return response()->json(
                 [
                     'message' => 'Unauthorized - Can\'t parse the token: ' . $e->getMessage(),
-                ], 401
+                ],
+                401
             );
         } catch (InvalidToken $e) { // If the token is invalid (expired ...)
 
@@ -297,15 +307,14 @@ class apiAuthController extends Controller
         $result = $messaging->validateRegistrationTokens($request->fcm_token);
         if ($result['invalid'] != null) {
             return response()->json(['data' => 'your json token is invalid'], 404);
-
         }
 
         // Retrieve the UID (User ID) from the verified Firebase credential's token
         $uid = $verifiedIdToken->claims()->get('sub');
         $password = bcrypt($uid);
         $user = new User();
-        
-       
+
+
         $user->name = $request->name;
         $user->surname = $request->surname;
         $user->firebase_uid = $uid;
@@ -313,15 +322,12 @@ class apiAuthController extends Controller
         $user->picture = $request->picture;
         $user->topic = "notification_topic_" . $uid . time();
         $user->gender = $request->gender;
-        $user->date_of_birth = $request->date_of_birth;
+        $user->date_of_birth = Carbon::parse($request->date_of_birth)->format('Y-m-d');
 
-        if(filter_var($request->email_address, FILTER_VALIDATE_EMAIL)) {
+        if (filter_var($request->email_address, FILTER_VALIDATE_EMAIL)) {
             $user->email_address = $request->email_address;
-           
-        }
-        else {
+        } else {
             $user->phone_number = $request->email_address;
-           
         }
         $user->picture = $request->picture;
         if ($user->save()) {
@@ -341,12 +347,11 @@ class apiAuthController extends Controller
                 ]);
 
                 $messaging->subscribeToTopic($user->topic, $request->fcm_token);
-                $messaging->subscribeToTopic(\Config::get("values.GLOBAL_BUDDHIST_TOPIC"),$request->fcm_token);
+                $messaging->subscribeToTopic(\Config::get("values.GLOBAL_BUDDHIST_TOPIC"), $request->fcm_token);
 
                 return $response->getBody();
-
             } catch (\GuzzleHttp\Exception\BadResponseException $e) {
-               
+
 
                 if ($e->getCode() === 400) {
                     return response()->json('Invalid Request. Please enter a Phone number or a password.', $e->getCode());
@@ -359,8 +364,5 @@ class apiAuthController extends Controller
         } else {
             return response()->json(['message' => 'Something went Wrong'], 500);
         }
-
-    
     }
-
 }
