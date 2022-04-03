@@ -12,7 +12,8 @@ use Image;
 use Response;
 use App\Enums\GenderEnum;
 use Illuminate\Validation\Rule;
-Use Carbon\Carbon;
+use Carbon\Carbon;
+
 class apiAuthController extends Controller
 {
 
@@ -275,14 +276,9 @@ class apiAuthController extends Controller
         ]);
 
         $checkInEmailField = User::where("email_address", $request->email_address)->first();
-        if ($checkInEmailField) {
-            return $this->error('Email is already in use', 400);
-        }
+        $checkInPhoneNumberField = User::where("phone_number", $request->phone_number)->first();
+        
 
-        $checkInPhoneNumberField = User::where("phone_number",$request->phone_number)->first();
-        if($checkInPhoneNumberField) {
-            return $this->error("Phonenumber is already in use", 400);
-        }
 
 
         $auth = app('firebase.auth');
@@ -308,10 +304,49 @@ class apiAuthController extends Controller
         if ($result['invalid'] != null) {
             return response()->json(['data' => 'your json token is invalid'], 404);
         }
-
-        // Retrieve the UID (User ID) from the verified Firebase credential's token
+        $http = new \GuzzleHttp\Client([
+            'timeout' => 60,
+        ]);
         $uid = $verifiedIdToken->claims()->get('sub');
         $password = bcrypt($uid);
+
+        if ($checkInEmailField || $checkInPhoneNumberField) {
+           $existUser = User::where("firebase_uid",$uid)->first();
+           if(!$existUser) {
+               return response()->json(["data"=>"Data conflict"],500);
+           }
+
+            try {
+                $response = $http->post(\Config::get("values.APP_URL") . ':' . \Config::get("values.ANOTHER_PORT") . '/oauth/token', [
+                    'form_params' => [
+                        'grant_type' => 'password',
+                        'client_id' => \Config::get("values.CLIENT_ID"),
+                        'client_secret' => \Config::get("values.CLIENT_SECRET"),
+                        'username' => $request->email_address,
+                        'password' => $uid,
+                    ],
+                ]);
+
+
+                $messaging->subscribeToTopic($existUser->topic, $request->fcm_token);
+                $messaging->subscribeToTopic(\Config::get("values.GLOBAL_BUDDHIST_TOPIC"), $request->fcm_token);
+
+                return $response->getBody();
+            } catch (\GuzzleHttp\Exception\BadResponseException $e) {
+
+
+                if ($e->getCode() === 400) {
+                    return response()->json('Invalid Request. Please enter credential.', $e->getCode());
+                } else if ($e->getCode() === 401) {
+                    return response()->json('Your credentials are incorrect. Please try again', $e->getCode());
+                }
+
+                return response()->json('Something went wrong on the server.', $e->getCode());
+            }
+        }
+
+        // Retrieve the UID (User ID) from the verified Firebase credential's token
+        
         $user = new User();
 
 
@@ -332,9 +367,7 @@ class apiAuthController extends Controller
         $user->picture = $request->picture;
         if ($user->save()) {
             $user->attachRole("bond");
-            $http = new \GuzzleHttp\Client([
-                'timeout' => 60,
-            ]);
+           
             try {
                 $response = $http->post(\Config::get("values.APP_URL") . ':' . \Config::get("values.ANOTHER_PORT") . '/oauth/token', [
                     'form_params' => [
@@ -342,7 +375,7 @@ class apiAuthController extends Controller
                         'client_id' => \Config::get("values.CLIENT_ID"),
                         'client_secret' => \Config::get("values.CLIENT_SECRET"),
                         'username' => $request->email_address,
-                        'password' => $password,
+                        'password' => $uid,
                     ],
                 ]);
 
@@ -354,7 +387,7 @@ class apiAuthController extends Controller
 
 
                 if ($e->getCode() === 400) {
-                    return response()->json('Invalid Request. Please enter a Phone number or a password.', $e->getCode());
+                    return response()->json('Invalid Request. Please enter credential.', $e->getCode());
                 } else if ($e->getCode() === 401) {
                     return response()->json('Your credentials are incorrect. Please try again', $e->getCode());
                 }

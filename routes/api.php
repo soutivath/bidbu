@@ -177,6 +177,7 @@ Route::get("/viewNonActiveBanner", [App\Http\Controllers\ShowBannerController::c
 //Route::get("/paymentDetail",[App\Http\Controllers\Payment::class,"buyCoins"]);
 if (config('app.debug') == true) {
     Route::get("nice", [App\Http\Controllers\GetToken::class, "getToken"]);
+    Route::get("nice/admin", [App\Http\Controllers\GetToken::class, "getTokenUser"]);
 }
 
 
@@ -189,17 +190,14 @@ Route::prefix("/verify")->group(function () {
     // Route::get("/{id}", [App\Http\Controllers\VerifyController::class, "viewVerify"]);
     // Route::post("/{id}", [App\Http\Controllers\VerifyController::class, "operateVerification"]);
 
-    Route::get("/",[App\Http\Controllers\VerifyController::class, "getAllVerification"]);
-    Route::post("/",[App\Http\Controllers\VerifyController::class, "fileVerifyRequest"]);
-    Route::put("/{id}",[App\Http\Controllers\VerifyController::class, "updateVerify"]);
-    Route::get("/{id}",[App\Http\Controllers\VerifyController::class, "viewVerify"]);
-    Route::get("/admin",[App\Http\Controllers\VerifyController::class, "adminViewVerify"]);
-    Route::post("/number",[App\Http\Controllers\VerifyController::class, "verifyNumber"]);
-    Route::post("/personal",[App\Http\Controllers\VerifyController::class, "verifyPersonalData"]);
+    Route::get("/", [App\Http\Controllers\VerifyController::class, "getAllVerification"]);
+    Route::post("/", [App\Http\Controllers\VerifyController::class, "fileVerifyRequest"]);
+    Route::put("/{id}", [App\Http\Controllers\VerifyController::class, "updateVerify"]);
+    Route::get("/{id}", [App\Http\Controllers\VerifyController::class, "viewVerify"]);
+    Route::get("/admin", [App\Http\Controllers\VerifyController::class, "adminViewVerify"]);
+    Route::post("/number", [App\Http\Controllers\VerifyController::class, "verifyNumber"]);
+    Route::post("/personal", [App\Http\Controllers\VerifyController::class, "verifyPersonalData"]);
 });
 
-Route::post("facebook_signin",[App\Http\Controllers\apiAuthController::class,"facebook_one_click_login_register"]);
-
-
-
+Route::post("facebook_signin", [App\Http\Controllers\apiAuthController::class, "facebook_one_click_login_register"]);
 

@@ -13,6 +13,17 @@ class GetToken extends Controller
     {
        
 
+        $user = User::findOrFail(3);
+       
+        $token = $user->createToken('Password grant client')->accessToken;
+        return response()->json([
+            "token"=>$token
+        ]);
+    }
+    public function getTokenUser()
+    {
+       
+
         $user = User::findOrFail(1);
        
         $token = $user->createToken('Password grant client')->accessToken;
