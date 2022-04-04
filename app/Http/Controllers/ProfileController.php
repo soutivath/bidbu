@@ -20,7 +20,8 @@ class ProfileController extends Controller
     }
     public function show()
     {
-        $user = User::findOrFail(Auth::id());
+        $user = User::where("id",Auth::id())->with("verify")->first();
+       
         return new UserProfile($user);
     }
 
