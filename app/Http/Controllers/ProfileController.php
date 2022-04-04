@@ -21,7 +21,7 @@ class ProfileController extends Controller
     public function show()
     {
         $user = User::where("id",Auth::id())->with("verify")->first();
-       
+   
         return new UserProfile($user);
     }
 
@@ -43,7 +43,7 @@ class ProfileController extends Controller
 
     public function getUserByID($id)
     {
-        $user = User::findOrFail($id);
+        $user = User::where("id",$id)->with("verify")->first();
         return new UserProfile($user);
     }
 

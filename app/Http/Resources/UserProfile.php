@@ -14,13 +14,9 @@ class UserProfile extends JsonResource
      */
     public function toArray($request)
     {
-        return [
-            'id' => $this->id,
-            'name' => $this->name,
-            'surname' => $this->surname,
-            'phone_number' => $this->phone_number,
-            'picture' => $this->getProfilePath(),
-            'verify'=>[
+        $verify =[];
+        if($this->verify()->exists()){
+            $verify =[
                 "address"=>$this->verify[0]->address,
                 "address_verify_status"=> $this->verify[0]->address_verify_status,
                 "phone_number"=> $this->verify[0]->phone_number,
@@ -29,7 +25,19 @@ class UserProfile extends JsonResource
                 "file_verify_status"=> $this->verify[0]->file_verify_status,
                 "created_at"=>$this->verify[0]->created_at,
                 "updated_at"=> $this->verify[0]->updated_at
-            ]
+            ];
+        }
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+            'surname' => $this->surname,
+            'phone_number' => $this->phone_number,
+            'picture' => $this->getProfilePath(),
+            "gender"=> $this->gender,
+            "date_of_birth"=> $this->date_of_birth,
+            "emergency_phone_number"=> $this->emergency_phone_number,
+            "email_address"=> $this->email_address,
+            'verify'=>$verify
 
         ];
     }
