@@ -292,7 +292,7 @@ class VerifyRepository implements VerifyInterface
             "surname"=>"required|string",
             "gender"=>["required",Rule::in([GenderEnum::FEMALE,GenderEnum::MALE])],
             "date_of_birth"=>"required|date",
-            "phone_number"=>"required|regex:/^([0-9\s\-\+\(\)]*)$/|min:10",
+           
             "address"=>"required|string",
         ]);
         DB::beginTransaction();
