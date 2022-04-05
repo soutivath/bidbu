@@ -2,14 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\BuddhistResource;
+use App\Http\Resources\participantBiddingResource;
 use App\Http\Resources\UserProfile;
 use App\Http\Resources\UserProfileWithReview;
+use App\Models\Buddhist;
 use App\Models\User;
 use Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Image;
 use App\Models\Review;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
+
 class ProfileController extends Controller
 {
     public function __construct()
@@ -85,5 +91,23 @@ class ProfileController extends Controller
         $user->save();
         return response()->json(["message" => $user], 200);
 
+    }
+
+    public function itemBelongToUser($id){
+        $item = Buddhist::where("user_id",$id)->get();
+        return BuddhistResource::collection($item);
+    }
+
+    public function userItemParticipant($id){
+        $data = DB::table('notification')->leftJoin("buddhists", "buddhists.id", "=", "notification.buddhist_id")
+            ->where([
+                ["notification.user_id",$id],
+            ])
+            ->whereIn("notification_type", ["bidding_participant"])
+            ->select("buddhists.id", "buddhists.name", "buddhists.highest_price", "buddhists.image_path", "buddhists.end_time", "buddhists.highBidUser", "buddhists.place")
+            ->distinct()
+            ->paginate(30);
+
+        return participantBiddingResource::collection($data);
     }
 }
