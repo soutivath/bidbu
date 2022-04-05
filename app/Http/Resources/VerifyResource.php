@@ -38,6 +38,7 @@ class VerifyResource extends JsonResource
             "emegency_phone_number"=>$this->emegency_phone_number,
             "email_address"=>$this->user->email_address,
             "verify"=> [
+                "verify_id"=>$this->id,
                 "address"=>$this->address,
                 "address_verify_status"=>$this->address_verify_status,
                 "phone_number"=>$this->phone_number,
