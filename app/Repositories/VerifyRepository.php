@@ -273,7 +273,7 @@ class VerifyRepository implements VerifyInterface
                 $auth->deleteUsers([$toDeleteUID], $forceDeleteEnabledUser);
             }
             DB::commit();
-            $this->success("Phone verify successfully", 200);
+           return $this->success("Phone verify successfully", 200);
            
         } catch (\Exception $e) {
             DB::rollback();

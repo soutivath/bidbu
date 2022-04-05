@@ -194,7 +194,7 @@ Route::prefix("/verify")->group(function () {
     Route::post("/", [App\Http\Controllers\VerifyController::class, "fileVerifyRequest"]);
     Route::put("/{id}", [App\Http\Controllers\VerifyController::class, "updateVerify"]);
     Route::get("/{id}", [App\Http\Controllers\VerifyController::class, "viewVerify"]);
-    Route::get("/admin", [App\Http\Controllers\VerifyController::class, "adminViewVerify"]);
+    Route::get("/admin/{id}", [App\Http\Controllers\VerifyController::class, "adminViewVerify"]);
     Route::post("/number", [App\Http\Controllers\VerifyController::class, "verifyNumber"]);
     Route::post("/personal", [App\Http\Controllers\VerifyController::class, "verifyPersonalData"]);
 });
