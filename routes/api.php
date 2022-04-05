@@ -200,5 +200,5 @@ Route::prefix("/verify")->group(function () {
 });
 
 Route::post("facebook_signin", [App\Http\Controllers\apiAuthController::class, "facebook_one_click_login_register"]);
-Route::get("item_by_user",[App\Http\Controllers\ProfileController::class,"itemBelongToUser"]);
-Route::get("participant_by_user",[App\Http\Controllers\ProfileController::class,"userItemParticipant"]);
+Route::get("item_by_user/{id}",[App\Http\Controllers\ProfileController::class,"itemBelongToUser"]);
+Route::get("participant_by_user/{id}",[App\Http\Controllers\ProfileController::class,"userItemParticipant"]);
