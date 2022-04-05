@@ -16,11 +16,15 @@ class VerifyResource extends JsonResource
     {
         $verify = [];
         $allImage = array();
-        $files = File::files(public_path('/verification_images/' . $this->file_folder_path . "/"));
-        foreach ($files as $file) {
-            $file_path = pathinfo($file);
-            \array_push($allImage, $this->getImagePath() . "/" . $file_path['basename']);
+        $files=null;
+        if($this->file_folder_path!=null){
+            $files = File::files(public_path('/verification_images/' . $this->file_folder_path . "/"));
+            foreach ($files as $file) {
+                $file_path = pathinfo($file);
+                \array_push($allImage, $this->getImagePath() . "/" . $file_path['basename']);
+            }
         }
+       
       
        
         return [

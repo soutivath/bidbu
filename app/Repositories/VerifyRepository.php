@@ -55,8 +55,8 @@ class VerifyRepository implements VerifyInterface
         ->orWhere("phone_verify_status",$phone_verify_status)
         ->orWhere("file_verify_status",$file_verify_status)->get();
 
-        return VerifyResource::collection($verifiesData);
-        //return $this->success("get data successfully", $verifiesData);
+        //return VerifyResource::collection($verifiesData);
+        return $this->success("get data successfully", $verifiesData);
     }
     public function fileVerifyRequest(VerificationRequest $request)
     {
@@ -150,8 +150,9 @@ class VerifyRepository implements VerifyInterface
            $verifyWithUser = Verify::where("user_id",Auth::id())->with("user")->first();
             // return response()->json(["data"=>$verifyWithUser]);
             if(!$verifyWithUser){
-                $this->error("No data found",404);
+              return  $this->error("No data found",404);
             }
+           
             return new VerifyResource($verifyWithUser);
         } catch (\Exception $e) {
             return $e->getMessage();
@@ -160,7 +161,12 @@ class VerifyRepository implements VerifyInterface
 
     public function adminViewVerify($id)
     {
-        $verify = Verify::where("id", $id)->with("user")->first();
+        $verify = Verify::with("user")->where("id", $id)->first();
+        if(!$verify){
+            
+            return $this->error("No data found",404);
+        }
+       // return response()->json(["data"=>$verify]);
         return new VerifyResource($verify);
        // return $this->success("get data from", $verify, 200);
     }
@@ -246,7 +252,7 @@ class VerifyRepository implements VerifyInterface
 
             $existingPhoneNumber = User::where("phone_number", Auth::user()->phone_number)->first();
             if ($existingPhoneNumber) {
-                $this->error("Phone number is exist", 400);
+              return  $this->error("Phone number is exist", 400);
             }
 
 
@@ -315,7 +321,7 @@ class VerifyRepository implements VerifyInterface
         $user = User::findOrFail(Auth::id());
         try {
             if (!$user) {
-                $this->error("Data not found", 400);
+               return $this->error("Data not found", 400);
             }
             $user->name = $request->name;
             $user->surname = $request->surname;
