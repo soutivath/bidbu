@@ -55,8 +55,8 @@ class VerifyRepository implements VerifyInterface
         ->orWhere("phone_verify_status",$phone_verify_status)
         ->orWhere("file_verify_status",$file_verify_status)->get();
 
-        //return VerifyResource::collection($verifiesData);
-        return $this->success("get data successfully", $verifiesData);
+        return VerifyResource::collection($verifiesData);
+        //return $this->success("get data successfully", $verifiesData);
     }
     public function fileVerifyRequest(VerificationRequest $request)
     {

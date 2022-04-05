@@ -14,7 +14,7 @@ class VerifyResource extends JsonResource
      */
     public function toArray($request)
     {
-        $verify = [];
+        $verify = null;
         $allImage = array();
         $files=null;
         if($this->file_folder_path!=null){
