@@ -235,7 +235,7 @@ class VerifyRepository implements VerifyInterface
             $uid = $verifiedIdToken->claims()->get('sub');
             $toDeleteUID = "";
             if (Auth::user()->firebase_uid != $uid) {
-                $toDeleteUID = Auth::user()->firebase_uid;
+                $toDeleteUID = $uid;
             }
 
 
@@ -250,7 +250,7 @@ class VerifyRepository implements VerifyInterface
 
             $user = User::findOrFail(Auth::id());
             $user->phone_number = $request->phone_number;
-            $user->firebase_uid = $uid;
+            //$user->firebase_uid = $uid;
             $user->save();
             $phone_number = $request->phone_number;
 
@@ -268,15 +268,29 @@ class VerifyRepository implements VerifyInterface
                 $aVerify->save();
             }
 
-            $forceDeleteEnabledUser = true;
+          
+
             if($toDeleteUID!=""){
-                $auth->deleteUsers([$toDeleteUID], $forceDeleteEnabledUser);
+              
+                    
+
+                    $forceDeleteEnabledUser=true;
+                    $auth->deleteUser($toDeleteUID,$forceDeleteEnabledUser);
+                    $properties = [
+                        'phoneNumber'=>$request->phone_number,
+                    ];
+                    $auth->updateUser(Auth::user()->firebase_uid,$properties);
+                
+                
             }
             DB::commit();
            return $this->success("Phone verify successfully", 200);
            
         } catch (\Exception $e) {
             DB::rollback();
+            if ($e instanceof \Kreait\Firebase\Exception\Auth\UserNotFound) {
+                return response()->json(['error'=>['message'=>'firebase user not found']], 404);
+        }
             return $e->getMessage();
         }
     }

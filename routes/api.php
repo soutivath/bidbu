@@ -200,4 +200,3 @@ Route::prefix("/verify")->group(function () {
 });
 
 Route::post("facebook_signin", [App\Http\Controllers\apiAuthController::class, "facebook_one_click_login_register"]);
-
