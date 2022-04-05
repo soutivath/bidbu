@@ -14,7 +14,7 @@ class UserProfile extends JsonResource
      */
     public function toArray($request)
     {
-        $verify =[];
+        $verify =null;
         if($this->verify()->exists()){
             $verify =[
                 "address"=>$this->verify[0]->address,
