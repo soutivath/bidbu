@@ -284,7 +284,7 @@ class VerifyRepository implements VerifyInterface
                 
             }
             DB::commit();
-           return $this->success("Phone verify successfully", 200);
+           return $this->success("Phone verify successfully",[], 200);
            
         } catch (\Exception $e) {
             DB::rollback();
