@@ -34,12 +34,12 @@ class VerifyResource extends JsonResource
             "emegency_phone_number"=>$this->emegency_phone_number,
             "verify"=> [
                 "address"=>$this->address,
-                "address_verify_status"=>$this->address_verify_status,
+                "address_verify_status"=>$this->address_verify_status==null?"ວ່າງ":$this->address_verify_status,
                 "phone_number"=>$this->phone_number,
-                "phone_number_verify_status"=>$this->phone_number_verify_status,
+                "phone_number_verify_status"=>$this->phone_number_verify_status==null?"ວ່າງ":$this->phone_number_verify_status,
                 "file_type"=>$this->file_type,
                 "file_folder_path"=>$allImage,
-                "file_verify_status"=>$this->file_verify_status,
+                "file_verify_status"=>$this->file_verify_status==null?"ວ່າງ":$this->file_verify_status,
             ]
             
         ];
