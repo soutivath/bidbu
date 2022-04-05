@@ -54,7 +54,9 @@ class VerifyRepository implements VerifyInterface
         $verifiesData = Verify::with("user")->where("address_verify_status", $address_verify_status)
         ->orWhere("phone_verify_status",$phone_verify_status)
         ->orWhere("file_verify_status",$file_verify_status)->get();
-        return $this->success("get data successfully", $verifiesData);
+
+        return VerifyResource::collection($verifiesData);
+        //return $this->success("get data successfully", $verifiesData);
     }
     public function fileVerifyRequest(VerificationRequest $request)
     {
@@ -143,7 +145,6 @@ class VerifyRepository implements VerifyInterface
 
     public function viewVerify()
     {
-
         try {
            // $userWithVerify = User::where("id", Auth::id())->with("verify")->first();
            $verifyWithUser = Verify::where("user_id",Auth::id())->with("user")->first();
@@ -159,8 +160,9 @@ class VerifyRepository implements VerifyInterface
 
     public function adminViewVerify($id)
     {
-        $verify = Verify::with("user")->where("id", $id)->get();
-        return $this->success("get data from", $verify, 200);
+        $verify = Verify::where("id", $id)->with("user")->first();
+        return new VerifyResource($verify);
+       // return $this->success("get data from", $verify, 200);
     }
 
 
