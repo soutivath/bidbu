@@ -127,18 +127,27 @@ class VerifyRepository implements VerifyInterface
     public function updateVerify(Request $request, $id)
     {
         $request->validate([
-            "address_verify_status"=>[ "required",
+            "address_verify_status"=>[ "sometimes",
             Rule::in([VerifyStatus::APPROVED,VerifyStatus::REJECTED,VerifyStatus::PENDING])],
-            "file_verify_status"=>[ "required",
+            "file_verify_status"=>[ "sometimes",
             Rule::in([VerifyStatus::APPROVED,VerifyStatus::REJECTED,VerifyStatus::PENDING])],
-            "phone_verify_status"=>[ "required",
+            "phone_verify_status"=>[ "sometimes",
             Rule::in([VerifyStatus::APPROVED,VerifyStatus::REJECTED,VerifyStatus::PENDING])]
         ]);
         //receive all request status address and file status
         $verify = Verify::findOrFail($id);
-        $verify->address_verify_status = $request->address_verify_status;
-        $verify->file_verify_status = $request->file_verify_status;
-        $verify->phone_verify_status = $request->phone_verify_status;
+        if($request->has("address_verify_status")){
+            $verify->address_verify_status = $request->address_verify_status;
+        }
+        if($request->has("file_verify_status")){
+            $verify->file_verify_status = $request->file_verify_status;
+        }
+        if($request->has("phone_verify_status")){
+            $verify->phone_verify_status = $request->phone_verify_status;
+        }
+        
+      
+        
         $verify->save();
         return $this->success("Update verify successfully", 200);
     }
