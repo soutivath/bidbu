@@ -61,11 +61,16 @@ class InboxChatController extends Controller
     {
         $request->validate([
             "chat_room_id" => "required",
-            "message" => "required",
+            "message" => "sometimes|string",
             "send_to" => "required",
             'images' => 'sometimes|array|max:5',
             'images.*' => 'image|mimes:jpeg,png,jpg,PNG|max:30720',
         ]);
+
+        if(!$request->has("message")&&!$request->has("images")){
+            return response()->json(["data"=>[],"message"=>"please send message or image"],400);
+        }
+
         $messaging = app('firebase.messaging');
 
         $androidConfig = AndroidConfig::fromArray([
