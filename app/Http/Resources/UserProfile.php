@@ -27,6 +27,18 @@ class UserProfile extends JsonResource
                 "updated_at"=> $this->verify[0]->updated_at
             ];
         }
+        else{
+            $verify =[
+                "address"=>null,
+                "address_verify_status"=>null,
+                "phone_number"=>null,
+                "phone_verify_status"=>null,
+                "file_type"=>null,
+                "file_verify_status"=> null,
+                "created_at"=>null,
+                "updated_at"=> null
+            ];
+        }
         return [
             'id' => $this->id,
             'name' => $this->name,
