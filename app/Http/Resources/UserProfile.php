@@ -49,6 +49,7 @@ class UserProfile extends JsonResource
             "date_of_birth"=> $this->date_of_birth,
             "emergency_phone_number"=> $this->emergency_phone_number,
             "email_address"=> $this->email_address,
+           
             'verify'=>$verify,
             'created_at'=>$this->created_at
 

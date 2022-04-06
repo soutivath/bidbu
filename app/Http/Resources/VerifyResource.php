@@ -37,6 +37,7 @@ class VerifyResource extends JsonResource
             "phone_number"=>$this->phone_number,
             "emegency_phone_number"=>$this->emegency_phone_number,
             "email_address"=>$this->user->email_address,
+            "profilePicture"=>$this->user->getProfilePath(),
             "verify"=> [
                 "verify_id"=>$this->id,
                 "address"=>$this->address,
