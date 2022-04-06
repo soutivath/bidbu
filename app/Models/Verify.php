@@ -9,7 +9,7 @@ class Verify extends Model
 {
     use HasFactory;
 
-    protected $fillable = ["address","address_verify_status","phone_number","phone_number_verify_status","file_type","file_folder_path","file_verify_status","user_id"];
+    protected $fillable = ["address","address_verify_status","phone_number","phone_verify_status","file_type","file_folder_path","file_verify_status","user_id"];
     
     public function user(){
         return $this->belongsTo(User::class);

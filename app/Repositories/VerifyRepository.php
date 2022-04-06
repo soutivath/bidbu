@@ -131,14 +131,14 @@ class VerifyRepository implements VerifyInterface
             Rule::in([VerifyStatus::APPROVED,VerifyStatus::REJECTED,VerifyStatus::PENDING])],
             "file_verify_status"=>[ "required",
             Rule::in([VerifyStatus::APPROVED,VerifyStatus::REJECTED,VerifyStatus::PENDING])],
-            "phone_number_verify_status"=>[ "required",
+            "phone_verify_status"=>[ "required",
             Rule::in([VerifyStatus::APPROVED,VerifyStatus::REJECTED,VerifyStatus::PENDING])]
         ]);
         //receive all request status address and file status
         $verify = Verify::findOrFail($id);
         $verify->address_verify_status = $request->address_verify_status;
         $verify->file_verify_status = $request->file_verify_status;
-        $verify->phone_number_verify_status = $request->phone_number_verify_status;
+        $verify->phone_verify_status = $request->phone_verify_status;
         $verify->save();
         return $this->success("Update verify successfully", 200);
     }
@@ -266,12 +266,12 @@ class VerifyRepository implements VerifyInterface
             $checkVerify = Verify::where("user_id", Auth::id())->first();
             if ($checkVerify) {
                 $checkVerify->phone_number = $phone_number;
-                $checkVerify->phone_number_verify_status = VerifyStatus::APPROVED;
+                $checkVerify->phone_verify_status = VerifyStatus::APPROVED;
                 $checkVerify->save();
             } else {
                 $aVerify = new Verify();
                 $aVerify->phone_number = $phone_number;
-                $aVerify->phone_number_verify_status = VerifyStatus::APPROVED;
+                $aVerify->phone_verify_status = VerifyStatus::APPROVED;
                 $aVerify->user_id = Auth::id();
                 $aVerify->save();
             }
