@@ -24,38 +24,47 @@ class VerifyRepository implements VerifyInterface
     use ResponseAPI;
     public function getAllVerification(Request $request)
     {
+        $verifiesData = Verify::with("user");
         
-        
-        $address_verify_status=VerifyStatus::PENDING;
-        $phone_verify_status=VerifyStatus::PENDING;
-        $file_verify_status=VerifyStatus::PENDING;
+        $address_verify_status=" ";
+        $phone_verify_status=" ";
+        $file_verify_status=" ";
         if ($request->has("address_verify_status") == VerifyStatus::APPROVED) {
-            $address_verify_status = VerifyStatus::APPROVED;
+            $verifiesData = $verifiesData->orwhere("address_verify_status", VerifyStatus::APPROVED);
+            //$address_verify_status = VerifyStatus::APPROVED;
         } else if ($request->has("address_verify_status") == VerifyStatus::PENDING) {
-            $address_verify_status = VerifyStatus::PENDING;
+           // $address_verify_status = VerifyStatus::PENDING;
+           $verifiesData = $verifiesData->orwhere("address_verify_status", VerifyStatus::PENDING);
         } else if ($request->has("address_verify_status") == VerifyStatus::REJECTED) {
-            $address_verify_status = VerifyStatus::REJECTED;
+            //$address_verify_status = VerifyStatus::REJECTED;
+            $verifiesData = $verifiesData->orwhere("address_verify_status", VerifyStatus::REJECTED);
         }
 
         if ($request->has("phone_verify_status") == VerifyStatus::APPROVED) {
-            $phone_verify_status = VerifyStatus::APPROVED;
+            $verifiesData = $verifiesData->orwhere("phone_verify_status", VerifyStatus::APPROVED);
+           // $phone_verify_status = VerifyStatus::APPROVED;
         } else if ($request->has("phone_verify_status") == VerifyStatus::PENDING) {
-            $phone_verify_status = VerifyStatus::PENDING;
+           // $phone_verify_status = VerifyStatus::PENDING;
+           $verifiesData = $verifiesData->orwhere("phone_verify_status", VerifyStatus::PENDING);
         } else if ($request->has("phone_verify_status") == VerifyStatus::REJECTED) {
-            $phone_verify_status = VerifyStatus::REJECTED;
+           // $phone_verify_status = VerifyStatus::REJECTED;
+           $verifiesData = $verifiesData->orwhere("phone_verify_status", VerifyStatus::REJECTED);
         }
         if ($request->has("file_verify_status") == VerifyStatus::APPROVED) {
-            $file_verify_status = VerifyStatus::APPROVED;
+            //$file_verify_status = VerifyStatus::APPROVED;
+            $verifiesData = $verifiesData->orwhere("file_verify_status", VerifyStatus::APPROVED);
         } else if ($request->has("file_verify_status") == VerifyStatus::PENDING) {
-            $file_verify_status = VerifyStatus::PENDING;
+           // $file_verify_status = VerifyStatus::PENDING;
+           $verifiesData = $verifiesData->orwhere("file_verify_status", VerifyStatus::PENDING);
         } else if ($request->has("file_verify_status") == VerifyStatus::REJECTED) {
-            $file_verify_status = VerifyStatus::REJECTED;
+           // $file_verify_status = VerifyStatus::REJECTED;
+           $verifiesData = $verifiesData->orwhere("file_verify_status", VerifyStatus::REJECTED);
         }
-        $verifiesData = Verify::with("user")->where("address_verify_status", $address_verify_status)
-        ->orWhere("phone_verify_status",$phone_verify_status)
-        ->orWhere("file_verify_status",$file_verify_status)->get();
-
-        return VerifyResource::collection($verifiesData);
+        // ->orwhere("address_verify_status", $address_verify_status)
+        // ->orWhere("phone_verify_status",$phone_verify_status)
+        // ->orWhere("file_verify_status",$file_verify_status)->get();
+        
+        return VerifyResource::collection($verifiesData->get());
         //return $this->success("get data successfully", $verifiesData);
     }
     public function fileVerifyRequest(VerificationRequest $request)
