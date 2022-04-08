@@ -57,9 +57,9 @@ class ProfileController extends Controller
     {
         $request->validate([
 
-            'name' => 'required|max:30|string',
-            'surname' => 'required|max:30|string',
-            'picture' => 'sometimes|image|mimes:jpeg,png,jpg|max:8192',
+            // 'name' => 'required|max:30|string',
+            // 'surname' => 'required|max:30|string',
+           //'picture' => 'required|image|mimes:jpeg,png,jpg|max:8192',
             'phone_number' => 'required|string',
             'password' => 'required',
         ]);
@@ -70,9 +70,9 @@ class ProfileController extends Controller
             return response()->json(["message" => "ລະຫັດຜ່ານບໍ່ຖຶກຕ້ອງ"], 403);
         }
 
-        $user->name = $request->name;
-        $user->surname = $request->surname;
-        $user->phone_number = $request->phone_number;
+        // $user->name = $request->name;
+        // $user->surname = $request->surname;
+        // $user->phone_number = $request->phone_number;
         if ($request->hasFile('picture')) {
             if ($user->picture != "default_image.jpg") {
                 $oldPath = public_path() . '/profile_image/' . $user->picture;

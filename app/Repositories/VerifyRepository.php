@@ -16,8 +16,11 @@ use Firebase\Auth\Token\Exception\InvalidToken;
 use Illuminate\Support\Facades\Auth;
 use App\Enums\GenderEnum;
 use App\Enums\VerifyFileType;
+use App\Models\NotificationFirebase;
 use Illuminate\Support\Facades\File;
 use Illuminate\Validation\Rule;
+use Kreait\Firebase\Messaging\AndroidConfig;
+use Kreait\Firebase\Messaging\CloudMessage;
 
 class VerifyRepository implements VerifyInterface
 {
@@ -25,44 +28,55 @@ class VerifyRepository implements VerifyInterface
     public function getAllVerification(Request $request)
     {
         $verifiesData = Verify::with("user");
-      
-       
+     
        
         if ($request->has("address_verify_status") && $request->address_verify_status ==VerifyStatus::APPROVED) {
            $verifiesData->orwhere("address_verify_status", VerifyStatus::APPROVED);
+          
          
             //$address_verify_status = VerifyStatus::APPROVED;
         } else if ($request->has("address_verify_status")&&$request->address_verify_status  == VerifyStatus::PENDING) {
            // $address_verify_status = VerifyStatus::PENDING;
           $verifiesData->orwhere("address_verify_status",  VerifyStatus::PENDING);
+        
         } else if ($request->has("address_verify_status")&&$request->address_verify_status == VerifyStatus::REJECTED) {
             //$address_verify_status = VerifyStatus::REJECTED;
            $verifiesData->orwhere("address_verify_status", VerifyStatus::REJECTED);
+          
         }
 
         if ($request->has("phone_verify_status") &&$request->phone_verify_status== VerifyStatus::APPROVED) {
           $verifiesData->orwhere("phone_verify_status", VerifyStatus::APPROVED);
+         
            // $phone_verify_status = VerifyStatus::APPROVED;
         } else if ($request->has("phone_verify_status") &&$request->phone_verify_status == VerifyStatus::PENDING) {
            // $phone_verify_status = VerifyStatus::PENDING;
          $verifiesData->orwhere("phone_verify_status", VerifyStatus::PENDING);
+       
         } else if ($request->has("phone_verify_status")  &&$request->phone_verify_status== VerifyStatus::REJECTED) {
            // $phone_verify_status = VerifyStatus::REJECTED;
           $verifiesData->orwhere("phone_verify_status", VerifyStatus::REJECTED);
+        
         }
         if ($request->has("file_verify_status")  &&$request->file_verify_status== VerifyStatus::APPROVED) {
             //$file_verify_status = VerifyStatus::APPROVED;
           $verifiesData->orwhere("file_verify_status", VerifyStatus::APPROVED);
+         
         } else if ($request->has("file_verify_status")  &&$request->file_verify_status== VerifyStatus::PENDING) {
            // $file_verify_status = VerifyStatus::PENDING;
           $verifiesData->orwhere("file_verify_status", VerifyStatus::PENDING);
+        
         } else if ($request->has("file_verify_status")  &&$request->file_verify_status== VerifyStatus::REJECTED) {
            // $file_verify_status = VerifyStatus::REJECTED;
            $verifiesData->orwhere("file_verify_status", VerifyStatus::REJECTED);
+           
         }
         // ->orwhere("address_verify_status", $address_verify_status)
         // ->orWhere("phone_verify_status",$phone_verify_status)
         // ->orWhere("file_verify_status",$file_verify_status)->get();
+        
+
+
         
         return VerifyResource::collection($verifiesData->get());
         //return $this->success("get data successfully", $verifiesData);
@@ -143,21 +157,36 @@ class VerifyRepository implements VerifyInterface
             "phone_verify_status"=>[ "sometimes",
             Rule::in([VerifyStatus::APPROVED,VerifyStatus::REJECTED,VerifyStatus::PENDING])]
         ]);
+        
+       
         //receive all request status address and file status
         $verify = Verify::findOrFail($id);
+        $is_address_verify = false;
+        $is_file_verify = false;
+        $is_phone_verify = false;
+
         if($request->has("address_verify_status")){
             $verify->address_verify_status = $request->address_verify_status;
+            $is_address_verify = true;
         }
         if($request->has("file_verify_status")){
             $verify->file_verify_status = $request->file_verify_status;
+            $is_file_verify = true;
         }
         if($request->has("phone_verify_status")){
             $verify->phone_verify_status = $request->phone_verify_status;
+            $is_phone_verify = true;
         }
+
+        
+        
+     
+
+      
         
       
         
-        $verify->save();
+      
         return $this->success("Update verify successfully", 200);
     }
 
@@ -282,16 +311,19 @@ class VerifyRepository implements VerifyInterface
 
 
             $checkVerify = Verify::where("user_id", Auth::id())->first();
+            $showData=null;
             if ($checkVerify) {
                 $checkVerify->phone_number = $phone_number;
                 $checkVerify->phone_verify_status = VerifyStatus::APPROVED;
                 $checkVerify->save();
+                $showData=$checkVerify;
             } else {
                 $aVerify = new Verify();
                 $aVerify->phone_number = $phone_number;
                 $aVerify->phone_verify_status = VerifyStatus::APPROVED;
                 $aVerify->user_id = Auth::id();
                 $aVerify->save();
+                $showData=$aVerify;
             }
 
           
@@ -310,7 +342,7 @@ class VerifyRepository implements VerifyInterface
                 
             }
             DB::commit();
-           return $this->success("Phone verify successfully",[], 200);
+           return response()->json(["data"=>$showData,"message"=>"save message successfully","success"=>true],200);
            
         } catch (\Exception $e) {
             DB::rollback();
