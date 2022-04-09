@@ -139,7 +139,7 @@ Route::get("participantBidding", [App\Http\Controllers\BuddhistController::class
 Route::get("testNotification/", [App\Http\Controllers\testController::class, "testNotification"]);
 Route::get("most_like/", [App\Http\Controllers\BuddhistController::class, "countByFavorite"]);
 Route::get("nearly_end/", [App\Http\Controllers\BuddhistController::class, "almostEnd"]);
-Route::post("editProfile/", [App\Http\Controllers\ProfileController::class, "editProfile"]);
+Route::put("editProfile/", [App\Http\Controllers\ProfileController::class, "editProfile"]);
 Route::get("recommended/", [App\Http\Controllers\RecommendedBuddhistController::class, "index"]);
 Route::post("recommended/", [App\Http\Controllers\RecommendedBuddhistController::class, "store"]);
 Route::get("recommended/allBuddhist", [App\Http\Controllers\RecommendedBuddhistController::class, "allBuddhist"]);
@@ -202,3 +202,5 @@ Route::prefix("/verify")->group(function () {
 Route::post("facebook_signin", [App\Http\Controllers\apiAuthController::class, "facebook_one_click_login_register"]);
 Route::get("item_by_user/{id}",[App\Http\Controllers\ProfileController::class,"itemBelongToUser"]);
 Route::get("participant_by_user/{id}",[App\Http\Controllers\ProfileController::class,"userItemParticipant"]);
+
+

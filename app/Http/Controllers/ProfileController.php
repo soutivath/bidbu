@@ -59,14 +59,14 @@ class ProfileController extends Controller
 
             // 'name' => 'required|max:30|string',
             // 'surname' => 'required|max:30|string',
-           //'picture' => 'required|image|mimes:jpeg,png,jpg|max:8192',
-            'phone_number' => 'required|string',
+           'picture' => 'required|image|mimes:jpeg,png,jpg|max:8192',
+           // 'phone_number' => 'required|string',
             'password' => 'required',
         ]);
 
         $user = User::find(Auth::id());
 
-        if (!Hash::check($request->password, Auth::user()->password)) {
+        if (!Hash::check($request->password, $user->password)) {
             return response()->json(["message" => "ລະຫັດຜ່ານບໍ່ຖຶກຕ້ອງ"], 403);
         }
 

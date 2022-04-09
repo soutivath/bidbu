@@ -74,13 +74,18 @@ class User extends Authenticatable
     }
     public function verify()
     {
-        return $this->hasMany(Verify::class);
+        return $this->hasOne(Verify::class);
     }
 
     public function getProfilePath()
     {
-        return Config("values.APP_URL") . ":" . $_SERVER["SERVER_PORT"] .
+        
+        if(str_starts_with($this->picture,"https://")){
+            return $this->picture;
+        }else{
+            return Config("values.APP_URL") . ":" . $_SERVER["SERVER_PORT"] .
         "/" . "profile_image/" . $this->picture;
+        }
     }
 
     public function isActiveAdmin()
