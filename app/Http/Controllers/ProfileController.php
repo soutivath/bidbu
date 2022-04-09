@@ -74,7 +74,8 @@ class ProfileController extends Controller
         // $user->surname = $request->surname;
         // $user->phone_number = $request->phone_number;
         if ($request->hasFile('picture')) {
-            if ($user->picture != "default_image.jpg") {
+           
+            if ($user->picture != "default_image.jpg" && !str_starts_with($user->picture,"https://")) {
                 $oldPath = public_path() . '/profile_image/' . $user->picture;
                 \unlink($oldPath);
 
