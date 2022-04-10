@@ -53,7 +53,7 @@ class VerifyController extends Controller
     if (Auth::user()->hasRole("admin") || Auth::user()->hasRole("superadmin")) {
       return $this->verificationInterface->adminViewVerify($id);
     }else{
-      return response()->json(["message" => "only user can't use this function"], 403);
+      return response()->json(["message" => "user can't use this function"], 403);
     }
     
   }

@@ -315,20 +315,20 @@ class VerifyRepository implements VerifyInterface
           "firebase_token"=>"required|string",
             "phone_number"=>"required|regex:/^([0-9\s\-\+\(\)]*)$/|min:10",
             "fcm_token"=>"required|string",
-            // "old_firebase_token"=>"required|string",
-            // "old_fcm_token"=>"required|string"
+             "old_firebase_token"=>"required|string",
+             "old_fcm_token"=>"required|string"
         ]);
         DB::beginTransaction();
         try {
 
             $phone_number = "";
-            //$oldPhoneNumber = Auth::user()->phone_number;
+            $oldPhoneNumber = Auth::user()->phone_number;
             $auth = app('firebase.auth');
             $idTokenString = $request->firebase_token;
-         //   $oldIdTokenString = $request->old_firebase_token;
+            $oldIdTokenString = $request->old_firebase_token;
             try { // Try to verify the Firebase credential token with Google
                 $verifiedIdToken = $auth->verifyIdToken($idTokenString);
-              //  $verifiedOldIdToken = $auth->verifyIdToken($oldIdTokenString);
+                $verifiedOldIdToken = $auth->verifyIdToken($oldIdTokenString);
             } catch (\InvalidArgumentException $e) { // If the token has the wrong format
                 return response()->json(
                     [
@@ -349,15 +349,14 @@ class VerifyRepository implements VerifyInterface
             if ($result['invalid'] != null) {
                 return response()->json(['data' => 'your json token is invalid'], 404);
             }
-        /*    if ($oldCheckResult['invalid'] != null) {
+            if ($oldCheckResult['invalid'] != null) {
                 return response()->json(['data' => 'your json token is invalid'], 404);
-            }*/
+            }
 
             // Retrieve the UID (User ID) from the verified Firebase credential's token
             $uid = $verifiedIdToken->claims()->get('sub');
-          //  $oldUid = $verifiedOldIdToken->claims()->get('sub');
+            $oldUid = $verifiedOldIdToken->claims()->get('sub');
             $toDeleteUID = "";
-            dd($uid);
             if (Auth::user()->firebase_uid != $uid) {
                 $toDeleteUID = $uid;
             }
