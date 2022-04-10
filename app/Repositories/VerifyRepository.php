@@ -244,7 +244,7 @@ class VerifyRepository implements VerifyInterface
         
      
 
-      
+      $verify->save();
         
       
         
