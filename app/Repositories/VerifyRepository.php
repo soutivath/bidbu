@@ -160,7 +160,9 @@ class VerifyRepository implements VerifyInterface
         
        
         //receive all request status address and file status
-        $verify = Verify::findOrFail($id);
+        $verify = Verify::where("id",$id)->with("user")->first();
+      
+        return response()->json(["data"=>$verify->user->topic]);
         $is_address_verify = false;
         $is_file_verify = false;
         $is_phone_verify = false;
@@ -176,9 +178,30 @@ class VerifyRepository implements VerifyInterface
         if($request->has("phone_verify_status")){
             $verify->phone_verify_status = $request->phone_verify_status;
             $is_phone_verify = true;
-        }
-
         
+        }
+    
+            $messaging = app('firebase.messaging');
+        $androidConfig = AndroidConfig::fromArray([
+            'ttl' => '3600s',
+            'priority' => 'high',
+
+        ]);
+        $message = CloudMessage::withTarget("topic",$verify->user->topic)
+        ->withNotification(Notification::fromArray([
+            'title' => 'ຈາກ ' . "" . ' ທີ່ທ່ານໄດ້ປ່ອຍ',
+            'body' => 'ການປະມູນຈົບລົງແລ້ວ ບໍ່ມີຄົນເຂົ້າຮ່ວມການປະມູນຂອງທ່ານ',
+            'image' => \public_path("/notification_images/chat.png"),
+        ]))
+        ->withData([
+            'buddhist_id' =>"",
+            'type' => '',
+            'sender' => "0",
+            'result' => "no_participant",
+        ]);
+    $message = $message->withAndroidConfig($androidConfig);
+    $messaging->send($message);
+
         
      
 
@@ -254,7 +277,7 @@ class VerifyRepository implements VerifyInterface
     public function verifyNumber(Request $request)
     {
         $request->validate([
-          //"firebase_token"=>"required|string",
+          "firebase_token"=>"required|string",
             "phone_number"=>"required|regex:/^([0-9\s\-\+\(\)]*)$/|min:10",
             "fcm_token"=>"required|string"
         ]);
@@ -372,13 +395,13 @@ class VerifyRepository implements VerifyInterface
         $user = User::findOrFail(Auth::id());
         try {
             if (!$user) {
-               return $this->error("Data not found", 400);
+               return $this->error("Data not found", 404);
             }
             $user->name = $request->name;
             $user->surname = $request->surname;
             $user->gender = $request->gender;
             $user->date_of_birth = $request->date_of_birth;
-            $user->emergency_phone_number = $request->emergency_phone_number;
+           
             $user->save();
 
             $verify = Verify::where("user_id", Auth::id())->first();
@@ -401,4 +424,15 @@ class VerifyRepository implements VerifyInterface
             return $e->getMessage();
         }
     }
+
+    public function addEmergencyPhone(Request $request){
+        $request->validate([
+            "emergency_phone_number"=>"required|regex:/^([0-9\s\-\+\(\)]*)$/|min:10",
+        ]);
+        $user = User::findOrFail(Auth::id());
+        $user->emergency_phone_number = $request->emergency_phone_number;
+        $user->save();
+        return response()->json(["data"=>$user]);
+    }
+
 }

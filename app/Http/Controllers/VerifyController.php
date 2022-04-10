@@ -65,4 +65,8 @@ class VerifyController extends Controller
   {
     return $this->verificationInterface->verifyPersonalData($request);
   }
+
+  public function addEmergencyPhone(Request $request){
+    return $this->verificationInterface->addEmergencyPhone($request);
+  }
 }

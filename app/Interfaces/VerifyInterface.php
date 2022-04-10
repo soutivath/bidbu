@@ -12,5 +12,6 @@ interface VerifyInterface{
     public function adminViewVerify ($id);
     public function verifyNumber (Request $request);
     public function verifyPersonalData (Request $request);
+    public function addEmergencyPhone (Request $request);
 }
 
