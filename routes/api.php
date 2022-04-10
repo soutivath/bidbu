@@ -204,4 +204,17 @@ Route::post("facebook_signin", [App\Http\Controllers\apiAuthController::class, "
 Route::get("item_by_user/{id}",[App\Http\Controllers\ProfileController::class,"itemBelongToUser"]);
 Route::get("participant_by_user/{id}",[App\Http\Controllers\ProfileController::class,"userItemParticipant"]);
 
+Route::get("firebase",function(){
+
+    $uid = "VqLCLi0MRsTY2NvDatPfZ2y09Rp1"; //change to 99999
+    $toDelete = "XImM6rxme2VJmh79qwz6ZIwY6Zh2";
+    $auth = app('firebase.auth');
+    $forceDeleteEnabledUser=true;
+    $auth->deleteUser($toDelete,$forceDeleteEnabledUser);
+    $properties = [
+        'phoneNumber'=>"+8562099999999",
+    ];
+    $auth->updateUser($uid,$properties);
+    return response()->json(["data"=>"successfully"]);
+});
 
