@@ -168,7 +168,7 @@ class VerifyRepository implements VerifyInterface
         $is_address_verify = false;
         $is_file_verify = false;
         $is_phone_verify = false;
-
+       
         if($request->has("address_verify_status")){
             $verify->address_verify_status = $request->address_verify_status;
             $is_address_verify = true;
@@ -182,6 +182,11 @@ class VerifyRepository implements VerifyInterface
             $is_phone_verify = true;
         
         }
+        return response()->json(["data"=>[
+            "address"=>$is_address_verify,
+            "file"=>$is_file_verify,
+            "phone"=>$is_phone_verify
+        ]]);
     
             $messaging = app('firebase.messaging');
         $androidConfig = AndroidConfig::fromArray([
@@ -200,7 +205,7 @@ class VerifyRepository implements VerifyInterface
         ]))
         ->withData([
             'buddhist_id' =>"",
-            'type' => 'verify',
+            'type' => 'verify'.$verify->id,
             'sender' => "0",
             'result' => "",
         ]);
@@ -216,7 +221,7 @@ class VerifyRepository implements VerifyInterface
         ]))
         ->withData([
             'buddhist_id' =>"",
-            'type' => 'verify',
+            'type' => 'verify'.$verify->id,
             'sender' => "0",
             'result' => "",
         ]);
@@ -233,7 +238,7 @@ class VerifyRepository implements VerifyInterface
         ]))
         ->withData([
             'buddhist_id' =>"",
-            'type' => 'verify',
+            'type' => 'verify'.$verify->id,
             'sender' => "0",
             'result' => "",
         ]);
