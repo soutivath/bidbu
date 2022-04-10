@@ -356,7 +356,7 @@ class VerifyRepository implements VerifyInterface
 
 
 
-            $existingPhoneNumber = User::where("phone_number", Auth::user()->phone_number)->first();
+            $existingPhoneNumber = User::where("phone_number", $request->phone_number)->first();
             if ($existingPhoneNumber) {
               return  $this->error("Phone number is exist", 400);
             }
