@@ -50,6 +50,9 @@ class ProfileController extends Controller
     public function getUserByID($id)
     {
         $user = User::where("id",$id)->with("verify")->first();
+        if(!$user){
+            return response()->json(["data"=>[],"message"=>"User not found",404]);
+        }
         return new UserProfile($user);
     }
 
@@ -61,14 +64,14 @@ class ProfileController extends Controller
             // 'surname' => 'required|max:30|string',
            'picture' => 'required|image|mimes:jpeg,png,jpg|max:8192',
            // 'phone_number' => 'required|string',
-            'password' => 'required',
+          //  'password' => 'required',
         ]);
 
         $user = User::find(Auth::id());
 
-        if (!Hash::check($request->password, $user->password)) {
+        /*if (!Hash::check($request->password, $user->password)) {
             return response()->json(["message" => "ລະຫັດຜ່ານບໍ່ຖຶກຕ້ອງ"], 403);
-        }
+        }*/
 
         // $user->name = $request->name;
         // $user->surname = $request->surname;

@@ -17,14 +17,14 @@ class UserProfile extends JsonResource
         $verify =null;
         if($this->verify()->exists()){
             $verify =[
-                "address"=>$this->verify[0]->address,
-                "address_verify_status"=> $this->verify[0]->address_verify_status,
-                "phone_number"=> $this->verify[0]->phone_number,
-                "phone_verify_status"=> $this->verify[0]->phone_verify_status,
-                "file_type"=>$this->verify[0]->file_type,
-                "file_verify_status"=> $this->verify[0]->file_verify_status,
-                "created_at"=>$this->verify[0]->created_at,
-                "updated_at"=> $this->verify[0]->updated_at
+                "address"=>$this->verify->address,
+                "address_verify_status"=> $this->verify->address_verify_status,
+                "phone_number"=> $this->verify->phone_number,
+                "phone_verify_status"=> $this->verify->phone_verify_status,
+                "file_type"=>$this->verify->file_type,
+                "file_verify_status"=> $this->verify->file_verify_status,
+                "created_at"=>$this->verify->created_at,
+                "updated_at"=> $this->verify->updated_at
             ];
         }
         else{
