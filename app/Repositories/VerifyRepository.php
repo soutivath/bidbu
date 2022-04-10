@@ -182,11 +182,8 @@ class VerifyRepository implements VerifyInterface
             $is_phone_verify = true;
         
         }
-        return response()->json(["data"=>[
-            "address"=>$is_address_verify,
-            "file"=>$is_file_verify,
-            "phone"=>$is_phone_verify
-        ]]);
+        $verify->save();
+       
     
             $messaging = app('firebase.messaging');
         $androidConfig = AndroidConfig::fromArray([
@@ -245,15 +242,7 @@ class VerifyRepository implements VerifyInterface
     $message = $message->withAndroidConfig($androidConfig);
     $messaging->send($message);
     }
-
-        
      
-
-      $verify->save();
-        
-      
-        
-      
         return $this->success("Update verify successfully", 200);
     }
 
