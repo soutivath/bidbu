@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Interfaces\VerifyInterface;
 use App\Http\Requests\Verification\VerificationRequest;
 use App\Traits\ResponseAPI;
+use App\Traits\VerifyStatusHelper;
 use App\Models\Verify;
 use Illuminate\Support\Facades\DB;
 use Image;
@@ -17,6 +18,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Enums\GenderEnum;
 use App\Enums\VerifyFileType;
 use App\Models\NotificationFirebase;
+use Kreait\Firebase\Messaging\Notification;
 use Illuminate\Support\Facades\File;
 use Illuminate\Validation\Rule;
 use Kreait\Firebase\Messaging\AndroidConfig;
@@ -24,7 +26,7 @@ use Kreait\Firebase\Messaging\CloudMessage;
 
 class VerifyRepository implements VerifyInterface
 {
-    use ResponseAPI;
+    use ResponseAPI, VerifyStatusHelper;
     public function getAllVerification(Request $request)
     {
         $verifiesData = Verify::with("user");
@@ -162,7 +164,7 @@ class VerifyRepository implements VerifyInterface
         //receive all request status address and file status
         $verify = Verify::where("id",$id)->with("user")->first();
       
-        return response()->json(["data"=>$verify->user->topic]);
+       
         $is_address_verify = false;
         $is_file_verify = false;
         $is_phone_verify = false;
@@ -187,20 +189,57 @@ class VerifyRepository implements VerifyInterface
             'priority' => 'high',
 
         ]);
+       
+
+    if($is_address_verify){
         $message = CloudMessage::withTarget("topic",$verify->user->topic)
         ->withNotification(Notification::fromArray([
-            'title' => 'ຈາກ ' . "" . ' ທີ່ທ່ານໄດ້ປ່ອຍ',
-            'body' => 'ການປະມູນຈົບລົງແລ້ວ ບໍ່ມີຄົນເຂົ້າຮ່ວມການປະມູນຂອງທ່ານ',
+            'title' => 'ຈາກ ຂອງດີ',
+            'body' => 'ການຢືນຢັນທີ່ຢູ່ຂອງທ່ານ '.$this->getLaosStringStatus($request->address_verify_status),
             'image' => \public_path("/notification_images/chat.png"),
         ]))
         ->withData([
             'buddhist_id' =>"",
-            'type' => '',
+            'type' => 'verify',
             'sender' => "0",
-            'result' => "no_participant",
+            'result' => "",
         ]);
     $message = $message->withAndroidConfig($androidConfig);
     $messaging->send($message);
+    };
+    if($is_file_verify){
+        $message = CloudMessage::withTarget("topic",$verify->user->topic)
+        ->withNotification(Notification::fromArray([
+            'title' => 'ຈາກ ຂອງດີ',
+            'body' => 'ການຢືນຢັນ'.$this->getLaosStringFilesStatus($verify->verify_file_type).' ຂອງທ່ານ '.$this->getLaosStringStatus($request->file_verify_status),
+            'image' => \public_path("/notification_images/chat.png"),
+        ]))
+        ->withData([
+            'buddhist_id' =>"",
+            'type' => 'verify',
+            'sender' => "0",
+            'result' => "",
+        ]);
+    $message = $message->withAndroidConfig($androidConfig);
+    $messaging->send($message);
+    }
+    if($is_phone_verify){
+        
+        $message = CloudMessage::withTarget("topic",$verify->user->topic)
+        ->withNotification(Notification::fromArray([
+            'title' => 'ຈາກ ຂອງດີ',
+            'body' => 'ການຢືນຢັນເບີໂທຂອງທ່ານ '.$this->getLaosStringStatus($request->phone_verify_status),
+            'image' => \public_path("/notification_images/chat.png"),
+        ]))
+        ->withData([
+            'buddhist_id' =>"",
+            'type' => 'verify',
+            'sender' => "0",
+            'result' => "",
+        ]);
+    $message = $message->withAndroidConfig($androidConfig);
+    $messaging->send($message);
+    }
 
         
      
@@ -212,6 +251,8 @@ class VerifyRepository implements VerifyInterface
       
         return $this->success("Update verify successfully", 200);
     }
+
+    
 
     public function viewVerify()
     {
