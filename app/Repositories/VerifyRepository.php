@@ -320,6 +320,7 @@ class VerifyRepository implements VerifyInterface
         try {
 
             $phone_number = "";
+            $oldPhoneNumber = Auth::user()->phone_number;
             $auth = app('firebase.auth');
             $idTokenString = $request->firebase_token;
 
@@ -394,7 +395,7 @@ class VerifyRepository implements VerifyInterface
                     $forceDeleteEnabledUser=true;
                     $auth->deleteUser($toDeleteUID,$forceDeleteEnabledUser);
                     $properties = [
-                        'phoneNumber'=>$request->phone_number,
+                        'phoneNumber'=>$oldPhoneNumber,
                     ];
                     $auth->updateUser(Auth::user()->firebase_uid,$properties);
                 
