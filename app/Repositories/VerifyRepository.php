@@ -254,8 +254,9 @@ class VerifyRepository implements VerifyInterface
     public function verifyNumber(Request $request)
     {
         $request->validate([
-            "firebase_token"=>"required|string",
+          //"firebase_token"=>"required|string",
             "phone_number"=>"required|regex:/^([0-9\s\-\+\(\)]*)$/|min:10",
+            "fcm_token"=>"required|string"
         ]);
         DB::beginTransaction();
         try {
