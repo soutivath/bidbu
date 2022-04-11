@@ -43,7 +43,7 @@ class VerifyResource extends JsonResource
                 "address"=>$this->address,
                 "address_verify_status"=>$this->address_verify_status,
                 "phone_number"=>$this->phone_number,
-                "phone_number_verify_status"=>$this->phone_verify_status,
+                "phone_verify_status"=>$this->phone_verify_status,
                 "file_type"=>$this->file_type,
                 "file_folder_path"=>$allImage,
                 "file_verify_status"=>$this->file_verify_status,
