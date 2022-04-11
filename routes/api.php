@@ -200,7 +200,7 @@ Route::prefix("/verify")->group(function () {
 Route::get("/verify_admin/{id}", [App\Http\Controllers\VerifyController::class, "adminViewVerify"]);
 Route::post("/verify_number", [App\Http\Controllers\VerifyController::class, "verifyNumber"]);
 Route::post("/verify_personal", [App\Http\Controllers\VerifyController::class, "verifyPersonalData"]);
-Route::put("/verify_phone_number",[App\Http\Controllers\VerifyController::class, "addEmergencyPhone"]);
+Route::put("/verify_emergency_phone_number",[App\Http\Controllers\VerifyController::class, "addEmergencyPhone"]);
 
 
 Route::post("facebook_signin", [App\Http\Controllers\apiAuthController::class, "facebook_one_click_login_register"]);
