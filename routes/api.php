@@ -194,11 +194,14 @@ Route::prefix("/verify")->group(function () {
     Route::post("/", [App\Http\Controllers\VerifyController::class, "fileVerifyRequest"]);
     Route::put("/{id}", [App\Http\Controllers\VerifyController::class, "updateVerify"]);
     Route::get("/{id}", [App\Http\Controllers\VerifyController::class, "viewVerify"]);
-    Route::get("/admin/{id}", [App\Http\Controllers\VerifyController::class, "adminViewVerify"]);
-    Route::post("/number", [App\Http\Controllers\VerifyController::class, "verifyNumber"]);
-    Route::post("/personal", [App\Http\Controllers\VerifyController::class, "verifyPersonalData"]);
-    Route::put("/phone_number",[App\Http\Controllers\VerifyController::class, "addEmergencyPhone"]);
+    
 });
+
+Route::get("/verify_admin/{id}", [App\Http\Controllers\VerifyController::class, "adminViewVerify"]);
+Route::post("/verify_number", [App\Http\Controllers\VerifyController::class, "verifyNumber"]);
+Route::post("/verify_personal", [App\Http\Controllers\VerifyController::class, "verifyPersonalData"]);
+Route::put("/verify_phone_number",[App\Http\Controllers\VerifyController::class, "addEmergencyPhone"]);
+
 
 Route::post("facebook_signin", [App\Http\Controllers\apiAuthController::class, "facebook_one_click_login_register"]);
 Route::get("item_by_user/{id}",[App\Http\Controllers\ProfileController::class,"itemBelongToUser"]);
