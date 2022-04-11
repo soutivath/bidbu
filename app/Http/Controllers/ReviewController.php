@@ -8,6 +8,7 @@ use App\Models\ReviewDetail;
 use Illuminate\Database\RecordsNotFoundException;
 use Illuminate\Http\Request;
 use App\Models\Buddhist;
+use App\Models\User;
 use Carbon\carbon;
 use Illuminate\Support\Facades\Auth;
 class ReviewController extends Controller
@@ -27,14 +28,22 @@ class ReviewController extends Controller
             ],400);
         }
         
-        $buddhist = Buddhist::find($request->buddhist_id);
+        $buddhist = Buddhist::find($request->buddhist_id)->first();
+        if(!$buddhist){
+            return response()->json([
+                "data"=>[],
+                "success"=>false,
+                "message"=>"Item not found"
+            ],404);
+        }
+        $winnerUser = User::findOrFail($buddhist->highBidUser);
         if(Carbon::now()->lessThan(Carbon::now()->parse($buddhist->end_time)))
         {
             return response()->json(["message"=>"This item not expired yet."],400);
         }
-        if(Auth::user()->firebase_uid!=$buddhist->winner_user_id)
+        if(Auth::id()!=$winnerUser->id && Auth::id()!=$buddhist->user_id )
         {
-            return response()->json(["message"=>"You are not a winner."],400);
+            return response()->json(["message"=>"You are not a winner or owner."],400);
         }
 
 
