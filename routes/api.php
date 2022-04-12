@@ -207,4 +207,6 @@ Route::post("facebook_signin", [App\Http\Controllers\apiAuthController::class, "
 Route::get("item_by_user/{id}",[App\Http\Controllers\ProfileController::class,"itemBelongToUser"]);
 Route::get("participant_by_user/{id}",[App\Http\Controllers\ProfileController::class,"userItemParticipant"]);
 
+Route::get("remove_lasted_bid/{id}",[App\Http\Controllers\BiddingController::class,"removeLastedBidItem"]);
+
 
