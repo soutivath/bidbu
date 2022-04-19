@@ -22,7 +22,13 @@ class BiddingController extends Controller
 
     public function removeLastedBidItem(Request $request, $buddhist_id)
     {
-
+        
+        $request->validate([
+            "price"=>"required|integer",
+            "id"=>"required|integer|exists:users,id",
+            "firebase_uid"=>"required|string|exists:users,firebase_uid",
+        ]);
+      
     
         $messaging = app('firebase.messaging');
         $androidConfig = AndroidConfig::fromArray([
@@ -31,11 +37,7 @@ class BiddingController extends Controller
 
         ]);
       
-        $request->validate([
-            "price"=>"required|integer",
-            "id"=>"required|integer|exists:users,id",
-            "firebase_uid"=>"required|stirng|exists:users,firebase_uid",
-        ]);
+     
 
         DB::beginTransaction();
 
