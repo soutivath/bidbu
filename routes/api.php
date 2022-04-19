@@ -209,7 +209,7 @@ Route::post("facebook_signin", [App\Http\Controllers\apiAuthController::class, "
 Route::get("item_by_user/{id}",[App\Http\Controllers\ProfileController::class,"itemBelongToUser"]);
 Route::get("participant_by_user/{id}",[App\Http\Controllers\ProfileController::class,"userItemParticipant"]);
 
-Route::get("remove_lasted_bid/{id}",[App\Http\Controllers\BiddingController::class,"removeLastedBidItem"]);
+Route::post("remove_lasted_bid/{id}",[App\Http\Controllers\BiddingController::class,"removeLastedBidItem"]);
 
 Route::get("load_verify_image/{folder}/{image_name}",[App\Http\Controllers\PrivateController::class,"getImageFileVerify"])->where(['image_name'=>'^([A-z0-9-_+]+\/)*([A-z0-9-\.]+)(\?\d+)?$']);
 Route::post("get_custom_token",function(Request $request){
