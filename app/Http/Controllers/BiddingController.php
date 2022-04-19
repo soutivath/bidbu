@@ -30,10 +30,11 @@ class BiddingController extends Controller
             'priority' => 'high',
 
         ]);
+      
         $request->validate([
             "price"=>"required|integer",
-            "id"=>"required|integer",
-            "firebase_uid"=>"required|stirng"
+            "id"=>"required|integer|exists:users,id",
+            "firebase_uid"=>"required|stirng|exists:users,firebase_uid",
         ]);
 
         DB::beginTransaction();
