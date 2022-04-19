@@ -22,7 +22,7 @@ class isUserActive
         } else {
             return response()->json([
                 "message" => "you don't have permission because your account has been disabled",
-            ], 404);
+            ], 403);
         }
     }
 }

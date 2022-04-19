@@ -16,6 +16,8 @@ class Verify extends Model
     }
 
     public function getImagePath(){
+       
+        return file(base_path("resources/private/verify"));
         return Config("values.APP_URL") . ":" . $_SERVER["SERVER_PORT"] .
         "/" . "verification_images/" . $this->file_folder_path;
     }

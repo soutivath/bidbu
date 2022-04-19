@@ -47,6 +47,10 @@ return [
             'driver' => 'local',
             'root' => storage_path('app'),
         ],
+        'private_verify' => [
+            'driver' => 'local',
+            'root' =>base_path("resources/private/verify"),
+        ],
 
         'public' => [
             'driver' => 'local',

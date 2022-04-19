@@ -15,13 +15,13 @@ class VerifyResource extends JsonResource
     public function toArray($request)
     {
         $verify = null;
-        $allImage = array();
+        $allImageName = array();
         $files=null;
         if($this->file_folder_path!=null){
-            $files = File::files(public_path('/verification_images/' . $this->file_folder_path . "/"));
+            $files = File::files(base_path("resources/private/verify/" . $this->file_folder_path . "/"));
             foreach ($files as $file) {
                 $file_path = pathinfo($file);
-                \array_push($allImage, $this->getImagePath() . "/" . $file_path['basename']);
+                \array_push($allImageName, $file_path['basename']);
             }
         }
        
@@ -45,7 +45,8 @@ class VerifyResource extends JsonResource
                 "phone_number"=>$this->phone_number,
                 "phone_verify_status"=>$this->phone_verify_status,
                 "file_type"=>$this->file_type,
-                "file_folder_path"=>$allImage,
+                "files_name"=>$allImageName,
+                "folderName"=>$this->file_folder_path,
                 "file_verify_status"=>$this->file_verify_status,
             ]
             

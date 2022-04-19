@@ -2,7 +2,9 @@
 
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Request as FacadesRequest;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\View;
 use Kreait\Firebase\DynamicLink\AnalyticsInfo;
 use Kreait\Firebase\DynamicLink\AnalyticsInfo\GooglePlayAnalytics;
@@ -208,5 +210,28 @@ Route::get("item_by_user/{id}",[App\Http\Controllers\ProfileController::class,"i
 Route::get("participant_by_user/{id}",[App\Http\Controllers\ProfileController::class,"userItemParticipant"]);
 
 Route::get("remove_lasted_bid/{id}",[App\Http\Controllers\BiddingController::class,"removeLastedBidItem"]);
+
+Route::get("load_verify_image/{folder}/{image_name}",[App\Http\Controllers\PrivateController::class,"getImageFileVerify"])->where(['image_name'=>'^([A-z0-9-_+]+\/)*([A-z0-9-\.]+)(\?\d+)?$']);
+Route::post("get_custom_token",function(Request $request){
+    // $auth = app('firebase.auth');
+    // $uid = 'fMN2wdAvgxSeRevQ0m0ZO4XfKky2';
+    // $customToken = $auth->createCustomToken($uid);
+    // return response()->json(["data"=>$customToken->toString()],200);
+    // Storage::disk("private_verify")->put("folder",$request->picture,"private");
+    // dd(Storage::disk("private_verify"));
+    // if(Storage::disk("private_verify")){
+    //     Storage::path('test.jpeg');
+    // }
+    // if (Storage::disk('private_verify')->exists('test.jpeg')) {
+      //  $url = Storage::disk('private_verify'.DIRECTORY_SEPARATOR."625a7381742c9_1650094977")->get('identity_card-625a738176557_1650094977.png');
+    //  return response()->file(base_path("resources/private/verify".DIRECTORY_SEPARATOR."625a7381742c9_1650094977".DIRECTORY_SEPARATOR."identity_card-625a738176557_1650094977.png"));
+        // dd();
+        // dd($url);
+    //    $asset = asset($url);
+      //  return response()->file(base_path("resources/private/verify".DIRECTORY_SEPARATOR."test.jpeg"));
+        // return response()->json(["data"=>$url]);
+    // }
+    // dd("not exist");
+});
 
 

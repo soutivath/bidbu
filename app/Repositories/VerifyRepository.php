@@ -89,8 +89,9 @@ class VerifyRepository implements VerifyInterface
         DB::beginTransaction();
         try {
             $folderName = uniqid() . "_" . time();
-            $base_verify_location = public_path("/verification_images");
-            $base_verify_file_location = public_path("/verification_images/" . $folderName);
+            
+            $base_verify_location = base_path("resources/private/verify");
+            $base_verify_file_location = base_path("resources/private/verify/". $folderName);
             if (!File::isDirectory($base_verify_location)) {
                 File::makeDirectory($base_verify_location, 493, true);
             }
@@ -130,14 +131,14 @@ class VerifyRepository implements VerifyInterface
             foreach ($request->images as $image) {
                 $fileExtension = $image->getClientOriginalExtension();
                 $fileName = $request->verify_type . "-" . uniqid() . "_" . time() . "." . $fileExtension;
-                $file_location_with_name = public_path("/verification_images/" . $folderName . "/" . $fileName);
+                $file_location_with_name = base_path("resources/private/verify/". $folderName . "/" . $fileName);
                 Image::make($image)->resize(1920, null, function ($constraint) {
                     $constraint->aspectRatio();
                 })->save($file_location_with_name);
             }
             if ($oldFilePath != "") {
-                if (File::isDirectory(public_path("/verification_images/".$oldFilePath))) {
-                    File::deleteDirectory(public_path("/verification_images/".$oldFilePath));
+                if (File::isDirectory(base_path("resources/private/verify/".$oldFilePath))) {
+                    File::deleteDirectory(base_path("resources/private/verify/".$oldFilePath));
                 }
             }
             DB::commit();
