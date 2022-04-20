@@ -18,6 +18,8 @@ class BiddingController extends Controller
 {
     public function __construct()
     {
+        $this->middleware('auth:api');
+        $this->middleware('isUserActive:api');
     }
 
     public function removeLastedBidItem(Request $request, $buddhist_id)

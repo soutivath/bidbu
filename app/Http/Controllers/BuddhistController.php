@@ -309,6 +309,8 @@ class BuddhistController extends Controller
         if (Auth::id() == $bud->user_id) {
             return response()->json(["message" => "You can't bid your buddhist"], 403);
         }
+
+        
         //get Highest Price
 
         if (Carbon::now()->lessThan(Carbon::parse($bud->end_time))) {
