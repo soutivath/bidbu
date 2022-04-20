@@ -26,7 +26,7 @@ class PostUpdateRequest extends FormRequest
         return [
             "user_id"=>"required|integer|exists:users,id",
             "score"=>"required|integer|min:1|max:5",
-            "comment"=>"required|string|max:255",
+            "comment"=>"sometimes|string|max:255",
             "buddhist_id"=>"required|integer|exists:buddhists,id"
         ];
     }

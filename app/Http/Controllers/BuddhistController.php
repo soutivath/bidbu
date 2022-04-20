@@ -47,7 +47,7 @@ class BuddhistController extends Controller
                 $perPage = (int)$request->perPage;
             }
 
-            if($convertedPerPage>30){
+            if($convertedPerPage>50){
                 $perPage = (int)$request->perPage;
             }
         }
@@ -571,7 +571,7 @@ class BuddhistController extends Controller
                 $perPage = (int)$request->perPage;
             }
 
-            if($convertedPerPage>30){
+            if($convertedPerPage>50){
                 $perPage = (int)$request->perPage;
             }
         }
@@ -594,7 +594,7 @@ class BuddhistController extends Controller
                 $perPage = (int)$request->perPage;
             }
 
-            if($convertedPerPage>30){
+            if($convertedPerPage>50){
                 $perPage = (int)$request->perPage;
             }
         }
@@ -621,7 +621,7 @@ class BuddhistController extends Controller
                 $perPage = (int)$request->perPage;
             }
 
-            if($convertedPerPage>30){
+            if($convertedPerPage>50){
                 $perPage = (int)$request->perPage;
             }
         }
@@ -641,7 +641,7 @@ class BuddhistController extends Controller
                 $perPage = (int)$request->perPage;
             }
 
-            if($convertedPerPage>30){
+            if($convertedPerPage>50){
                 $perPage = (int)$request->perPage;
             }
         }
@@ -671,7 +671,7 @@ class BuddhistController extends Controller
                 $perPage = (int)$request->perPage;
             }
 
-            if($convertedPerPage>30){
+            if($convertedPerPage>50){
                 $perPage = (int)$request->perPage;
             }
         }
@@ -699,7 +699,7 @@ class BuddhistController extends Controller
                 $perPage = (int)$request->perPage;
             }
 
-            if($convertedPerPage>30){
+            if($convertedPerPage>50){
                 $perPage = (int)$request->perPage;
             }
         }
@@ -738,7 +738,7 @@ class BuddhistController extends Controller
                 $perPage = (int)$request->perPage;
             }
 
-            if($convertedPerPage>30){
+            if($convertedPerPage>50){
                 $perPage = (int)$request->perPage;
             }
         }
@@ -771,7 +771,7 @@ class BuddhistController extends Controller
                 $perPage = (int)$request->perPage;
             }
 
-            if($convertedPerPage>30){
+            if($convertedPerPage>50){
                 $perPage = (int)$request->perPage;
             }
         }
@@ -808,7 +808,7 @@ class BuddhistController extends Controller
                 $perPage = (int)$request->perPage;
             }
 
-            if($convertedPerPage>30){
+            if($convertedPerPage>50){
                 $perPage = (int)$request->perPage;
             }
         }
@@ -839,7 +839,7 @@ class BuddhistController extends Controller
                 $perPage = (int)$request->perPage;
             }
 
-            if($convertedPerPage>30){
+            if($convertedPerPage>50){
                 $perPage = (int)$request->perPage;
             }
         }

@@ -60,11 +60,14 @@ class ReviewController extends Controller
             ]);
         }
       
-        
+        $comment = "";
+        if($request->has("comment")){
+            $comment = $request->comment;
+        }
        // id	score	comment review_id	user_id buddhist_id
         $reviewDetail = new ReviewDetail();
         $reviewDetail->score = $request->score;
-        $reviewDetail->comment = $request->comment;
+        $reviewDetail->comment = $comment;
         $reviewDetail->review_id = $review->id;
         $reviewDetail->user_id = Auth::id();
         $reviewDetail->buddhist_id = $request->buddhist_id;
@@ -101,8 +104,12 @@ class ReviewController extends Controller
          ])->first();
          if($review)
          {
+            $comment = "";
+            if($request->has("comment")){
+                $comment = $request->comment;
+            }
             $review->score = $request->score;
-            $review->comment = $request->comment;
+            $review->comment = $comment;
             $review->save();
             return response()->json(["message"=>"Update comment successfully"],200);
          }
