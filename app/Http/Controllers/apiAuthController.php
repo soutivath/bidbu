@@ -267,11 +267,11 @@ class apiAuthController extends Controller
             "fcm_token" => "required",
             "firebase_token" => "required",
             "picture" => "required|string",
-            "gender" => [
-                "required",
-                Rule::in([GenderEnum::MALE, GenderEnum::FEMALE]),
-            ],
-            "date_of_birth" => "required|date",
+            // "gender" => [
+            //     "required",
+            //     Rule::in([GenderEnum::MALE, GenderEnum::FEMALE]),
+            // ],
+            // "date_of_birth" => "required|date",
             "email_address" => "required|email:rfc,dns,filter"
         ]);
 
@@ -356,8 +356,8 @@ class apiAuthController extends Controller
         $user->password = $password;
         $user->picture = $request->picture;
         $user->topic = "notification_topic_" . $uid . time();
-        $user->gender = $request->gender;
-        $user->date_of_birth = Carbon::parse($request->date_of_birth)->format('Y-m-d');
+       // $user->gender = $request->gender;
+       // $user->date_of_birth = Carbon::parse($request->date_of_birth)->format('Y-m-d');
 
         if (filter_var($request->email_address, FILTER_VALIDATE_EMAIL)) {
             $user->email_address = $request->email_address;
