@@ -112,6 +112,15 @@ class BuddhistController extends Controller
             'fcm_token' => 'required|string',
             'minimum_price'=>'required|integer'
         ]);
+
+        if(!Auth::user()->verify()->exists()||!Auth::user()->verify->checkIfVerifyFile()){
+            return response()->json([
+                "data"=>[],
+                "success"=>false,
+                "message"=>"Please verify your account before continuing"
+            ],403);   
+        }
+        
         $messaging = app('firebase.messaging');
         $androidConfig = AndroidConfig::fromArray([
             'ttl' => '3600s',
@@ -315,13 +324,7 @@ class BuddhistController extends Controller
             'buddhist_id' => 'required|string',
         ]);
 
-        if(!Auth::user()->verify()->exists()||!Auth::user()->verify->checkIfVerifyFile()){
-            return response()->json([
-                "data"=>[],
-                "success"=>false,
-                "message"=>"Please verify your account before continuing"
-            ],403);   
-        }
+   
 
 
         if (Auth::user()->hasRole("admin") || Auth::user()->hasRole("superadmin")) {
