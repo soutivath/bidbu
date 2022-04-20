@@ -68,7 +68,7 @@ class BiddingController extends Controller
             $database = app('firebase.database');
 
 
-            $reference = $database->getReference('buddhist/6/')
+            $reference = $database->getReference('buddhist/.'.$buddhist_id.'/')
                 ->orderByChild('price')
                 ->limitToLast(2)
                 ->getSnapshot()
