@@ -133,7 +133,7 @@ class BiddingController extends Controller
             //delete current user from firebase
 
             try {
-                $currentUserToBeDeleted = $database->getReference("buddhist/6/" . $currentUserKey);
+                $currentUserToBeDeleted = $database->getReference("buddhist/".$buddhist_id."/" . $currentUserKey);
                 $database->runTransaction(function (Transaction $transaction) use ($currentUserToBeDeleted) {
                     $transaction->snapshot($currentUserToBeDeleted);
                     $transaction->remove($currentUserToBeDeleted);
