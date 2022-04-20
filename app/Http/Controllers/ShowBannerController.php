@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Constants\QueryConstant;
 use App\Http\Resources\BannerResource;
 use App\Models\Banner;
 use App\Models\BannerTran;
@@ -176,6 +177,23 @@ class ShowBannerController extends Controller
 
     public function getAll(Request $request)
     {
+
+        $perPage = QueryConstant::PERPAGE_PAGINATE_DEFAULT;
+       
+        if($request->has("perPage")){
+            $convertedPerPage = (int)$request->perPage;
+           
+
+
+            if($convertedPerPage!=0){
+                $perPage = (int)$request->perPage;
+            }
+
+            if($convertedPerPage>50){
+                $perPage = (int)$request->perPage;
+            }
+        }
+
         $banners = [];
 
         if ($request->input("language")) {
@@ -186,7 +204,7 @@ class ShowBannerController extends Controller
                     "banner_trans" => function ($query) use ($languageID) {
                         $query->where("language_id", $languageID->id);
                     }
-                ])->paginate(30);
+                ])->paginate($perPage);
             }
         }
         if ($banners == null || count($banners) == 0) {
@@ -194,16 +212,31 @@ class ShowBannerController extends Controller
                 "banner_trans" => function ($query) {
                     $query->where("language_id", 1);
                 }
-            ])->paginate(30);
+            ])->paginate($perPage);
         }
 
         return BannerResource::collection($banners);
     }
 
-    public function show($banner_id)
+    public function show(Request $request,$banner_id)
     {
+        $perPage = QueryConstant::PERPAGE_PAGINATE_DEFAULT;
+       
+        if($request->has("perPage")){
+            $convertedPerPage = (int)$request->perPage;
+           
+
+
+            if($convertedPerPage!=0){
+                $perPage = (int)$request->perPage;
+            }
+
+            if($convertedPerPage>50){
+                $perPage = (int)$request->perPage;
+            }
+        }
         try {
-            $banner = Banner::where("id", $banner_id)->with("banner_trans")->paginate(30);
+            $banner = Banner::where("id", $banner_id)->with("banner_trans")->paginate($perPage);
             return response()->json([
                 "data" => $banner
             ]);
@@ -239,8 +272,24 @@ class ShowBannerController extends Controller
 
     public function viewActiveBanner(Request $request)
     {
+        
 
         $banners = null;
+        $perPage = QueryConstant::PERPAGE_PAGINATE_DEFAULT;
+       
+        if($request->has("perPage")){
+            $convertedPerPage = (int)$request->perPage;
+           
+
+
+            if($convertedPerPage!=0){
+                $perPage = (int)$request->perPage;
+            }
+
+            if($convertedPerPage>50){
+                $perPage = (int)$request->perPage;
+            }
+        }
 
         if ($request->input("language")) {
             $language = $request->input("language");
@@ -250,7 +299,7 @@ class ShowBannerController extends Controller
                     "banner_trans" => function ($query) use ($languageID) {
                         $query->where("language_id", $languageID->id);
                     }
-                ])->paginate(30);
+                ])->paginate($perPage);
             }
         }
         if ($banners == null || $banners->count() == 0) {
@@ -258,7 +307,7 @@ class ShowBannerController extends Controller
                 "banner_trans" => function ($query) {
                     $query->where("language_id", 1);
                 }
-            ])->paginate(30);
+            ])->paginate($perPage);
         }
 
         return BannerResource::collection($banners);
@@ -269,6 +318,21 @@ class ShowBannerController extends Controller
     public function viewNonActiveBanner(Request $request)
     {
         $banners = null;
+        $perPage = QueryConstant::PERPAGE_PAGINATE_DEFAULT;
+       
+        if($request->has("perPage")){
+            $convertedPerPage = (int)$request->perPage;
+           
+
+
+            if($convertedPerPage!=0){
+                $perPage = (int)$request->perPage;
+            }
+
+            if($convertedPerPage>50){
+                $perPage = (int)$request->perPage;
+            }
+        }
 
         if ($request->input("language")) {
             $language = $request->input("language");
@@ -278,7 +342,7 @@ class ShowBannerController extends Controller
                     "banner_trans" => function ($query) use ($languageID) {
                         $query->where("language_id", $languageID->id);
                     }
-                ])->paginate(30);
+                ])->paginate($perPage);
             }
         }
         if ($banners == null || $banners->count() == 0) {
@@ -286,7 +350,7 @@ class ShowBannerController extends Controller
                 "banner_trans" => function ($query) {
                     $query->where("language_id", 0);
                 }
-            ])->paginate(30);
+            ])->paginate($perPage);
         }
 
         return BannerResource::collection($banners);

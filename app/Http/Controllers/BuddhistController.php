@@ -20,6 +20,8 @@ use Kreait\Firebase\Messaging\CloudMessage;
 use Kreait\Firebase\Messaging\Notification;
 use Kreait\Firebase\Messaging\AndroidConfig;
 
+use App\Constants\QueryConstant;
+
 class BuddhistController extends Controller
 {
     /**
@@ -34,16 +36,31 @@ class BuddhistController extends Controller
     }
     public function index(Request $request)
     {
+        $perPage = QueryConstant::PERPAGE_PAGINATE_DEFAULT;
+       
+        if($request->has("perPage")){
+            $convertedPerPage = (int)$request->perPage;
+           
+
+
+            if($convertedPerPage!=0){
+                $perPage = (int)$request->perPage;
+            }
+
+            if($convertedPerPage>30){
+                $perPage = (int)$request->perPage;
+            }
+        }
 
         if ($request->input("search")) {
             $bud = Buddhist::where([
                 ['end_time', '>', Carbon::now()], ["active", "1"], ["name", "LIKE", "%" . $request->input("search") . "%"],
-            ])->with('type')->orderBy("created_at", "desc")->paginate(5);
+            ])->with('type')->orderBy("created_at", "desc")->paginate($perPage);
             return BuddhistResource::collection($bud);
 
         } else {
 
-            $bud = Buddhist::where([['end_time', '>', Carbon::now()], ["active", "1"]])->with('type')->orderBy("created_at", "desc")->paginate(5);
+            $bud = Buddhist::where([['end_time', '>', Carbon::now()], ["active", "1"]])->with('type')->orderBy("created_at", "desc")->paginate($perPage);
             return BuddhistResource::collection($bud);
 
         }
@@ -541,72 +558,164 @@ class BuddhistController extends Controller
         }
     }
 
-    public function buddhistType($type_id)
+    public function buddhistType(Request $request,$type_id)
     {
+        $perPage = QueryConstant::PERPAGE_PAGINATE_DEFAULT;
+       
+        if($request->has("perPage")){
+            $convertedPerPage = (int)$request->perPage;
+           
 
-        $buddhists = Buddhist::where([['type_id', $type_id], ['end_time', '>', Carbon::now()], ["active", "1"]])->paginate(5);
+
+            if($convertedPerPage!=0){
+                $perPage = (int)$request->perPage;
+            }
+
+            if($convertedPerPage>30){
+                $perPage = (int)$request->perPage;
+            }
+        }
+
+        $buddhists = Buddhist::where([['type_id', $type_id], ['end_time', '>', Carbon::now()], ["active", "1"]])->paginate($perPage);
 
         return buddhistCollection::collection($buddhists);
     }
 
     public function recommendedBuddhist(Request $request, $type_id, $buddhist_id)
     {
+        $perPage = QueryConstant::PERPAGE_PAGINATE_DEFAULT;
+       
+        if($request->has("perPage")){
+            $convertedPerPage = (int)$request->perPage;
+           
+
+
+            if($convertedPerPage!=0){
+                $perPage = (int)$request->perPage;
+            }
+
+            if($convertedPerPage>30){
+                $perPage = (int)$request->perPage;
+            }
+        }
         $buddhist = Buddhist::where([
             ['end_time', '>', Carbon::now()],
             ['type_id', '=', $type_id],
             ['id', '!=', $buddhist_id],
             ["active", "1"],
-        ])->with('type')->orderBy("created_at", "desc")->paginate(5)->shuffle();
+        ])->with('type')->orderBy("created_at", "desc")->paginate($perPage)->shuffle();
         return BuddhistResource::collection($buddhist);
 
     }
 
-    public function almostEnd()
+    public function almostEnd(Request $request)
     {
-        $bud = Buddhist::where([['end_time', '>', Carbon::now()], ["active", "1"]])->with('type')->orderBy("end_time")->paginate(5);
+        $perPage = QueryConstant::PERPAGE_PAGINATE_DEFAULT;
+       
+        if($request->has("perPage")){
+            $convertedPerPage = (int)$request->perPage;
+           
+
+
+            if($convertedPerPage!=0){
+                $perPage = (int)$request->perPage;
+            }
+
+            if($convertedPerPage>30){
+                $perPage = (int)$request->perPage;
+            }
+        }
+        $bud = Buddhist::where([['end_time', '>', Carbon::now()], ["active", "1"]])->with('type')->orderBy("end_time")->paginate($perPage);
         return BuddhistResource::collection($bud);
     }
-    public function myActiveBuddhist()
+    public function myActiveBuddhist(Request $request)
     {
+        $perPage = QueryConstant::PERPAGE_PAGINATE_DEFAULT;
+       
+        if($request->has("perPage")){
+            $convertedPerPage = (int)$request->perPage;
+           
+
+
+            if($convertedPerPage!=0){
+                $perPage = (int)$request->perPage;
+            }
+
+            if($convertedPerPage>30){
+                $perPage = (int)$request->perPage;
+            }
+        }
+
         $buddhist = Buddhist::where([
             ["active", "1"],
             ["user_id", Auth::id()],
             ["end_time", '>', Carbon::now()],
 
-        ])->orderBy("end_time")->paginate(30);
+        ])->orderBy("end_time")->paginate($perPage);
         if (empty($buddhist)) {
             return response()->json(["message" => "No data found"], 200);
         }
         return BuddhistResource::collection($buddhist);
 
     }
-    public function mySoldOutBuddhist()
+    public function mySoldOutBuddhist(Request $request)
     {
+        $perPage = QueryConstant::PERPAGE_PAGINATE_DEFAULT;
+       
+        if($request->has("perPage")){
+            $convertedPerPage = (int)$request->perPage;
+           
+
+
+            if($convertedPerPage!=0){
+                $perPage = (int)$request->perPage;
+            }
+
+            if($convertedPerPage>30){
+                $perPage = (int)$request->perPage;
+            }
+        }
         $buddhist = Buddhist::where([
             ["winner_user_id", "!=", "empty"],
             ["end_time", '<', Carbon::now()],
             ["user_id", Auth::id()],
-        ])->orderBy("end_time")->paginate(30);
+        ])->orderBy("end_time")->paginate($perPage);
         if (empty($buddhist)) {
             return response()->json(["message" => "No data found"], 200);
         }
         return BuddhistResource::collection($buddhist);
 
     }
-    public function myNonSoldOutBuddhist()
+    public function myNonSoldOutBuddhist(Request $request)
     {
+        $perPage = QueryConstant::PERPAGE_PAGINATE_DEFAULT;
+       
+        if($request->has("perPage")){
+            $convertedPerPage = (int)$request->perPage;
+           
+
+
+            if($convertedPerPage!=0){
+                $perPage = (int)$request->perPage;
+            }
+
+            if($convertedPerPage>30){
+                $perPage = (int)$request->perPage;
+            }
+        }
+
         $buddhist = Buddhist::where([
             ["user_id", Auth::id()],
             ["end_time", '<', Carbon::now()],
             ["winner_user_id", "empty"],
-        ])->orderBy("end_time")->paginate(30);
+        ])->orderBy("end_time")->paginate($perPage);
         if (empty($buddhist)) {
             return response()->json(["message" => "No data found"], 200);
         }
         return BuddhistResource::collection($buddhist);
 
     }
-    public function biddingLose()
+    public function biddingLose(Request $request)
     {
         #check if it's not your buddhist
         #get UID last from firebase
@@ -618,6 +727,22 @@ class BuddhistController extends Controller
          * ້ເບິ່ງກ່່ອນວ່າມຶງປິມູນພະນັ່ນບໍ່
          * ກວດເວລາຫມົດກັບຜູ້ຊະນະ
          */
+        $perPage = QueryConstant::PERPAGE_PAGINATE_DEFAULT;
+       
+        if($request->has("perPage")){
+            $convertedPerPage = (int)$request->perPage;
+           
+
+
+            if($convertedPerPage!=0){
+                $perPage = (int)$request->perPage;
+            }
+
+            if($convertedPerPage>30){
+                $perPage = (int)$request->perPage;
+            }
+        }
+
 
         $data = DB::table('notification')->leftJoin("buddhists", "buddhists.id", "=", "notification.buddhist_id")
             ->where([
@@ -628,17 +753,32 @@ class BuddhistController extends Controller
             ])
             ->select("buddhists.id", "buddhists.name", "buddhists.highest_price", "buddhists.image_path", "buddhists.end_time", "buddhists.highBidUser", "buddhists.place")
             ->distinct()
-            ->paginate(30);
+            ->paginate($perPage);
 
         return participantBiddingResource::collection($data);
 
     }
-    public function biddingWin()
+    public function biddingWin(Request $request)
     {
+        $perPage = QueryConstant::PERPAGE_PAGINATE_DEFAULT;
+       
+        if($request->has("perPage")){
+            $convertedPerPage = (int)$request->perPage;
+           
+
+
+            if($convertedPerPage!=0){
+                $perPage = (int)$request->perPage;
+            }
+
+            if($convertedPerPage>30){
+                $perPage = (int)$request->perPage;
+            }
+        }
         $buddhist = Buddhist::where([
             ["end_time", '<', Carbon::now()],
             ["winner_user_id", Auth::user()->firebase_uid],
-        ])->paginate(30);
+        ])->paginate($perPage);
         if (empty($buddhist)) {
             return response()->json(["message" => "No data found"], 200);
         }
@@ -655,8 +795,24 @@ class BuddhistController extends Controller
         return new checkBuddhistResultResource($buddhist);
     }
 
-    public function participantBidding()
+    public function participantBidding(Request $request)
     {
+        $perPage = QueryConstant::PERPAGE_PAGINATE_DEFAULT;
+       
+        if($request->has("perPage")){
+            $convertedPerPage = (int)$request->perPage;
+           
+
+
+            if($convertedPerPage!=0){
+                $perPage = (int)$request->perPage;
+            }
+
+            if($convertedPerPage>30){
+                $perPage = (int)$request->perPage;
+            }
+        }
+
         $data = DB::table('notification')->leftJoin("buddhists", "buddhists.id", "=", "notification.buddhist_id")
             ->where([
                 ['buddhists.end_time', '>', Carbon::now()],
@@ -665,20 +821,35 @@ class BuddhistController extends Controller
             ->whereIn("notification_type", ["bidding_participant"])
             ->select("buddhists.id", "buddhists.name", "buddhists.highest_price", "buddhists.image_path", "buddhists.end_time", "buddhists.highBidUser", "buddhists.place")
             ->distinct()
-            ->paginate(30);
+            ->paginate($perPage);
 
         return participantBiddingResource::collection($data);
     }
 
-    public function countByFavorite()
+    public function countByFavorite(Request $request)
     {
+        $perPage = QueryConstant::PERPAGE_PAGINATE_DEFAULT;
+       
+        if($request->has("perPage")){
+            $convertedPerPage = (int)$request->perPage;
+           
+
+
+            if($convertedPerPage!=0){
+                $perPage = (int)$request->perPage;
+            }
+
+            if($convertedPerPage>30){
+                $perPage = (int)$request->perPage;
+            }
+        }
         $data = Buddhist::select(['buddhists.id', 'buddhists.name', 'buddhists.price', 'buddhists.highest_price', 'buddhists.place', 'buddhists.end_time', 'buddhists.image_path', 'buddhists.type_id', DB::raw('count(favourites.id) as total')])
             ->leftJoin('favourites', 'buddhists.id', '=', 'favourites.buddhist_id')
             ->with("type")
             ->where('buddhists.end_time', '>', Carbon::now())
             ->groupBy('buddhists.id')
             ->orderBy('total', 'DESC')
-            ->paginate(30);
+            ->paginate($perPage);
 
         return BuddhistResource::collection($data);
 

@@ -214,7 +214,7 @@ Route::post("remove_lasted_bid/{id}",[App\Http\Controllers\BiddingController::cl
 Route::get("load_verify_image/{folder}/{image_name}",[App\Http\Controllers\PrivateController::class,"getImageFileVerify"])->where(['image_name'=>'^([A-z0-9-_+]+\/)*([A-z0-9-\.]+)(\?\d+)?$']);
 Route::post("get_custom_token",[App\Http\Controllers\apiAuthController::class,"getCustomToken"]);
 
-
+Route::get("kong_dee_center",[App\Http\Controllers\ShowItemSectionController::class,"kongDeeCenter"]);
 
 
 

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Constants\QueryConstant;
 use App\Http\Resources\NotificationResource;
 use App\Models\Buddhist;
 use App\Models\NotificationFirebase;
@@ -23,15 +24,31 @@ class notificationController extends Controller
         $this->middleware('isUserActive:api');
     }
 
-    public function biddingNotification()
+    public function biddingNotification(Request $request)
     {
+        $perPage = QueryConstant::PERPAGE_PAGINATE_DEFAULT;
+       
+        if($request->has("perPage")){
+            $convertedPerPage = (int)$request->perPage;
+           
+
+
+            if($convertedPerPage!=0){
+                $perPage = (int)$request->perPage;
+            }
+
+            if($convertedPerPage>30){
+                $perPage = (int)$request->perPage;
+            }
+        }
+        
         $data = NotificationFirebase::select(['notification.buddhist_id', 'buddhists.name', 'buddhists.image_path', 'notification.data', 'notification.notification_time', 'notification.read', 'notification.comment_path'])
             ->leftJoin('buddhists', 'buddhists.id', '=', 'notification.buddhist_id')
             ->where([['buddhists.end_time', '>', Carbon::now()],
                 ["notification.user_id", Auth::user()->id],
                 ["notification.notification_type", "bidding_participant"]])
             ->orderBy("notification.created_at", "desc")
-            ->paginate(30);
+            ->paginate($perPage);
 
         /* $data = NotificationFirebase::where([
         ["user_id", Auth::id()],
@@ -54,10 +71,26 @@ class notificationController extends Controller
     }
 
     //get message notification
-    public function messageNotification()
+    public function messageNotification(Request $request)
     {
+        $perPage = QueryConstant::PERPAGE_PAGINATE_DEFAULT;
+       
+        if($request->has("perPage")){
+            $convertedPerPage = (int)$request->perPage;
+           
+
+
+            if($convertedPerPage!=0){
+                $perPage = (int)$request->perPage;
+            }
+
+            if($convertedPerPage>30){
+                $perPage = (int)$request->perPage;
+            }
+        }
+
         $data = NotificationFirebase::where("user_id", Auth::id())
-            ->whereIn("notification_type", ["message_participant", "reply","result_message"])->orderBy("created_at", "desc")->paginate(30);
+            ->whereIn("notification_type", ["message_participant", "reply","result_message"])->orderBy("created_at", "desc")->paginate($perPage);
         if (empty($data)) {
             return response()->json([
                 "message" => "no notification",
@@ -76,14 +109,32 @@ class notificationController extends Controller
 
     }
 
-    public function biddingResultNotification()
+    public function biddingResultNotification(Request $request)
     {
+
+        $perPage = QueryConstant::PERPAGE_PAGINATE_DEFAULT;
+       
+        if($request->has("perPage")){
+            $convertedPerPage = (int)$request->perPage;
+           
+
+
+            if($convertedPerPage!=0){
+                $perPage = (int)$request->perPage;
+            }
+
+            if($convertedPerPage>30){
+                $perPage = (int)$request->perPage;
+            }
+        }
+        
+
         $data = NotificationFirebase::where([
             ["user_id", Auth::id()],
             //  ["notification_type", "bidding_result"],
         ])
             ->whereIn("notification_type", ["bidding_result", "owner_result"])
-            ->orderBy("created_at", "desc")->paginate(30);
+            ->orderBy("created_at", "desc")->paginate($perPage);
         if (empty($data)) {
             return response()->json([
                 "message" => "no notification",

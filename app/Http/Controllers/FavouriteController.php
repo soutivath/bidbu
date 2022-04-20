@@ -7,7 +7,7 @@ use App\Models\favourite;
 use Auth;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-
+use App\Constants\QueryConstant;
 class FavouriteController extends Controller
 {
     /**
@@ -23,8 +23,23 @@ class FavouriteController extends Controller
 
     }
 
-    public function index()
+    public function index(Request $request)
     {
+        $perPage = QueryConstant::PERPAGE_PAGINATE_DEFAULT;
+       
+        if($request->has("perPage")){
+            $convertedPerPage = (int)$request->perPage;
+           
+
+
+            if($convertedPerPage!=0){
+                $perPage = (int)$request->perPage;
+            }
+
+            if($convertedPerPage>30){
+                $perPage = (int)$request->perPage;
+            }
+        }
         /* $favorite = favourite::where(
         'user_id', Auth::id()
         )->with('buddhist')->orderBy("created_at", "desc")->get();*/
@@ -34,7 +49,7 @@ class FavouriteController extends Controller
                 ['favourites.user_id',Auth::id()]])
             ->with("buddhist")
             ->orderBy("favourites.created_at", "desc")
-            ->paginate(30);
+            ->paginate($perPage);
         if (empty($favorite)) {
             return response()->json([
                 "message" => "no favorite yet",
