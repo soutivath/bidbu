@@ -210,7 +210,7 @@ class BiddingController extends Controller
                 "data" => [],
                 "message" => "Lasted bid was removed successfully",
                 "success" => true,
-            ], 500);
+            ], 200);
         } catch (\Exception $e) {
             DB::rollback();
             return response()->json([
