@@ -24,6 +24,7 @@ class Verify extends Model
     }
 
     public function checkIfVerifyFile(){
+       
         if($this->file_verify_status==VerifyStatus::APPROVED){
             return true;
         }

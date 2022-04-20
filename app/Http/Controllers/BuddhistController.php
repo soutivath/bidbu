@@ -308,12 +308,20 @@ class BuddhistController extends Controller
 
     public function bidding(Request $request)
     {
-
+       
         $request->validate([
             'bidding_price' => 'required|numeric|gt:0',
             'fcm_token' => 'required|string',
             'buddhist_id' => 'required|string',
         ]);
+
+        if(!Auth::user()->verify()->exists()||!Auth::user()->verify->checkIfVerifyFile()){
+            return response()->json([
+                "data"=>[],
+                "success"=>false,
+                "message"=>"Please verify your account before continuing"
+            ],403);   
+        }
 
 
         if (Auth::user()->hasRole("admin") || Auth::user()->hasRole("superadmin")) {
