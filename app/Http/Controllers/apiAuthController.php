@@ -22,6 +22,26 @@ class apiAuthController extends Controller
         $this->middleware('auth:api')->only(['logOut', "checkToken"]);
     }
 
+    public function getCustomToken(Request $request){
+        $request->validate([
+            'phone_number' => 'required|string|exists:users,phone_number',
+            'password' => 'required|string|min:6|max:18',
+        ]);
+        if (Auth::attempt(['phone_number' => $request->phone_number, 'password' => $request->password])) {
+            $user = User::where(["phone_number"=>$request->phone_number])->first();
+            $auth = app('firebase.auth');
+            $firebase_uid = $user->firebase_uid;
+            $customToken = $auth->createCustomToken($firebase_uid);
+            return response()->json(["data"=>$customToken->toString(),"message"=>"get data successfully","success"=>true],200);
+        }
+        else{
+            return response()->json(["data"=>[],"message"=>"unauthorized","success"=>false],401);
+        }
+
+     
+
+    }
+
     public function login(Request $request)
     {
 

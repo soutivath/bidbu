@@ -332,12 +332,27 @@ class BuddhistController extends Controller
                 ->getSnapshot();
             $data = $reference1->getValue();
 
+
+          
+
+
             if ((int) $request->bidding_price > (int) $highest_price) {
                 if ((int) $request->bidding_price - (int) $highest_price < (int) $bud->priceSmallest) {
                     return response()->json([
                         "message" => "ຂັ້ນຕ່ຳໃນການປະມູນແມ່ນ " . $bud->priceSmallest . " ກີບ",
                     ]);
                 }
+                $maximunPrice = ($bud->highest_price*10000)/100;
+                if ((int) $request->bidding_price > (int) $maximunPrice) {
+                    return response()->json([
+                        "message" => "ລາຄາບໍ່ຄວນເກີນ 10000% ຂອງລາຄາຫຼ້າສຸດ",
+                    ]);
+                }
+
+
+
+
+
                 $reference = $database->getReference('buddhist/' . $bud->id . '/')
                     ->push([
                         'uid' => Auth::user()->firebase_uid, //bidder id
