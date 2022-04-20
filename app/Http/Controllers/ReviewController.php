@@ -37,6 +37,11 @@ class ReviewController extends Controller
             ],404);
         }
         $winnerUser = User::findOrFail($buddhist->highBidUser);
+        return response()->json([
+            "current_auth_id"=>Auth::id(),
+            "winner_id"=>$winnerUser->id,
+            "owner_id"=>$buddhist->user_id
+        ]);
         if(Carbon::now()->lessThan(Carbon::now()->parse($buddhist->end_time)))
         {
             return response()->json(["message"=>"This item not expired yet."],400);
