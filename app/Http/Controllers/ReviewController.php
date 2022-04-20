@@ -41,7 +41,9 @@ class ReviewController extends Controller
         {
             return response()->json(["message"=>"This item not expired yet."],400);
         }
-        if(Auth::id()!=$winnerUser->id || Auth::id()!=$buddhist->user_id )
+     
+
+        if(Auth::id()!=$winnerUser->id && Auth::id()!=$buddhist->user_id )
         {
             return response()->json(["message"=>"You are not a winner or owner."],400);
         }
