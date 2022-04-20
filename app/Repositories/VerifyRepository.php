@@ -104,6 +104,13 @@ class VerifyRepository implements VerifyInterface
            
             $checkIfVerifyIsExisting = Verify::where("user_id", Auth::id())->first();
             if ($checkIfVerifyIsExisting) {
+                if($checkIfVerifyIsExisting->file_verify_status==VerifyStatus::APPROVED){
+                    return response()->json([
+                        "data"=>[],
+                        "message"=>"This account is already verified",
+                        "success"=>false
+                    ],400);
+                }
                 $oldFilePath = $checkIfVerifyIsExisting->file_folder_path;
                
                 $checkIfVerifyIsExisting->file_type = $request->verify_type;
@@ -454,8 +461,17 @@ class VerifyRepository implements VerifyInterface
 
             $verify = Verify::where("user_id", Auth::id())->first();
             if ($verify) {
+
+                $currentVerifyStatus = "";
+                if($verify->address_verify_status==VerifyStatus::APPROVED){
+                    $currentVerifyStatus=VerifyStatus::APPROVED;
+                }else{
+                    $currentVerifyStatus=VerifyStatus::PENDING;
+                }
+
+
                 $verify->address = $request->address;
-                $verify->address_verify_status = VerifyStatus::PENDING;
+                $verify->address_verify_status = $currentVerifyStatus;
                 $verify->save();
             } else {
                 $verify = new Verify();

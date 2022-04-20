@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
+use App\Enums\VerifyStatus;
 class Verify extends Model
 {
     use HasFactory;
@@ -20,5 +21,12 @@ class Verify extends Model
         return file(base_path("resources/private/verify"));
         return Config("values.APP_URL") . ":" . $_SERVER["SERVER_PORT"] .
         "/" . "verification_images/" . $this->file_folder_path;
+    }
+
+    public function checkIfVerifyFile(){
+        if($this->file_verify_status==VerifyStatus::APPROVED){
+            return true;
+        }
+        return false;
     }
 }
