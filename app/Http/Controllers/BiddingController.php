@@ -24,7 +24,7 @@ class BiddingController extends Controller
 
     public function removeLastedBidItem(Request $request, $buddhist_id)
     {
-        
+      
         $request->validate([
             "price"=>"required|integer",
             "id"=>"required|integer|exists:users,id",
@@ -45,6 +45,7 @@ class BiddingController extends Controller
 
         try {
             $isItemExisting = Buddhist::findOrFail($buddhist_id);
+          
             if (!$isItemExisting) {
                 return response()->json([
                     "data" => [],
@@ -52,6 +53,7 @@ class BiddingController extends Controller
                     "success" => false,
                 ], 404);
             }
+          
 
             if (Carbon::now()->greaterThan(Carbon::now()->parse($isItemExisting->end_time))) {
                 return response()->json(["message" => "This item is expired."], 400);
@@ -65,15 +67,31 @@ class BiddingController extends Controller
                 ], 403);
             }
 
+            if($isItemExisting->user_id==$isItemExisting->highBidUser){
+                return response()->json([
+                    "data" => [],
+                    "message" => "This is lasted price",
+                    "success" => false,
+                ], 400);
+            }
+
+
             $database = app('firebase.database');
 
 
-            $reference = $database->getReference('buddhist/.'.$buddhist_id.'/')
+            $reference = $database->getReference('buddhist/'.$buddhist_id.'/')
                 ->orderByChild('price')
                 ->limitToLast(2)
                 ->getSnapshot()
                 ->getValue();
-
+                
+                if($reference==null){
+                    return response()->json([
+                        "data"=>[],
+                        "success" => false,
+                        "message" => "No data found"
+                    ]);
+                }
 
 
             $keys   = array_keys($reference);
@@ -82,11 +100,27 @@ class BiddingController extends Controller
             $previousUserKey = $keys[0];
             $previousUserValue = $values[0];
 
+           
+
             $currentUserKey = $keys[1];
             $currentUserValue = $values[1];
 
+            $previousPrice = $previousUserValue["price"];
+            $highBidUser = 0;
+            $previous_winner_user_id= "";
+
+
+            if($previousUserValue["uid"]==Auth::user()->firebase_uid){
+              
+            $highBidUser = Auth::id();
+            $previous_winner_user_id= "empty";
+            }else{
+                $highBidUser = $previousUserValue["id"];
+                $previous_winner_user_id= $previousUserValue["uid"];
+            }
+
             //check match uid
-            if(!($isItemExisting->winner_user_id==$currentUserValue->uid&&$isItemExisting->winner_user_id==$request->firebase_uid)){
+            if(!($isItemExisting->winner_user_id==$currentUserValue["uid"]&&$isItemExisting->winner_user_id==$request->firebase_uid)){
                 return response()->json([
                     "data" => [],
                     "message" => "UID not match please try again",
@@ -95,7 +129,7 @@ class BiddingController extends Controller
             }
 
             //check match price
-            if(!($isItemExisting->highest_price==$currentUserValue->price&&$isItemExisting->highest_price==$request->price)){
+            if(!($isItemExisting->highest_price==$currentUserValue["price"]&&$isItemExisting->highest_price==$request->price)){
                 return response()->json([
                     "data" => [],
                     "message" => "Price not match please try again",
@@ -104,7 +138,7 @@ class BiddingController extends Controller
             }
 
             //check match id
-            if(!($isItemExisting->highBidUser==$currentUserValue->id&&$isItemExisting->highBidUser==$request->id)){
+            if(!($isItemExisting->highBidUser==$currentUserValue["id"]&&$isItemExisting->highBidUser==$request->id)){
                 return response()->json([
                     "data" => [],
                     "message" => "ID not match please try again",
@@ -112,11 +146,14 @@ class BiddingController extends Controller
                 ], 500);
             }
 
+           
+         
+         
 
-            $isItemExisting->highest_price = $previousUserValue->price;
+            $isItemExisting->highest_price =(int) $previousPrice;
             $isItemExisting->winner_fcm_token = "rollback";
-            $isItemExisting->highBidUser = $previousUserValue->id;
-            $isItemExisting->winner_user_id = $previousUserValue->uid;
+            $isItemExisting->highBidUser = (int)$highBidUser;
+            $isItemExisting->winner_user_id = $previous_winner_user_id;
             $isItemExisting->save();
 
 
@@ -127,7 +164,7 @@ class BiddingController extends Controller
                 ->update([
                     //'notification_type' => "bidding_participant",
                     'notification_time' => date('Y-m-d H:i:s'),
-                    'data' => $previousUserValue->price,
+                    'data' => $previousUserValue["price"],
                     'read' => 0,
                 ]);
             //delete current user from firebase
@@ -157,7 +194,7 @@ class BiddingController extends Controller
             $message = CloudMessage::withTarget("topic", $isItemExisting->topic)
                 ->withNotification(Notification::fromArray([
                     'title' => 'ຈາກ ຂອງດີ',
-                    'body' => 'ເຈົ້າຂອງສິນຄ້າຍົກເລີກການປະມູນຂອງ '.$currentUserValue->name.' ຕອນນີ້ລາຄາຢູ່ທີ່ '.$previousUserValue->price,
+                    'body' => 'ເຈົ້າຂອງສິນຄ້າຍົກເລີກການປະມູນຂອງ '.$currentUserValue["name"].' ຕອນນີ້ລາຄາຢູ່ທີ່ '.$previousUserValue["price"],
                     'image' => \public_path("/notification_images/chat.png"),
                 ]))
                 ->withData([
@@ -176,6 +213,9 @@ class BiddingController extends Controller
             ], 500);
         } catch (\Exception $e) {
             DB::rollback();
+            return response()->json([
+                'message' => $e->getMessage(),
+            ], 500);
         }
     }
 }
