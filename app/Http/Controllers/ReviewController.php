@@ -28,7 +28,8 @@ class ReviewController extends Controller
             ],400);
         }
         
-        $buddhist = Buddhist::find($request->buddhist_id)->first();
+        $buddhist = Buddhist::find($request->buddhist_id);
+       
         if(!$buddhist){
             return response()->json([
                 "data"=>[],
@@ -36,6 +37,16 @@ class ReviewController extends Controller
                 "message"=>"Item not found"
             ],404);
         }
+
+        if($buddhist->user_id==$buddhist->highBidUser){
+            return response()->json([
+                "data"=>[],
+                "success"=>false,
+                "message"=>"No participant can't write a review"
+            ],400);
+        }
+
+
         $winnerUser = User::findOrFail($buddhist->highBidUser);
         return response()->json([
             "current_auth_id"=>Auth::id(),
