@@ -216,43 +216,7 @@ Route::post("get_custom_token",[App\Http\Controllers\apiAuthController::class,"g
 
 Route::get("kong_dee_center",[App\Http\Controllers\ShowItemSectionController::class,"kongDeeCenter"]);
 
-use Illuminate\Support\Facades\Auth;
-use App\Models\Buddhist;
-use App\Models\User;
-Route::get("get_winner_id",function(Request $request){
-    
 
-    
-    $buddhist = Buddhist::find(11);
-    return response()->json(["data"=>$buddhist]);
-    dd($buddhist);
-    if(!$buddhist){
-        return response()->json([
-            "data"=>[],
-            "success"=>false,
-            "message"=>"Item not found"
-        ],404);
-    }
-    $winnerUser = User::findOrFail($buddhist->highBidUser);
-    
-    return response()->json([
-        "current_auth_id"=>Auth::id(),
-        "winner_id"=>$winnerUser->id,
-        "owner_id"=>$buddhist->user_id
-    ]);
-    
- 
-
-    if(Auth::id()!=$winnerUser->id && Auth::id()!=$buddhist->user_id )
-    {
-        return response()->json(["message"=>"You are not a winner or owner."],400);
-    }
-
-
-    
-    return response()->json(["message"=>"Review successfully"],201);
-   
-});
 
 
 
