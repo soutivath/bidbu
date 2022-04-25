@@ -50,10 +50,13 @@ class User extends Authenticatable
     {
         //return $this->where('phone_number', $phone_number)->first();
         if(filter_var($phone_number, FILTER_VALIDATE_EMAIL)){
-         return   $this->where('email_address', $phone_number)->first();
+         return  $this->where('email_address', $phone_number)->first();
+        }
+        else if(is_numeric($phone_number)){
+            return $this->where('phone_number', $phone_number)->first();
         }
         else{
-            return $this->where('phone_number', $phone_number)->first();
+            return $this->where('firebase_uid', $phone_number)->first();
         }
 
        // return $this->where(fn($q) => $q->where('email', $username)->orWhere('phone', $username));

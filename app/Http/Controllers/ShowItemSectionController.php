@@ -15,6 +15,7 @@ class ShowItemSectionController extends Controller
     public function __construct(){
       
     }
+    
 
     public function kongDeeCenter(Request $request){
       

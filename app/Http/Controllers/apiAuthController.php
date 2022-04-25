@@ -292,11 +292,13 @@ class apiAuthController extends Controller
             //     Rule::in([GenderEnum::MALE, GenderEnum::FEMALE]),
             // ],
             // "date_of_birth" => "required|date",
-            "email_address" => "required|email:rfc,dns,filter"
+            "email_address" => "sometimes|email:rfc,dns,filter"
         ]);
-
-        $checkInEmailField = User::where("email_address", $request->email_address)->first();
-        $checkInPhoneNumberField = User::where("phone_number", $request->phone_number)->first();
+        // if($request->has($request->email_address)) {
+        //     $checkInEmailField = User::where("email_address", $request->email_address)->first();
+        // }
+       
+      //  $checkInPhoneNumberField = User::where("phone_number", $request->phone_number)->first();
         
 
 
@@ -330,11 +332,14 @@ class apiAuthController extends Controller
         $uid = $verifiedIdToken->claims()->get('sub');
         $password = bcrypt($uid);
 
-        if ($checkInEmailField || $checkInPhoneNumberField) {
-           $existUser = User::where("firebase_uid",$uid)->first();
-           if(!$existUser) {
-               return response()->json(["data"=>"Data conflict"],500);
-           }
+        $checkExistingUid  = User::where(["firebase_uid",$uid])->first();
+        if ($checkExistingUid) {
+         $credentialData = "";
+         if($request->has("email_address")){
+             $credentialData = $request->email_address;
+         }else{
+             $credentialData = $uid;
+         }
 
             try {
                 $response = $http->post(\Config::get("values.APP_URL") . ':' . \Config::get("values.ANOTHER_PORT") . '/oauth/token', [
@@ -342,13 +347,13 @@ class apiAuthController extends Controller
                         'grant_type' => 'password',
                         'client_id' => \Config::get("values.CLIENT_ID"),
                         'client_secret' => \Config::get("values.CLIENT_SECRET"),
-                        'username' => $request->email_address,
+                        'username' => $credentialData,
                         'password' => $uid,
                     ],
                 ]);
 
 
-                $messaging->subscribeToTopic($existUser->topic, $request->fcm_token);
+                $messaging->subscribeToTopic($checkExistingUid->topic, $request->fcm_token);
                 $messaging->subscribeToTopic(\Config::get("values.GLOBAL_BUDDHIST_TOPIC"), $request->fcm_token);
 
                 return $response->getBody();
@@ -379,12 +384,17 @@ class apiAuthController extends Controller
        // $user->gender = $request->gender;
        // $user->date_of_birth = Carbon::parse($request->date_of_birth)->format('Y-m-d');
 
-        if (filter_var($request->email_address, FILTER_VALIDATE_EMAIL)) {
-            $user->email_address = $request->email_address;
-        } else {
-            $user->phone_number = $request->email_address;
-        }
-        $user->picture = $request->picture;
+       $credentialLogin = "";
+       if($request->has("email_address")){
+           $user->email_address = $request->email_address;
+           $credentialLogin = $request->email_address;
+       }
+       else{
+           $credentialLogin = $uid;
+       }
+
+      
+      //  $user->picture = $request->picture;
         if ($user->save()) {
             $user->attachRole("bond");
            
@@ -394,7 +404,7 @@ class apiAuthController extends Controller
                         'grant_type' => 'password',
                         'client_id' => \Config::get("values.CLIENT_ID"),
                         'client_secret' => \Config::get("values.CLIENT_SECRET"),
-                        'username' => $request->email_address,
+                        'username' => $credentialLogin,
                         'password' => $uid,
                     ],
                 ]);
