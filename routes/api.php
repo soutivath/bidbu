@@ -220,11 +220,11 @@ Route::get("kong_dee_center",[App\Http\Controllers\ShowItemSectionController::cl
 Route::get("mkdir",function(){
     $folderName = uniqid() . "_" . time();
             
-    $base_verify_location = base_path("nice");
+    $base_verify_location = base_path("bruh");
   
     $base_verify_file_location = base_path("resources/private/verify/". $folderName);
     if (!File::isDirectory($base_verify_location)) {
-        File::makeDirectory($base_verify_location,0775, true,true);
+        File::makeDirectory($base_verify_location,0775, true);
     }
  
     return response()->json(["data"=>"successfully"]);
