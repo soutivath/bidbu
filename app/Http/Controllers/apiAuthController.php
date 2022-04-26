@@ -28,7 +28,7 @@ class apiAuthController extends Controller
             'password' => 'required|string|min:6|max:18',
         ]);
         if (Auth::attempt(['phone_number' => $request->phone_number, 'password' => $request->password])) {
-            $user = User::where(["phone_number"=>$request->phone_number])->first();
+            $user = User::where("phone_number",$request->phone_number)->first();
             $auth = app('firebase.auth');
             $firebase_uid = $user->firebase_uid;
             $customToken = $auth->createCustomToken($firebase_uid);
@@ -332,7 +332,7 @@ class apiAuthController extends Controller
         $uid = $verifiedIdToken->claims()->get('sub');
         $password = bcrypt($uid);
 
-        $checkExistingUid  = User::where(["firebase_uid",$uid])->first();
+        $checkExistingUid  = User::where("firebase_uid",$uid)->first();
         if ($checkExistingUid) {
          $credentialData = "";
          if($request->has("email_address")){
