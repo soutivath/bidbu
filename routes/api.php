@@ -217,17 +217,4 @@ Route::post("get_custom_token",[App\Http\Controllers\apiAuthController::class,"g
 
 Route::get("kong_dee_center",[App\Http\Controllers\ShowItemSectionController::class,"kongDeeCenter"]);
 
-Route::get("mkdir",function(){
-    $folderName = uniqid() . "_" . time();
-    $base_verify_location = base_path("resources/private/verify");
-    $base_verify_file_location = base_path("resources/private/verify/". $folderName);
-    if (!File::isDirectory($base_verify_location)) {
-        File::makeDirectory($base_verify_location,0775, true);
-    }
-    if (!File::isDirectory($base_verify_file_location)) {
-        File::makeDirectory($base_verify_file_location,0775, true);
-    }
- 
-    return response()->json(["data"=>"successfully"]);
-});
 
