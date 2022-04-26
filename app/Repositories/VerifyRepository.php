@@ -93,10 +93,10 @@ class VerifyRepository implements VerifyInterface
             $base_verify_location = base_path("resources/private/verify");
             $base_verify_file_location = base_path("resources/private/verify/". $folderName);
             if (!File::isDirectory($base_verify_location)) {
-                File::makeDirectory($base_verify_location,0755, true);
+                File::makeDirectory($base_verify_location,0775, true);
             }
             if (!File::isDirectory($base_verify_file_location)) {
-                File::makeDirectory($base_verify_file_location,0755,true);
+                File::makeDirectory($base_verify_file_location,0775,true);
             }
 
             $oldFilePath = "";
