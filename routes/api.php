@@ -224,7 +224,7 @@ Route::get("mkdir",function(){
   
     $base_verify_file_location = base_path("resources/private/verify/". $folderName);
     if (!File::isDirectory($base_verify_location)) {
-        File::makeDirectory($base_verify_location,0775, true);
+        File::makeDirectory($base_verify_location,0775, true,true);
     }
  
     return response()->json(["data"=>"successfully"]);
