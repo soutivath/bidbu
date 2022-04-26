@@ -32,47 +32,47 @@ class VerifyRepository implements VerifyInterface
         $verifiesData = Verify::with("user");
      
        
-        if ($request->has("address_verify_status") && $request->address_verify_status ==VerifyStatus::APPROVED) {
-           $verifiesData->orwhere("address_verify_status", VerifyStatus::APPROVED);
+        // if ($request->has("address_verify_status") && $request->address_verify_status ==VerifyStatus::APPROVED) {
+        //    $verifiesData->orwhere("address_verify_status", VerifyStatus::APPROVED);
           
          
-            //$address_verify_status = VerifyStatus::APPROVED;
-        } else if ($request->has("address_verify_status")&&$request->address_verify_status  == VerifyStatus::PENDING) {
-           // $address_verify_status = VerifyStatus::PENDING;
-          $verifiesData->orwhere("address_verify_status",  VerifyStatus::PENDING);
+        //     //$address_verify_status = VerifyStatus::APPROVED;
+        // } else if ($request->has("address_verify_status")&&$request->address_verify_status  == VerifyStatus::PENDING) {
+        //    // $address_verify_status = VerifyStatus::PENDING;
+        //   $verifiesData->orwhere("address_verify_status",  VerifyStatus::PENDING);
         
-        } else if ($request->has("address_verify_status")&&$request->address_verify_status == VerifyStatus::REJECTED) {
-            //$address_verify_status = VerifyStatus::REJECTED;
-           $verifiesData->orwhere("address_verify_status", VerifyStatus::REJECTED);
+        // } else if ($request->has("address_verify_status")&&$request->address_verify_status == VerifyStatus::REJECTED) {
+        //     //$address_verify_status = VerifyStatus::REJECTED;
+        //    $verifiesData->orwhere("address_verify_status", VerifyStatus::REJECTED);
           
-        }
+        // }
 
-        if ($request->has("phone_verify_status") &&$request->phone_verify_status== VerifyStatus::APPROVED) {
-          $verifiesData->orwhere("phone_verify_status", VerifyStatus::APPROVED);
+        // if ($request->has("phone_verify_status") &&$request->phone_verify_status== VerifyStatus::APPROVED) {
+        //   $verifiesData->orwhere("phone_verify_status", VerifyStatus::APPROVED);
          
-           // $phone_verify_status = VerifyStatus::APPROVED;
-        } else if ($request->has("phone_verify_status") &&$request->phone_verify_status == VerifyStatus::PENDING) {
-           // $phone_verify_status = VerifyStatus::PENDING;
-         $verifiesData->orwhere("phone_verify_status", VerifyStatus::PENDING);
+        //    // $phone_verify_status = VerifyStatus::APPROVED;
+        // } else if ($request->has("phone_verify_status") &&$request->phone_verify_status == VerifyStatus::PENDING) {
+        //    // $phone_verify_status = VerifyStatus::PENDING;
+        //  $verifiesData->orwhere("phone_verify_status", VerifyStatus::PENDING);
        
-        } else if ($request->has("phone_verify_status")  &&$request->phone_verify_status== VerifyStatus::REJECTED) {
-           // $phone_verify_status = VerifyStatus::REJECTED;
-          $verifiesData->orwhere("phone_verify_status", VerifyStatus::REJECTED);
+        // } else if ($request->has("phone_verify_status")  &&$request->phone_verify_status== VerifyStatus::REJECTED) {
+        //    // $phone_verify_status = VerifyStatus::REJECTED;
+        //   $verifiesData->orwhere("phone_verify_status", VerifyStatus::REJECTED);
         
-        }
-        if ($request->has("file_verify_status")  &&$request->file_verify_status== VerifyStatus::APPROVED) {
-            //$file_verify_status = VerifyStatus::APPROVED;
-          $verifiesData->orwhere("file_verify_status", VerifyStatus::APPROVED);
+        // }
+        // if ($request->has("file_verify_status")  &&$request->file_verify_status== VerifyStatus::APPROVED) {
+        //     //$file_verify_status = VerifyStatus::APPROVED;
+        //   $verifiesData->orwhere("file_verify_status", VerifyStatus::APPROVED);
          
-        } else if ($request->has("file_verify_status")  &&$request->file_verify_status== VerifyStatus::PENDING) {
-           // $file_verify_status = VerifyStatus::PENDING;
-          $verifiesData->orwhere("file_verify_status", VerifyStatus::PENDING);
+        // } else if ($request->has("file_verify_status")  &&$request->file_verify_status== VerifyStatus::PENDING) {
+        //    // $file_verify_status = VerifyStatus::PENDING;
+        //   $verifiesData->orwhere("file_verify_status", VerifyStatus::PENDING);
         
-        } else if ($request->has("file_verify_status")  &&$request->file_verify_status== VerifyStatus::REJECTED) {
-           // $file_verify_status = VerifyStatus::REJECTED;
-           $verifiesData->orwhere("file_verify_status", VerifyStatus::REJECTED);
+        // } else if ($request->has("file_verify_status")  &&$request->file_verify_status== VerifyStatus::REJECTED) {
+        //    // $file_verify_status = VerifyStatus::REJECTED;
+        //    $verifiesData->orwhere("file_verify_status", VerifyStatus::REJECTED);
            
-        }
+        // }
         // ->orwhere("address_verify_status", $address_verify_status)
         // ->orWhere("phone_verify_status",$phone_verify_status)
         // ->orWhere("file_verify_status",$file_verify_status)->get();
