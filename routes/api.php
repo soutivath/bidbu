@@ -217,4 +217,3 @@ Route::post("get_custom_token",[App\Http\Controllers\apiAuthController::class,"g
 
 Route::get("kong_dee_center",[App\Http\Controllers\ShowItemSectionController::class,"kongDeeCenter"]);
 
-
