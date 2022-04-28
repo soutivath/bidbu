@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Enums\VerifyStatus;
 use App\Models\favourite;
 use Auth;
 use Carbon\carbon;
@@ -45,6 +46,17 @@ class OneBuddhistResource extends JsonResource
             \array_push($allImage, Config("values.APP_URL") . ":" . $_SERVER["SERVER_PORT"] .
                 "/" . "buddhist_images/" . $this->image_path . "/" . $file_path['basename']);
         }
+
+        $verify_status = false;
+        if($this->user->verify()->exists()) {
+            if($this->user->verify->file_verify_status==VerifyStatus::APPROVED){
+                $verify_status = true;
+            }
+            
+        }
+        else{
+            $verify_status = false;
+        }
         return [
             ['id' => $this->id,
                 'name' => $this->name,
@@ -77,6 +89,7 @@ class OneBuddhistResource extends JsonResource
                 'favoriteCount' => favourite::where("buddhist_id", $this->id)->count(),
                 'priceSmallest' => $this->priceSmallest,
                 'minimum_price'=>$this->minimum_price,
+                'is_verify'=>$verify_status
             ],
         ];
     }

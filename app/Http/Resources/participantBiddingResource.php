@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Enums\VerifyStatus;
 use carbon\Carbon;
 use File;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -28,6 +29,7 @@ class participantBiddingResource extends JsonResource
             'time_remain' => Carbon::now()->lessThan(Carbon::parse($this->end_time)) ? Carbon::now()->diffInSeconds(Carbon::parse($this->end_time)) : 0,
             'image' => $allImage,
             'place' => $this->place,
+            'is_verify'=>$this->file_verify_status==VerifyStatus::APPROVED?true:false
         ];
     }
 }

@@ -53,14 +53,25 @@ class BuddhistController extends Controller
         }
 
         if ($request->input("search")) {
-            $bud = Buddhist::where([
-                ['end_time', '>', Carbon::now()], ["active", "1"], ["name", "LIKE", "%" . $request->input("search") . "%"],
-            ])->with('type')->orderBy("created_at", "desc")->paginate($perPage);
+           $bud =  DB::table("buddhists")->leftJoin('verifies',"buddhists.user_id",'=','verifies.user_id')
+            ->where([['buddhists.end_time', '>', Carbon::now()], ["buddhists.active", "1"], ["buddhists.name", "LIKE", "%" . $request->input("search") . "%"]])
+            ->select(
+                'buddhists.id','buddhists.name','buddhists.price','buddhists.highest_price','buddhists.place','buddhists.end_time','buddhists.image_path','verifies.file_verify_status'
+            )
+            ->orderBy("buddhists.created_at","desc")->paginate($perPage);
+            // $bud = Buddhist::where([
+            //     ['end_time', '>', Carbon::now()], ["active", "1"], ["name", "LIKE", "%" . $request->input("search") . "%"],
+            // ])->with('type')->orderBy("created_at", "desc")->paginate($perPage);
             return BuddhistResource::collection($bud);
 
         } else {
-
-            $bud = Buddhist::where([['end_time', '>', Carbon::now()], ["active", "1"]])->with('type')->orderBy("created_at", "desc")->paginate($perPage);
+            $bud =  DB::table("buddhists")->leftJoin('verifies',"buddhists.user_id",'=','verifies.user_id')
+            ->where([['buddhists.end_time', '>', Carbon::now()], ["buddhists.active", "1"]])
+            ->select(
+                'buddhists.id','buddhists.name','buddhists.price','buddhists.highest_price','buddhists.place','buddhists.end_time','buddhists.image_path','verifies.file_verify_status'
+            )
+            ->orderBy("buddhists.created_at","desc")->paginate($perPage);
+           // $bud = Buddhist::where([['end_time', '>', Carbon::now()], ["active", "1"]])->with('type')->orderBy("created_at", "desc")->paginate($perPage);
             return BuddhistResource::collection($bud);
 
         }
@@ -235,7 +246,7 @@ class BuddhistController extends Controller
     public function show($id)
     {
 
-        $bud = Buddhist::where('id', $id)->with(["type", "user"])->first();
+        $bud = Buddhist::where('id', $id)->with(["type", "user.verify"])->first();
         if (empty($bud)) {
             return response()->json([
                 "message" => "No Data Found",
@@ -585,7 +596,14 @@ class BuddhistController extends Controller
             }
         }
 
-        $buddhists = Buddhist::where([['type_id', $type_id], ['end_time', '>', Carbon::now()], ["active", "1"]])->paginate($perPage);
+        $buddhists =  DB::table("buddhists")->leftJoin('verifies',"buddhists.user_id",'=','verifies.user_id')
+        ->where([['buddhists.type_id', $type_id],['buddhists.end_time', '>', Carbon::now()], ["buddhists.active", "1"]])
+        ->select(
+            'buddhists.id','buddhists.name','buddhists.price','buddhists.place','buddhists.end_time','buddhists.image_path','verifies.file_verify_status'
+        )->paginate($perPage);
+
+      //  $buddhists = Buddhist::where([['type_id', $type_id], ['end_time', '>', Carbon::now()], ["active", "1"]])->paginate($perPage);
+
 
         return buddhistCollection::collection($buddhists);
     }
@@ -607,12 +625,24 @@ class BuddhistController extends Controller
                 $perPage = (int)$request->perPage;
             }
         }
-        $buddhist = Buddhist::where([
-            ['end_time', '>', Carbon::now()],
-            ['type_id', '=', $type_id],
-            ['id', '!=', $buddhist_id],
-            ["active", "1"],
-        ])->with('type')->orderBy("created_at", "desc")->paginate($perPage)->shuffle();
+     
+        $buddhist =  DB::table("buddhists")->leftJoin('verifies',"buddhists.user_id",'=','verifies.user_id')
+        ->where([
+            ['buddhists.end_time', '>', Carbon::now()], 
+            ['buddhists.type_id', '=', $type_id],
+            ["buddhists.active", "1"],
+            ['buddhists.id', '!=', $buddhist_id],
+            ])
+        ->select(
+            'buddhists.id','buddhists.name','buddhists.price','buddhists.highest_price','buddhists.place','buddhists.end_time','buddhists.image_path','verifies.file_verify_status'
+        )
+        ->orderBy("buddhists.created_at","desc")->paginate($perPage)->shuffle();
+        // $buddhist = Buddhist::where([
+        //     ['end_time', '>', Carbon::now()],
+        //     ['type_id', '=', $type_id],
+        //     ['id', '!=', $buddhist_id],
+        //     ["active", "1"],
+        // ])->with('type')->orderBy("created_at", "desc")->paginate($perPage)->shuffle();
         return BuddhistResource::collection($buddhist);
 
     }
@@ -634,7 +664,16 @@ class BuddhistController extends Controller
                 $perPage = (int)$request->perPage;
             }
         }
-        $bud = Buddhist::where([['end_time', '>', Carbon::now()], ["active", "1"]])->with('type')->orderBy("end_time")->paginate($perPage);
+        $bud =  DB::table("buddhists")->leftJoin('verifies',"buddhists.user_id",'=','verifies.user_id')
+        ->where([
+            ['buddhists.end_time', '>', Carbon::now()], 
+            ["buddhists.active", "1"]])
+        ->select(
+            'buddhists.id','buddhists.name','buddhists.price','buddhists.highest_price','buddhists.place','buddhists.end_time','buddhists.image_path','verifies.file_verify_status'
+        )
+        ->orderBy("buddhists.end_time")->paginate($perPage);
+
+      //  $bud = Buddhist::where([['end_time', '>', Carbon::now()], ["active", "1"]])->with('type')->orderBy("end_time")->paginate($perPage);
         return BuddhistResource::collection($bud);
     }
     public function myActiveBuddhist(Request $request)
@@ -655,12 +694,22 @@ class BuddhistController extends Controller
             }
         }
 
-        $buddhist = Buddhist::where([
-            ["active", "1"],
-            ["user_id", Auth::id()],
-            ["end_time", '>', Carbon::now()],
+        $buddhist =  DB::table("buddhists")->leftJoin('verifies',"buddhists.user_id",'=','verifies.user_id')
+        ->where([
+            ["buddhists.active", "1"], 
+            ["buddhists.end_time",'>', Carbon::now()],
+            ["buddhists.user_id",Auth::id()]
+           ])
+        ->select(
+            'buddhists.id','buddhists.name','buddhists.price','buddhists.highest_price','buddhists.place','buddhists.end_time','buddhists.image_path','verifies.file_verify_status'
+        )->orderBy("buddhists.end_time")->paginate($perPage);
 
-        ])->orderBy("end_time")->paginate($perPage);
+        // $buddhist = Buddhist::where([
+        //     ["active", "1"],
+        //     ["user_id", Auth::id()],
+        //     ["end_time", '>', Carbon::now()],
+
+        // ])->orderBy("end_time")->paginate($perPage);
         if (empty($buddhist)) {
             return response()->json(["message" => "No data found"], 200);
         }
@@ -684,11 +733,22 @@ class BuddhistController extends Controller
                 $perPage = (int)$request->perPage;
             }
         }
-        $buddhist = Buddhist::where([
-            ["winner_user_id", "!=", "empty"],
-            ["end_time", '<', Carbon::now()],
-            ["user_id", Auth::id()],
-        ])->orderBy("end_time")->paginate($perPage);
+
+        $buddhist =  DB::table("buddhists")->leftJoin('verifies',"buddhists.user_id",'=','verifies.user_id')
+        ->where([
+            ["buddhists.winner_user_id", "!=","empty"], 
+            ["buddhists.end_time",'<', Carbon::now()],
+            ["buddhists.user_id",Auth::id()]
+           ])
+        ->select(
+            'buddhists.id','buddhists.name','buddhists.price','buddhists.highest_price','buddhists.place','buddhists.end_time','buddhists.image_path','verifies.file_verify_status'
+        )->orderBy("buddhists.end_time")->paginate($perPage);
+
+        // $buddhist = Buddhist::where([
+        //     ["winner_user_id", "!=", "empty"],
+        //     ["end_time", '<', Carbon::now()],
+        //     ["user_id", Auth::id()],
+        // ])->orderBy("end_time")->paginate($perPage);
         if (empty($buddhist)) {
             return response()->json(["message" => "No data found"], 200);
         }
@@ -713,11 +773,21 @@ class BuddhistController extends Controller
             }
         }
 
-        $buddhist = Buddhist::where([
-            ["user_id", Auth::id()],
-            ["end_time", '<', Carbon::now()],
-            ["winner_user_id", "empty"],
-        ])->orderBy("end_time")->paginate($perPage);
+        $buddhist =  DB::table("buddhists")->leftJoin('verifies',"buddhists.user_id",'=','verifies.user_id')
+        ->where([
+            ["buddhists.winner_user_id", "empty"], 
+            ["buddhists.end_time",'<', Carbon::now()],
+            ["buddhists.user_id",Auth::id()]
+           ])
+        ->select(
+            'buddhists.id','buddhists.name','buddhists.price','buddhists.highest_price','buddhists.place','buddhists.end_time','buddhists.image_path','verifies.file_verify_status'
+        )->orderBy("buddhists.end_time")->paginate($perPage);
+
+        // $buddhist = Buddhist::where([
+        //     ["user_id", Auth::id()],
+        //     ["end_time", '<', Carbon::now()],
+        //     ["winner_user_id", "empty"],
+        // ])->orderBy("end_time")->paginate($perPage);
         if (empty($buddhist)) {
             return response()->json(["message" => "No data found"], 200);
         }
@@ -753,14 +823,16 @@ class BuddhistController extends Controller
         }
 
 
+
         $data = DB::table('notification')->leftJoin("buddhists", "buddhists.id", "=", "notification.buddhist_id")
+        ->leftJoin("verifies","verifies.user_id","=","buddhists.user_id")
             ->where([
                 ['buddhists.end_time', '<', Carbon::now()],
                 ['notification.notification_type', 'bidding_result'],
-                ["data", "!=", Auth::id()],
+                ["notification.data", "!=", Auth::id()],
                 ["notification.user_id",Auth::id()]
             ])
-            ->select("buddhists.id", "buddhists.name", "buddhists.highest_price", "buddhists.image_path", "buddhists.end_time", "buddhists.highBidUser", "buddhists.place")
+            ->select("buddhists.id", "buddhists.name", "buddhists.highest_price", "buddhists.image_path", "buddhists.end_time", "buddhists.highBidUser", "buddhists.place","verifies.file_verify_status")
             ->distinct()
             ->paginate($perPage);
 
@@ -784,10 +856,21 @@ class BuddhistController extends Controller
                 $perPage = (int)$request->perPage;
             }
         }
-        $buddhist = Buddhist::where([
-            ["end_time", '<', Carbon::now()],
-            ["winner_user_id", Auth::user()->firebase_uid],
-        ])->paginate($perPage);
+
+        $buddhist =  DB::table("buddhists")->leftJoin('verifies',"buddhists.user_id",'=','verifies.user_id')
+        ->where([
+          
+            ["buddhists.end_time",'<', Carbon::now()],
+            ["buddhists.winner_user_id", Auth::user()->firebase_uid]
+           ])
+        ->select(
+            'buddhists.id','buddhists.name','buddhists.price','buddhists.highest_price','buddhists.place','buddhists.end_time','buddhists.image_path','verifies.file_verify_status'
+        )->paginate($perPage);
+
+        // $buddhist = Buddhist::where([
+        //     ["end_time", '<', Carbon::now()],
+        //     ["winner_user_id", Auth::user()->firebase_uid],
+        // ])->paginate($perPage);
         if (empty($buddhist)) {
             return response()->json(["message" => "No data found"], 200);
         }
@@ -799,7 +882,9 @@ class BuddhistController extends Controller
     {
 
         $buddhist = Buddhist::where("id", $id)->with("user")->first();
-
+        if(!$buddhist){
+            return response()->json(["data"=>[],"message"=>"no data found","success"=>false]);
+        }
         // return response()->json(["data" => $buddhist], 200);
         return new checkBuddhistResultResource($buddhist);
     }
@@ -823,12 +908,13 @@ class BuddhistController extends Controller
         }
 
         $data = DB::table('notification')->leftJoin("buddhists", "buddhists.id", "=", "notification.buddhist_id")
+        ->leftJoin("verifies","buddhists.user_id","=","verifies.user_id")
             ->where([
                 ['buddhists.end_time', '>', Carbon::now()],
                 ["notification.user_id", Auth::id()],
             ])
             ->whereIn("notification_type", ["bidding_participant"])
-            ->select("buddhists.id", "buddhists.name", "buddhists.highest_price", "buddhists.image_path", "buddhists.end_time", "buddhists.highBidUser", "buddhists.place")
+            ->select("buddhists.id", "buddhists.name", "buddhists.highest_price", "buddhists.image_path", "buddhists.end_time", "buddhists.highBidUser", "buddhists.place","verifies.file_verify_status")
             ->distinct()
             ->paginate($perPage);
 
@@ -852,9 +938,9 @@ class BuddhistController extends Controller
                 $perPage = (int)$request->perPage;
             }
         }
-        $data = Buddhist::select(['buddhists.id', 'buddhists.name', 'buddhists.price', 'buddhists.highest_price', 'buddhists.place', 'buddhists.end_time', 'buddhists.image_path', 'buddhists.type_id', DB::raw('count(favourites.id) as total')])
+        $data = Buddhist::select(['buddhists.id', 'buddhists.name', 'buddhists.price', 'buddhists.highest_price', 'buddhists.place', 'buddhists.end_time', 'buddhists.image_path', 'buddhists.type_id','verifies.file_verify_status', DB::raw('count(favourites.id) as total')])
             ->leftJoin('favourites', 'buddhists.id', '=', 'favourites.buddhist_id')
-            ->with("type")
+            ->leftJoin("verifies","buddhists.user_id","=","verifies.user_id")
             ->where('buddhists.end_time', '>', Carbon::now())
             ->groupBy('buddhists.id')
             ->orderBy('total', 'DESC')

@@ -6,7 +6,7 @@ use Carbon\carbon;
 use File;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Request;
-
+use App\Enums\VerifyStatus;
 class BuddhistResource extends JsonResource
 {
     /**
@@ -34,11 +34,8 @@ class BuddhistResource extends JsonResource
             'highest_price' => $this->highest_price,
             'place' => $this->place,
             'time_remain' => Carbon::now()->lessThan(Carbon::parse($this->end_time)) ? Carbon::now()->diffInSeconds(Carbon::parse($this->end_time)) : 0,
-            'type' => [
-                'id' => $this->type->id,
-                'name' => $this->type->name,
-            ],
             'image' => $allImage,
+            'is_verify'=>$this->file_verify_status==VerifyStatus::APPROVED?true:false
         ];
     }
 }

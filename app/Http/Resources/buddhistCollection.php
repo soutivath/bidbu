@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Enums\VerifyStatus;
 use Illuminate\Http\Resources\Json\JsonResource;
 use File;
 use Carbon\carbon;
@@ -27,6 +28,7 @@ class buddhistCollection extends JsonResource
             'place'=>$this->place,
             'picture'=>$allImage,
             'time_remain'=>Carbon::now()->lessThan(Carbon::parse($this->end_time))?Carbon::now()->diffInSeconds(Carbon::parse($this->end_time)):0,
+            'is_verify'=>$this->file_verify_status==VerifyStatus::APPROVED?true:false
         ];
     }
 }

@@ -217,3 +217,41 @@ Route::post("get_custom_token",[App\Http\Controllers\apiAuthController::class,"g
 
 Route::get("kong_dee_center",[App\Http\Controllers\ShowItemSectionController::class,"kongDeeCenter"]);
 
+use App\Http\Resources\buddhistCollection;
+use App\Http\Resources\BuddhistResource;
+use App\Http\Resources\checkBuddhistResultResource;
+use App\Http\Resources\OneBuddhistResource;
+use App\Http\Resources\participantBiddingResource;
+use App\Models\Buddhist;
+use Illuminate\Support\Carbon;
+Route::get("get_nested",function (){
+    // $data = DB::table('notification')->leftJoin("buddhists", "buddhists.id", "=", "notification.buddhist_id")
+    // ->where([
+    //     ['buddhists.end_time', '>', Carbon::now()],
+    //     ["notification.user_id", Auth::id()],
+    // ])
+    // ->whereIn("notification_type", ["bidding_participant"])
+    // ->select("buddhists.id", "buddhists.name", "buddhists.highest_price", "buddhists.image_path", "buddhists.end_time", "buddhists.highBidUser", "buddhists.place")
+    // ->distinct()
+    // ->paginate(30);
+
+
+   $budhistQuery = DB::table("buddhists")->leftJoin('verifies',"buddhists.user_id",'=','verifies.user_id')
+   ->where([['buddhists.end_time', '>', Carbon::now()], ["buddhists.active", "1"]])
+   ->select(
+       'buddhists.id','buddhists.name','buddhists.price','buddhists.highest_price','buddhists.place','buddhists.end_time','buddhists.image_path','verifies.file_verify_status'
+   )->get();
+   
+//    return response()->json(["data"=>$budhistQuery]);
+//     $bud = Buddhist::with(["user.verify"])->get();
+//     return response()->json(["data"=>$bud]);
+    return BuddhistResource::collection($budhistQuery);
+
+    // 'id' => $this->id,
+    // 'name' => $this->name,
+    // 'price' => $this->price,
+    // 'highest_price' => $this->highest_price,
+    // 'place' => $this->place,
+    // 'time_remain' => Carbon::now()->lessThan(Carbon::parse($this->end_time)) ? Carbon::now()->diffInSeconds(Carbon::parse($this->end_time)) :
+    // 'image' => $allImage,
+});
