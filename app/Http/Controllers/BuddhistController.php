@@ -835,7 +835,10 @@ class BuddhistController extends Controller
             ->select("buddhists.id", "buddhists.name", "buddhists.highest_price", "buddhists.image_path", "buddhists.end_time", "buddhists.highBidUser", "buddhists.place","verifies.file_verify_status")
             ->distinct()
             ->paginate($perPage);
-
+           
+            if (empty($data)) {
+                return response()->json(["message" => "No data found"], 200);
+            }
         return participantBiddingResource::collection($data);
 
     }

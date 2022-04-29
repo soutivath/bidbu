@@ -104,11 +104,12 @@ class ProfileController extends Controller
 
     public function userItemParticipant($id){
         $data = DB::table('notification')->leftJoin("buddhists", "buddhists.id", "=", "notification.buddhist_id")
+        ->leftJoin("verifies","buddhists.user_id","=","verifies.user_id")
             ->where([
                 ["notification.user_id",$id],
             ])
             ->whereIn("notification_type", ["bidding_participant"])
-            ->select("buddhists.id", "buddhists.name", "buddhists.highest_price", "buddhists.image_path", "buddhists.end_time", "buddhists.highBidUser", "buddhists.place")
+            ->select("buddhists.id", "buddhists.name", "buddhists.highest_price", "buddhists.image_path", "buddhists.end_time", "buddhists.highBidUser", "buddhists.place","verifies.file_verify_status")
             ->distinct()
             ->paginate(30);
 
