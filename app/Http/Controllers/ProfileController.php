@@ -98,7 +98,13 @@ class ProfileController extends Controller
     }
 
     public function itemBelongToUser($id){
-        $item = Buddhist::where("user_id",$id)->get();
+
+     
+
+        $item = Buddhist::select(['buddhists.id', 'buddhists.name', 'buddhists.price', 'buddhists.highest_price', 'buddhists.place', 'buddhists.end_time', 'buddhists.image_path', 'buddhists.type_id','verifies.file_verify_status'])
+        ->leftJoin("verifies","verifies.user_id","=","buddhists.user_id")
+        ->where("buddhists.user_id",$id)->paginate(30);
+        
         return BuddhistResource::collection($item);
     }
 
