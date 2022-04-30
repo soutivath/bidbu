@@ -7,7 +7,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laratrust\Traits\LaratrustUserTrait;
 use Laravel\Passport\HasApiTokens;
-
+use App\Enums\VerifyStatus;
 class User extends Authenticatable
 {
     use LaratrustUserTrait;
@@ -106,6 +106,16 @@ class User extends Authenticatable
         if ($this->active == 1) {
             return true;
         } else {
+            return false;
+        }
+    }
+    public function getVerifyStatus(){
+        if($this->verify()->exists()){
+            if($this->verify->file_verify_status==VerifyStatus::APPROVED||$this->file_verify_status==VerifyStatus::PENDING){
+                return true;
+            }
+            return false;
+        }else{
             return false;
         }
     }

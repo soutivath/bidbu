@@ -391,6 +391,7 @@ class BuddhistController extends Controller
 
                 $reference = $database->getReference('buddhist/' . $bud->id . '/')
                     ->push([
+                        'is_verify'=>Auth::user()->getVerifyStatus(),
                         'time'=>Carbon::now()->format("Y-m-d H:i:s"),
                         'uid' => Auth::user()->firebase_uid, //bidder id
                         'price' => $request->bidding_price, // new highest price
