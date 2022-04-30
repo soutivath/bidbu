@@ -116,6 +116,15 @@ class VerifyRepository implements VerifyInterface
                 $checkIfVerifyIsExisting->file_type = $request->verify_type;
                 $checkIfVerifyIsExisting->file_folder_path = $folderName;
                 $checkIfVerifyIsExisting->file_verify_status = VerifyStatus::PENDING;
+
+                $checkIfVerifyIsExisting->verify_name = $request->verify_name;
+                $checkIfVerifyIsExisting->verify_surname = $request->verify_surname;
+                $checkIfVerifyIsExisting->verify_phone_number = $request->verify_phone_number;
+                $checkIfVerifyIsExisting->verify_gender = $request->verify_gender;
+                $checkIfVerifyIsExisting->verify_date_of_birth = $request->verify_date_of_birth;
+
+
+
                 $checkIfVerifyIsExisting->save();
 
                 //delete old image
@@ -126,6 +135,14 @@ class VerifyRepository implements VerifyInterface
                 $newVerify->file_folder_path = $folderName;
                 $newVerify->file_verify_status = VerifyStatus::PENDING;
                 $newVerify->user_id = Auth::id();
+
+
+
+                $newVerify->verify_name = $request->verify_name;
+                $newVerify->verify_surname = $request->verify_surname;
+                $newVerify->verify_phone_number = $request->verify_phone_number;
+                $newVerify->verify_gender = $request->verify_gender;
+                $newVerify->verify_date_of_birth = $request->verify_date_of_birth;
                 $newVerify->save();
             }
 

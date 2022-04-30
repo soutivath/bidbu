@@ -10,8 +10,9 @@ class Verify extends Model
 {
     use HasFactory;
 
-    protected $fillable = ["address","address_verify_status","phone_number","phone_verify_status","file_type","file_folder_path","file_verify_status","user_id"];
-    
+    protected $fillable = ["address","address_verify_status","phone_number","phone_verify_status","file_type","file_folder_path","file_verify_status",
+    "user_id","verify_name","verify_surname","verify_phone_number","verify_gender","verify_date_of_birth"];
+   
     public function user(){
         return $this->belongsTo(User::class);
     }

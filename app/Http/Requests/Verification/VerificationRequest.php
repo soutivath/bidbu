@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Verification;
 
+use App\Enums\GenderEnum;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use App\Enums\VerifyStatus;
@@ -27,7 +28,7 @@ class VerificationRequest extends FormRequest
     {
        
         return [
-           
+            
            
             "verify_type"=>[
                 "required",
@@ -35,6 +36,11 @@ class VerificationRequest extends FormRequest
             ],
             'images' => 'required|array|max:2',
             'images.*' => 'image|mimes:jpeg,png,jpg,PNG|max:30720',
+            "verify_name"=>"required|string|max:255",
+            "verify_surname"=>"required|string|max:255",
+            "verify_phone_number"=>"required|string|regex:/^([0-9\s\-\+\(\)]*)$/|min:10",
+            "verify_gender"=>["required",Rule::in([GenderEnum::FEMALE,GenderEnum::MALE])],
+            "verify_date_of_birth"=>"required|date"
         ];
     }
 }
