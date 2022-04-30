@@ -43,14 +43,28 @@ class FavouriteController extends Controller
         /* $favorite = favourite::where(
         'user_id', Auth::id()
         )->with('buddhist')->orderBy("created_at", "desc")->get();*/
-        $favorite = favourite::leftJoin("buddhists", 'favourites.buddhist_id', "=", "buddhists.id")
-        ->leftJoin("verifies","buddhists.user_id","=","verifies.user_id")
+
+
+        // 'id' => $this->id,
+        // 'buddhist_id' => $this->buddhist->id,
+        // 'user_id' => $this->user->id,
+        // 'name' => $this->name,
+        // 'place' => $this->buddhist->place,
+        // 'time_remain' => Carbon::now()->lessThan(Carbon::parse($this->end_time)) ? Carbon::now()->diffInSeconds(Carbon::parse($this->end_time)) : 0,
+        // 'picture' => $allImage,
+        // 'is_verify'=>$this->file_verify_status==VerifyStatus::APPROVED?true:false
+
+        $favorite = favourite::select(["favourites.id as id","buddhists.id as buddhist_id","buddhists.user_id as user_id","buddhists.name","buddhists.place"
+        ,"buddhists.end_time","buddhists.image_path","verifies.file_verify_status"])->leftJoin("buddhists", 'favourites.buddhist_id', "=", "buddhists.id")
+      ->leftJoin("verifies","buddhists.user_id","=","verifies.user_id")
             ->where([
                 ['buddhists.end_time', '>', Carbon::now()],
                 ['favourites.user_id',Auth::id()]])
-            ->with("buddhist")
+           //->with("buddhist")
             ->orderBy("favourites.created_at", "desc")
             ->paginate($perPage);
+
+            
         if (empty($favorite)) {
             return response()->json([
                 "message" => "no favorite yet",
