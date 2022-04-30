@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Carbon\carbon;
 use File;
 use Illuminate\Http\Resources\Json\JsonResource;
-
+use App\Enums\VerifyStatus;
 class FavoriteResource extends JsonResource
 {
     /**
@@ -31,6 +31,7 @@ class FavoriteResource extends JsonResource
             'place' => $this->buddhist->place,
             'time_remain' => Carbon::now()->lessThan(Carbon::parse($this->end_time)) ? Carbon::now()->diffInSeconds(Carbon::parse($this->end_time)) : 0,
             'picture' => $allImage,
+            'is_verify'=>$this->file_verify_status==VerifyStatus::APPROVED?true:false
 
         ];
     }
