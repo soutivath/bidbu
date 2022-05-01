@@ -951,6 +951,7 @@ class BuddhistController extends Controller
             ->groupBy('buddhists.id')
             ->orderBy('total', 'DESC')
             ->paginate($perPage);
+            return response()->json(["data"=>$data]);
 
         return BuddhistResource::collection($data);
 
