@@ -947,11 +947,14 @@ class BuddhistController extends Controller
           //  ->leftJoin('favourites', 'buddhists.id', '=', 'favourites.buddhist_id')
             ->leftJoin('notification','notification.buddhist_id','=','buddhists.id')
             ->leftJoin("verifies","buddhists.user_id","=","verifies.user_id")
-            ->where('buddhists.end_time', '>', Carbon::now())
+            ->where([
+                ['buddhists.end_time', '>', Carbon::now()],
+                ['notification.notification_type','=','bidding_participant']
+            ])
             ->groupBy('buddhists.id')
             ->orderBy('total', 'DESC')
             ->paginate($perPage);
-            return response()->json(["data"=>$data]);
+           
 
         return BuddhistResource::collection($data);
 
