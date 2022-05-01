@@ -412,6 +412,9 @@ class BuddhistController extends Controller
                 $messaging = app('firebase.messaging');
                 if (empty($data) && Auth::id() != $ownerID) {
                     $messaging->subscribeToTopic($ownerBuddhist->topic, $request->fcm_token);
+                    
+
+
                     NotificationFirebase::create([
                         'notification_time' => date('Y-m-d H:i:s'),
                         'read' => 0,

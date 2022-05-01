@@ -57,7 +57,7 @@ class sendNotification extends Command
             $deviceToken = $buddhist->winner_fcm_token;
             $winner_uid = $buddhist->winner_user_id;
 
-            if ($deviceToken == "empty") {
+            if ($winner_uid == "empty") {
                 /* $notification = Notification::fromArray([
                 'title' => 'ທ່ານມີການແຈ້ງເຕືອນໃໝ່ຈາກ ' . $buddhist->name . ' ທີ່ທ່ານໄດ້ປ່ອຍ',
                 'body' => 'ການປະມູນຈົບລົງແລ້ວ ບໍ່ມີຄົນເຂົ້າຮ່ວມການປະມູນຂອງທ່ານ',
