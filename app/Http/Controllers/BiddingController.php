@@ -193,7 +193,7 @@ class BiddingController extends Controller
 
             $message = CloudMessage::withTarget("topic", $isItemExisting->topic)
                 ->withNotification(Notification::fromArray([
-                    'title' => 'ຈາກ ຂອງດີ',
+                    'title' => 'ຈາກ '.$isItemExisting->name.' ທີ່ທ່ານໄດ້ຮ່ວມກະມູນ',
                     'body' => 'ເຈົ້າຂອງສິນຄ້າຍົກເລີກການປະມູນຂອງ '.$currentUserValue["name"].' ຕອນນີ້ລາຄາຢູ່ທີ່ '.$previousUserValue["price"],
                     'image' => \public_path("/notification_images/chat.png"),
                 ]))
