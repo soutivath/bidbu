@@ -124,13 +124,7 @@ class BuddhistController extends Controller
             'minimum_price'=>'required|integer'
         ]);
 
-        if(!Auth::user()->verify()->exists()||!Auth::user()->verify->checkIfVerifyFile()){
-            return response()->json([
-                "data"=>[],
-                "success"=>false,
-                "message"=>"Please verify your account before continuing"
-            ],403);   
-        }
+     
         
         $messaging = app('firebase.messaging');
         $androidConfig = AndroidConfig::fromArray([
