@@ -941,7 +941,7 @@ class BuddhistController extends Controller
             ->leftJoin("verifies","buddhists.user_id","=","verifies.user_id")
             ->where('buddhists.end_time', '>', Carbon::now())
             ->groupBy('buddhists.id')
-            ->orderBy('total', 'DESC')
+            //->orderBy('total', 'DESC')
             ->paginate($perPage);
 
         return BuddhistResource::collection($data);
