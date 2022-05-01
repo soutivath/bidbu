@@ -936,12 +936,20 @@ class BuddhistController extends Controller
                 $perPage = (int)$request->perPage;
             }
         }
-        $data = Buddhist::select(['buddhists.id', 'buddhists.name', 'buddhists.price', 'buddhists.highest_price', 'buddhists.place', 'buddhists.end_time', 'buddhists.image_path', 'buddhists.type_id','verifies.file_verify_status', DB::raw('count(favourites.id) as total')])
-            ->leftJoin('favourites', 'buddhists.id', '=', 'favourites.buddhist_id')
+        // $data = Buddhist::select(['buddhists.id', 'buddhists.name', 'buddhists.price', 'buddhists.highest_price', 'buddhists.place', 'buddhists.end_time', 'buddhists.image_path', 'buddhists.type_id','verifies.file_verify_status', DB::raw('count(favourites.id) as total')])
+        //     ->leftJoin('favourites', 'buddhists.id', '=', 'favourites.buddhist_id')
+        //     ->leftJoin("verifies","buddhists.user_id","=","verifies.user_id")
+        //     ->where('buddhists.end_time', '>', Carbon::now())
+        //     ->groupBy('buddhists.id')
+        //     ->orderBy('total', 'DESC')
+        //     ->paginate($perPage);
+        $data = Buddhist::select(['buddhists.id', 'buddhists.name', 'buddhists.price', 'buddhists.highest_price', 'buddhists.place', 'buddhists.end_time', 'buddhists.image_path', 'buddhists.type_id','verifies.file_verify_status', DB::raw('count(notification.buddhist_id) as total')])
+          //  ->leftJoin('favourites', 'buddhists.id', '=', 'favourites.buddhist_id')
+            ->leftJoin('notification','notification.buddhist_id','=','buddhists.id')
             ->leftJoin("verifies","buddhists.user_id","=","verifies.user_id")
             ->where('buddhists.end_time', '>', Carbon::now())
             ->groupBy('buddhists.id')
-            //->orderBy('total', 'DESC')
+            ->orderBy('total', 'DESC')
             ->paginate($perPage);
 
         return BuddhistResource::collection($data);
