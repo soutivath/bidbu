@@ -1,16 +1,9 @@
 <?php
 
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Request as FacadesRequest;
+
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\View;
-use Kreait\Firebase\DynamicLink\AnalyticsInfo;
-use Kreait\Firebase\DynamicLink\AnalyticsInfo\GooglePlayAnalytics;
-use Kreait\Firebase\DynamicLink\AnalyticsInfo\ITunesConnectAnalytics;
-use Kreait\Firebase\DynamicLink\AndroidInfo;
+
 
 /*
 |--------------------------------------------------------------------------
