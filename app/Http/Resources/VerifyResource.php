@@ -48,6 +48,11 @@ class VerifyResource extends JsonResource
                 "files_name"=>$allImageName,
                 "folderName"=>$this->file_folder_path,
                 "file_verify_status"=>$this->file_verify_status,
+                "verify_name"=>$this->verify_name,
+                "verify_surname"=>$this->verify_surname,
+                "verify_phone_number"=>$this->verify_phone_number,
+                "verify_gender"=>$this->verify_gender,
+                "verify_date_of_birth"=>$this->verify_date_of_birth,
             ]
             
         ];
