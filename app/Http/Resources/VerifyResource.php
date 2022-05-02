@@ -34,6 +34,7 @@ class VerifyResource extends JsonResource
             "gender"=>$this->user->gender,
             "date_of_birth"=>$this->user->date_of_birth,
             "address"=>$this->address,
+            "user_phone_number"=>$this->user->phone_number,
             "phone_number"=>$this->phone_number,
             "emegency_phone_number"=>$this->emegency_phone_number,
             "email_address"=>$this->user->email_address,
