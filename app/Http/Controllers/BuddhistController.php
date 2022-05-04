@@ -646,7 +646,7 @@ class BuddhistController extends Controller
         $buddhists =  DB::table("buddhists")->leftJoin('verifies',"buddhists.user_id",'=','verifies.user_id')
         ->where([['buddhists.type_id', $type_id],['buddhists.end_time', '>', Carbon::now()], ["buddhists.active", "1"]])
         ->select(
-            'buddhists.id','buddhists.name','buddhists.price','buddhists.place','buddhists.end_time','buddhists.image_path','verifies.file_verify_status'
+            'buddhists.id','buddhists.name','buddhists.price','buddhists.place','buddhists.end_time','buddhists.image_path','verifies.file_verify_status',
         )->paginate($perPage);
 
       //  $buddhists = Buddhist::where([['type_id', $type_id], ['end_time', '>', Carbon::now()], ["active", "1"]])->paginate($perPage);

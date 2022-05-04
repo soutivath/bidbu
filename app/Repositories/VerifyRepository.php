@@ -353,34 +353,18 @@ class VerifyRepository implements VerifyInterface
             $oldIdTokenString = $request->old_firebase_token;
             try { // Try to verify the Firebase credential token with Google
                 $verifiedIdToken = $auth->verifyIdToken($idTokenString);
-               
-            } catch (\InvalidArgumentException $e) { // If the token has the wrong format
-                return response()->json(
-                    [
-                        'message' => 'new token Unauthorized - Can\'t parse the token: ' . $e->getMessage(),
-                    ],
-                    401
-                );
-            } catch (InvalidToken $e) { // If the token is invalid (expired ...)
-
-                return response()->json([
-                    'message' => 'new token Unauthorized - Token is invalid: ' . $e->getMessage(),
-                ], 401);
-            }
-            try { // Try to verify the Firebase credential token with Google
-               
                 $verifiedOldIdToken = $auth->verifyIdToken($oldIdTokenString);
             } catch (\InvalidArgumentException $e) { // If the token has the wrong format
                 return response()->json(
                     [
-                        'message' => ' old token Unauthorized - Can\'t parse the token: ' . $e->getMessage(),
+                        'message' => 'Unauthorized - Can\'t parse the token: ' . $e->getMessage(),
                     ],
                     401
                 );
             } catch (InvalidToken $e) { // If the token is invalid (expired ...)
 
                 return response()->json([
-                    'message' => ' old token Unauthorized - Token is invalid: ' . $e->getMessage(),
+                    'message' => 'Unauthorized - Token is invalid: ' . $e->getMessage(),
                 ], 401);
             }
 

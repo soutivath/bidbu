@@ -42,8 +42,12 @@ class ShowItemSectionController extends Controller
       
 
    
+   
 
-        $items = Buddhist::whereHas("user",function ($query) use ($kongDeeCenterPhoneNumber){
+        $items = Buddhist::select(
+            'buddhists.id','buddhists.name','buddhists.price','buddhists.place','buddhists.end_time','buddhists.image_path','verifies.file_verify_status','buddhists.highest_price'
+        )->leftJoin('verifies',"buddhists.user_id",'=','verifies.user_id')->
+        whereHas("user",function ($query) use ($kongDeeCenterPhoneNumber){
             $loop = 0;
             foreach($kongDeeCenterPhoneNumber as $phone_number){
                 if($loop==0){
@@ -55,7 +59,7 @@ class ShowItemSectionController extends Controller
                 $loop++;
                 
             }
-        })->where([['end_time', '>', Carbon::now()], ["active", "1"]])->with(["type"])->paginate($perPage);
+        })->where([['end_time', '>', Carbon::now()], ["active", "1"]])->paginate($perPage);
        
 
         return BuddhistResource::collection($items); 
