@@ -42,8 +42,20 @@ class ShowItemSectionController extends Controller
       
 
    
-   
 
+        // $items = Buddhist::whereHas("user",function ($query) use ($kongDeeCenterPhoneNumber){
+        //     $loop = 0;
+        //     foreach($kongDeeCenterPhoneNumber as $phone_number){
+        //         if($loop==0){
+        //             $query->where("phone_number",$phone_number);
+        //         }
+        //         else{
+        //             $query->orWhere("phone_number",$phone_number);
+        //         }
+        //         $loop++;
+                
+        //     }
+        // })->where([['end_time', '>', Carbon::now()], ["active", "1"]])->with(["type"])->paginate($perPage);
         $items = Buddhist::select(
             'buddhists.id','buddhists.name','buddhists.price','buddhists.place','buddhists.end_time','buddhists.image_path','verifies.file_verify_status','buddhists.highest_price'
         )->leftJoin('verifies',"buddhists.user_id",'=','verifies.user_id')->
@@ -51,15 +63,16 @@ class ShowItemSectionController extends Controller
             $loop = 0;
             foreach($kongDeeCenterPhoneNumber as $phone_number){
                 if($loop==0){
-                    $query->where("phone_number",$phone_number);
+                    $query->where("users.phone_number",$phone_number);
                 }
                 else{
-                    $query->orWhere("phone_number",$phone_number);
+                    $query->orWhere("users.phone_number",$phone_number);
                 }
                 $loop++;
                 
             }
-        })->where([['end_time', '>', Carbon::now()], ["active", "1"]])->paginate($perPage);
+        })->where([['buddhists.end_time', '>', Carbon::now()], ["buddhists.active", "1"]])->paginate($perPage);
+       
        
 
         return BuddhistResource::collection($items); 
