@@ -19,7 +19,7 @@ class apiAuthController extends Controller
 
     public function __construct()
     {
-        $this->middleware('auth:api')->only(['logOut', "checkToken"]);
+        $this->middleware('auth:api')->only(['logOut', "checkToken","checkVerifyPhoneNumber"]);
     }
 
     public function getCustomToken(Request $request){
@@ -427,5 +427,16 @@ class apiAuthController extends Controller
         } else {
             return response()->json(['message' => 'Something went Wrong'], 500);
         }
+    }
+
+    public function checkVerifyPhoneNumber(){
+        if(Auth::user()->phone_number==null){
+            return response()->json([
+                "success" =>false,
+                "message"=>"This accound has no phone number please verify your phone number before continuing",
+                "data"=>[],
+            ],422);
+        }
+        return response()->json(["data"=>[],"message"=>"checking phone number passed","success"=>true],200);
     }
 }

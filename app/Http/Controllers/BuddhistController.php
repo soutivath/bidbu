@@ -125,6 +125,23 @@ class BuddhistController extends Controller
             'minimum_price'=>'required|integer'
         ]);
 
+        $checkSameItemInNamePriceDetail = Buddhist::where([
+            ["id",Auth::id()],
+            ["name"=>$request->name],
+            ["detail"=>$request->detail],
+            ["price"=>$request->price]
+        ])->first();
+        if($checkSameItemInNamePriceDetail){
+            return response()->json([
+                "data"=>[],
+                "message"=>"Your item must be in the same",
+                "success"=>false
+            ],400);
+        }
+        
+        
+
+
      
         
         $messaging = app('firebase.messaging');
